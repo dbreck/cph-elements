@@ -1,0 +1,242 @@
+/**
+ * CPH Stats Bubbles - Styles
+ *
+ * Organic floating bubbles for displaying statistics.
+ * Positioning is handled by JavaScript with collision avoidance.
+ *
+ * @package Salient_Child
+ * @since   1.0.0
+ */
+
+/* -----------------------------------------------------------------------------
+ * BASE STYLES
+ * -------------------------------------------------------------------------- */
+
+.cph-stats-bubbles {
+	--container-height: 600px;
+	--min-bubble-size: 150px;
+	--max-bubble-size: 350px;
+	--bubble-color: #E14A13;
+	--text-color: #ffffff;
+	--value-font-size: 48px;
+	--label-font-size: 20px;
+	--shadow-color: rgba(0, 0, 0, 0.15);
+
+	position: relative;
+	width: 100%;
+	height: var(--container-height);
+	overflow: hidden; /* Prevent bubbles from overflowing container */
+}
+
+.cph-stats-bubbles__bubble {
+	--bubble-size: 250px;
+
+	position: absolute;
+	width: var(--bubble-size);
+	height: var(--bubble-size);
+	background: var(--bubble-color);
+	border-radius: 50%;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	padding: 10px;
+	box-sizing: border-box;
+	text-align: center;
+	will-change: transform, left, top;
+	/* Center bubble at calculated position (JS positions by center point) */
+	transform: translate(-50%, -50%);
+}
+
+/* Shadow modifier */
+.cph-stats-bubbles--shadow .cph-stats-bubbles__bubble {
+	box-shadow: 0 10px 40px var(--shadow-color);
+}
+
+/* Typography */
+.cph-stats-bubbles__value {
+	font-family: "Area Normal", sans-serif;
+	font-weight: 700;
+	font-size: var(--value-font-size);
+	color: var(--text-color);
+	line-height: 1.1;
+	letter-spacing: -0.02em;
+}
+
+.cph-stats-bubbles__label {
+	font-family: "Area Normal", sans-serif;
+	font-weight: 400;
+	font-size: var(--label-font-size);
+	color: var(--text-color);
+	text-transform: uppercase;
+	line-height: 1.2;
+	margin-top: 8px;
+	max-width: 80%;
+	letter-spacing: 0.02em;
+}
+
+/* Size modifiers */
+.cph-stats-bubbles__bubble--small {
+	--bubble-size: var(--min-bubble-size);
+}
+
+.cph-stats-bubbles__bubble--medium {
+	--bubble-size: calc((var(--min-bubble-size) + var(--max-bubble-size)) / 2);
+}
+
+.cph-stats-bubbles__bubble--large {
+	--bubble-size: var(--max-bubble-size);
+}
+
+/* -----------------------------------------------------------------------------
+ * ANIMATION STATES
+ * -------------------------------------------------------------------------- */
+
+/* Initial state before animation */
+.cph-stats-bubbles[data-enable-countup="true"] .cph-stats-bubbles__bubble {
+	opacity: 0;
+	transform: translate(-50%, -50%) scale(0.8);
+}
+
+/* After JS initializes, bubbles become visible */
+.cph-stats-bubbles.is-initialized .cph-stats-bubbles__bubble {
+	opacity: 1;
+	transform: translate(-50%, -50%) scale(1);
+	transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+/* Staggered animation delays */
+.cph-stats-bubbles.is-initialized .cph-stats-bubbles__bubble:nth-child(1) {
+	transition-delay: 0s;
+}
+
+.cph-stats-bubbles.is-initialized .cph-stats-bubbles__bubble:nth-child(2) {
+	transition-delay: 0.1s;
+}
+
+.cph-stats-bubbles.is-initialized .cph-stats-bubbles__bubble:nth-child(3) {
+	transition-delay: 0.2s;
+}
+
+.cph-stats-bubbles.is-initialized .cph-stats-bubbles__bubble:nth-child(4) {
+	transition-delay: 0.3s;
+}
+
+.cph-stats-bubbles.is-initialized .cph-stats-bubbles__bubble:nth-child(5) {
+	transition-delay: 0.4s;
+}
+
+.cph-stats-bubbles.is-initialized .cph-stats-bubbles__bubble:nth-child(6) {
+	transition-delay: 0.5s;
+}
+
+.cph-stats-bubbles.is-initialized .cph-stats-bubbles__bubble:nth-child(7) {
+	transition-delay: 0.6s;
+}
+
+.cph-stats-bubbles.is-initialized .cph-stats-bubbles__bubble:nth-child(8) {
+	transition-delay: 0.7s;
+}
+
+.cph-stats-bubbles.is-initialized .cph-stats-bubbles__bubble:nth-child(9) {
+	transition-delay: 0.8s;
+}
+
+.cph-stats-bubbles.is-initialized .cph-stats-bubbles__bubble:nth-child(10) {
+	transition-delay: 0.9s;
+}
+
+/* -----------------------------------------------------------------------------
+ * RESPONSIVE - TABLET
+ * -------------------------------------------------------------------------- */
+
+@media only screen and (max-width: 999px) {
+	.cph-stats-bubbles {
+		--value-font-size: 36px;
+		--label-font-size: 16px;
+	}
+
+	/* Reduce bubble sizes on tablet */
+	.cph-stats-bubbles__bubble--small {
+		--bubble-size: calc(var(--min-bubble-size) * 0.85);
+	}
+
+	.cph-stats-bubbles__bubble--medium {
+		--bubble-size: calc(((var(--min-bubble-size) + var(--max-bubble-size)) / 2) * 0.85);
+	}
+
+	.cph-stats-bubbles__bubble--large {
+		--bubble-size: calc(var(--max-bubble-size) * 0.85);
+	}
+}
+
+/* -----------------------------------------------------------------------------
+ * RESPONSIVE - MOBILE
+ * Stack vertically with staggered horizontal offsets
+ * -------------------------------------------------------------------------- */
+
+@media only screen and (max-width: 690px) {
+	.cph-stats-bubbles {
+		--value-font-size: 32px;
+		--label-font-size: 14px;
+
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 20px;
+		height: auto !important;
+		padding: 20px 0;
+		overflow: visible; /* Allow slight overflow for stagger effect */
+	}
+
+	.cph-stats-bubbles__bubble {
+		position: relative !important;
+		left: auto !important;
+		top: auto !important;
+		transform: none; /* Reset transform for flexbox layout */
+	}
+
+	/* Staggered horizontal offsets for visual interest */
+	.cph-stats-bubbles__bubble:nth-child(odd) {
+		transform: translateX(-10%);
+	}
+
+	.cph-stats-bubbles__bubble:nth-child(even) {
+		transform: translateX(10%);
+	}
+
+	/* Smaller bubble sizes on mobile */
+	.cph-stats-bubbles__bubble--small {
+		--bubble-size: 140px;
+	}
+
+	.cph-stats-bubbles__bubble--medium {
+		--bubble-size: 180px;
+	}
+
+	.cph-stats-bubbles__bubble--large {
+		--bubble-size: 220px;
+	}
+
+	/* Adjust animation transforms for mobile */
+	.cph-stats-bubbles[data-enable-countup="true"] .cph-stats-bubbles__bubble {
+		transform: scale(0.8);
+	}
+
+	.cph-stats-bubbles.is-initialized .cph-stats-bubbles__bubble:nth-child(odd) {
+		transform: translateX(-10%) scale(1);
+	}
+
+	.cph-stats-bubbles.is-initialized .cph-stats-bubbles__bubble:nth-child(even) {
+		transform: translateX(10%) scale(1);
+	}
+}
+
+/* -----------------------------------------------------------------------------
+ * SALIENT OVERRIDES
+ * -------------------------------------------------------------------------- */
+
+/* Override Salient's default row/col styles */
+.row .col .cph-stats-bubbles {
+	overflow: hidden;
+}

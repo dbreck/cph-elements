@@ -1,0 +1,162 @@
+/**
+ * CPH Team Grid Styles
+ *
+ * Responsive grid layout for team members.
+ *
+ * @package Salient_Child
+ * @since   1.0.0
+ */
+
+/* ==========================================================================
+   Grid Container
+   ========================================================================== */
+
+.cph-team-grid {
+	display: grid;
+	grid-template-columns: repeat(var(--columns, 3), 1fr);
+	column-gap: var(--column-gap, 30px);
+	row-gap: var(--row-gap, 30px);
+	width: 100%;
+}
+
+/* ==========================================================================
+   Card Styles
+   ========================================================================== */
+
+.cph-team-grid__card {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+}
+
+.cph-team-grid__card-button {
+	display: flex;
+	flex-direction: column;
+	width: 100%;
+	height: 100%;
+	padding: 0;
+	background: none;
+	border: none;
+	cursor: pointer;
+	text-align: center;
+}
+
+/* Image Container */
+.cph-team-grid__card-image {
+	position: relative;
+	width: 100%;
+	height: var(--card-height, 544px);
+	overflow: hidden;
+	border-radius: 25px;
+}
+
+.cph-team-grid__card-image img {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	transition: transform 0.4s ease;
+}
+
+/* Salient override for images in grid */
+.row .col .cph-team-grid__card-image img {
+	height: 100%;
+}
+
+/* Hover effect */
+.cph-team-grid__card-button:hover .cph-team-grid__card-image img,
+.cph-team-grid__card-button:focus .cph-team-grid__card-image img {
+	transform: scale(1.05);
+}
+
+/* Content Area */
+.cph-team-grid__card-content {
+	padding: 24px 0 0;
+}
+
+.cph-team-grid__card-name {
+	margin: 0 0 8px;
+	font-family: "area-normal", sans-serif;
+	font-size: 30px;
+	font-weight: 600;
+	line-height: 1.2;
+	color: #2E231A;
+	text-align: center;
+}
+
+.cph-team-grid__card-title {
+	margin: 0;
+	font-family: "aktiv-grotesk", sans-serif;
+	font-size: 22px;
+	font-weight: 400;
+	line-height: 1.4;
+	color: #2E231A;
+	text-align: center;
+}
+
+/* Focus state for accessibility */
+.cph-team-grid__card-button:focus {
+	outline: none;
+}
+
+.cph-team-grid__card-button:focus-visible .cph-team-grid__card-image {
+	outline: 2px solid #335439;
+	outline-offset: 4px;
+}
+
+/* ==========================================================================
+   Empty State
+   ========================================================================== */
+
+.cph-team-grid-empty {
+	padding: 40px;
+	text-align: center;
+	font-family: "aktiv-grotesk", sans-serif;
+	font-size: 18px;
+	color: #666;
+}
+
+/* ==========================================================================
+   Responsive Breakpoints
+   ========================================================================== */
+
+/* Tablet - 2 columns */
+@media (max-width: 1199px) {
+	.cph-team-grid {
+		grid-template-columns: repeat(2, 1fr);
+	}
+
+	.cph-team-grid__card-image {
+		height: calc(var(--card-height, 544px) * 0.85);
+	}
+
+	.cph-team-grid__card-name {
+		font-size: 26px;
+	}
+
+	.cph-team-grid__card-title {
+		font-size: 20px;
+	}
+}
+
+/* Mobile - 1 column */
+@media (max-width: 767px) {
+	.cph-team-grid {
+		grid-template-columns: 1fr;
+		row-gap: 40px;
+	}
+
+	.cph-team-grid__card-image {
+		height: calc(var(--card-height, 544px) * 0.75);
+	}
+
+	.cph-team-grid__card-name {
+		font-size: 24px;
+	}
+
+	.cph-team-grid__card-title {
+		font-size: 18px;
+	}
+}

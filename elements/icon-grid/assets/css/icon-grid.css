@@ -1,0 +1,75 @@
+/**
+ * CPH Icon Grid Styles
+ *
+ * Grid layout for displaying icons with labels.
+ * Uses CSS custom properties for flexible configuration.
+ * Responsive values are controlled via inline styles from shortcode.
+ *
+ * @package Salient_Child
+ * @since   1.0.0
+ */
+
+/* ==========================================================================
+   GRID CONTAINER
+   ========================================================================== */
+
+.cph-icon-grid {
+	display: grid;
+	grid-template-columns: repeat(var(--columns, 5), 1fr);
+	row-gap: var(--row-gap, 0px);
+	width: 100%;
+}
+
+/* ==========================================================================
+   GRID ITEMS
+   ========================================================================== */
+
+.cph-icon-grid__item {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: flex-end; /* Bottom align content */
+	height: var(--cell-height, 175px);
+	gap: var(--gap, 30px);
+	padding: 10px;
+	box-sizing: border-box;
+}
+
+/* ==========================================================================
+   ICON
+   ========================================================================== */
+
+.cph-icon-grid__icon {
+	max-height: var(--icon-max-height, 100px);
+	width: auto;
+	max-width: 100%;
+	height: auto;
+	object-fit: contain;
+	color: var(--icon-color, #000000);
+}
+
+/* SVG icons inherit color via currentColor */
+.cph-icon-grid__icon[src$=".svg"] {
+	color: inherit;
+}
+
+/* Salient image override - ensure icons display properly */
+.row .col .cph-icon-grid__icon {
+	height: auto;
+	max-height: var(--icon-max-height, 100px);
+}
+
+/* ==========================================================================
+   LABEL
+   ========================================================================== */
+
+.cph-icon-grid__label {
+	font-family: "area-normal", sans-serif;
+	font-weight: 600;
+	font-size: var(--label-font-size, 28px);
+	line-height: 1.2;
+	text-transform: uppercase;
+	text-align: center;
+	color: var(--label-color, #000000);
+	letter-spacing: 0.02em;
+}

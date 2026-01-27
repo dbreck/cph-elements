@@ -1,0 +1,98 @@
+/**
+ * CPH WPBakery Admin Styles
+ *
+ * Styles for custom WPBakery element settings panels.
+ * Matches native Salient/Nectar device toggle styling.
+ *
+ * @package Salient_Child
+ * @since 1.0.0
+ */
+
+/* ==========================================================================
+   DEVICE SELECTION ICONS
+   ========================================================================== */
+
+.cph-device-selection {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	margin-left: 8px;
+}
+
+.cph-device-selection i {
+	width: 26px;
+	height: 26px;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: 50%;
+	border: 1px solid #d5d8dc;
+	cursor: pointer;
+	font-size: 14px;
+	color: #9ea3a8;
+	background: #fff;
+	transition: all 0.15s ease;
+}
+
+.cph-device-selection i:hover {
+	border-color: #5b5fc7;
+	color: #5b5fc7;
+}
+
+.cph-device-selection i.active {
+	border-color: #5b5fc7;
+	background: #5b5fc7;
+	color: #fff;
+}
+
+/* ==========================================================================
+   LABEL STYLING
+   ========================================================================== */
+
+/* Label text styling to match WPBakery */
+.cph-label-text {
+	font-weight: 600;
+	font-size: 13px;
+	color: #23282d;
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+}
+
+/* Ensure proper label alignment - inline with device icons */
+.cph-device-initialized .wpb_element_label {
+	display: flex !important;
+	align-items: center !important;
+	margin-bottom: 8px !important;
+}
+
+/* ==========================================================================
+   HIDDEN DEVICE FIELDS
+   ========================================================================== */
+
+/* Hide tablet/phone fields completely when not active */
+.cph-device-field-hidden {
+	display: none !important;
+}
+
+/* When tablet/phone field is shown, hide its label (we use desktop's label) */
+.cph-device-initialized.tablet .wpb_element_label,
+.cph-device-initialized.phone .wpb_element_label {
+	display: none !important;
+}
+
+/* ==========================================================================
+   INPUT FIELD STYLING
+   ========================================================================== */
+
+/* Ensure inputs use the proper WPBakery/WordPress admin font */
+.cph-device-initialized input[type="text"],
+.cph-device-initialized input[type="number"],
+.cph-device-initialized textarea,
+.cph-device-initialized select {
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif !important;
+	font-size: 14px !important;
+}
+
+/* Match WPBakery input styling */
+.cph-device-initialized .wpb_element_wrapper {
+	margin-top: 0;
+}

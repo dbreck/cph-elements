@@ -1,0 +1,785 @@
+/**
+ * CPH Horizontal Scroller
+ *
+ * Styles for the infinite horizontal carousel component.
+ *
+ * @package Salient_Child
+ * @since   1.0.0
+ */
+
+/* ==========================================================================
+   CSS Custom Properties (set via inline styles from PHP)
+   ========================================================================== */
+
+.cph-scroller {
+	--card-width: 25vw;
+	--card-aspect-ratio: 3/4;
+	--gap: 178px;
+	--arrow-offset: 158px;
+	--content-inset: 356px;
+
+	position: relative;
+	width: 100%;
+	overflow: visible;
+}
+
+/* ==========================================================================
+   Arrow Button
+   ========================================================================== */
+
+.cph-scroller__arrow {
+	position: absolute;
+	top: 50%;
+	transform: translateY(-50%);
+	z-index: 10;
+
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	width: 158px;
+	height: 80px;
+	padding: 0;
+
+	background: transparent;
+	border: 1px solid currentColor;
+	border-radius: 50px;
+	color: #000;
+
+	cursor: pointer;
+	transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.cph-scroller__arrow:hover {
+	background-color: #000;
+	color: #fff;
+}
+
+.cph-scroller__arrow svg {
+	width: 60px;
+	height: auto;
+	transition: transform 0.3s ease;
+}
+
+/* Left direction: arrow on left, pointing left */
+.cph-scroller--left .cph-scroller__arrow {
+	left: var(--arrow-offset);
+}
+
+.cph-scroller--left .cph-scroller__arrow svg {
+	transform: rotate(180deg);
+}
+
+/* Right direction: arrow on right, pointing right */
+.cph-scroller--right .cph-scroller__arrow {
+	right: var(--arrow-offset);
+}
+
+/* ==========================================================================
+   Viewport (clips content before reaching arrow zone)
+   ========================================================================== */
+
+.cph-scroller__viewport {
+	position: relative;
+	overflow: hidden;
+	width: 100%;
+}
+
+/* Left direction: inset on left side */
+.cph-scroller--left .cph-scroller__viewport {
+	margin-left: var(--content-inset);
+}
+
+/* Right direction: inset on right side */
+.cph-scroller--right .cph-scroller__viewport {
+	width: calc(100% - var(--content-inset));
+}
+
+/* ==========================================================================
+   Track (contains cards, this element is dragged)
+   ========================================================================== */
+
+.cph-scroller__track {
+	display: flex;
+	flex-direction: row;
+	gap: var(--gap);
+	cursor: grab;
+	user-select: none;
+	will-change: transform;
+}
+
+.cph-scroller__track:active {
+	cursor: grabbing;
+}
+
+/* ==========================================================================
+   Card Base Styles
+   ========================================================================== */
+
+.cph-scroller__card {
+	flex-shrink: 0;
+	width: var(--card-width);
+	display: flex;
+	flex-direction: column;
+}
+
+.cph-scroller__card-image {
+	position: relative;
+	width: 100%;
+	aspect-ratio: var(--card-aspect-ratio);
+	border-radius: 25px;
+	overflow: hidden;
+	display: block;
+	flex: none;
+}
+
+.cph-scroller__card-image img,
+.row .col .cph-scroller__card-image img {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	max-height: none;
+	object-fit: cover;
+	pointer-events: none;
+	display: block;
+	margin: 0;
+	padding: 0;
+	border-radius: 0;
+}
+
+/* ==========================================================================
+   Team Card Styles
+   ========================================================================== */
+
+.cph-scroller__card--team .cph-scroller__card-content {
+	padding-top: 25px;
+	margin-top: 0;
+	flex: none;
+}
+
+.cph-scroller__card-name {
+	margin: 0 0 2px !important;
+	font-weight: 700 !important;
+	line-height: 1.2 !important;
+	color: #000;
+	letter-spacing: 0.01em;
+	text-transform: none !important;
+}
+
+.cph-scroller__card-title {
+	margin: 0;
+	font-family: 'aktiv-grotesk', sans-serif;
+	font-size: 22px;
+	font-weight: 400;
+	line-height: 2.08;
+	color: #000;
+}
+
+.cph-scroller__card-button {
+	position: relative;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	overflow: hidden;
+
+	width: 280px;
+	padding: 18px 20px;
+
+	font-family: 'area-normal', sans-serif;
+	font-size: 20px;
+	font-weight: 400;
+	letter-spacing: 0.02em;
+	color: #000;
+
+	background: #fff;
+	border: 1px solid #000;
+	border-radius: 50px;
+	cursor: pointer;
+}
+
+.cph-scroller__card-button span {
+	position: relative;
+	z-index: 10;
+	transition: color 600ms cubic-bezier(0.48, 0, 0.12, 1);
+}
+
+.cph-scroller__card-button::before {
+	content: attr(data-text);
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translateX(-50%) translateY(225%);
+	z-index: 100;
+	color: #fff;
+	opacity: 0;
+	transition: all 500ms cubic-bezier(0.48, 0, 0.12, 1);
+}
+
+.cph-scroller__card-button::after {
+	content: "";
+	position: absolute;
+	bottom: -50%;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background-color: #000;
+	transform-origin: bottom center;
+	transform: skewY(9.3deg) scaleY(0);
+	transition: transform 600ms cubic-bezier(0.48, 0, 0.12, 1);
+	z-index: 50;
+}
+
+.cph-scroller__card-button:hover span {
+	color: transparent;
+}
+
+.cph-scroller__card-button:hover::before {
+	transform: translateX(-50%) translateY(-50%);
+	opacity: 1;
+	transition: all 900ms cubic-bezier(0.48, 0, 0.12, 1);
+}
+
+.cph-scroller__card-button:hover::after {
+	transform-origin: bottom center;
+	transform: skewY(9.3deg) scaleY(2);
+}
+
+/* ==========================================================================
+   Blog Card Styles
+   ========================================================================== */
+
+.cph-scroller__card--blog {
+	position: relative;
+}
+
+.cph-scroller__card--blog .cph-scroller__card-link {
+	display: block;
+	text-decoration: none;
+	color: inherit;
+}
+
+.cph-scroller__card--blog .cph-scroller__card-image {
+	aspect-ratio: var(--card-aspect-ratio);
+}
+
+.cph-scroller__card-overlay {
+	position: absolute;
+	inset: 0;
+	background: linear-gradient(to bottom,
+			rgba(0, 0, 0, 0) 0%,
+			rgba(0, 0, 0, 0.4) 100%);
+	pointer-events: none;
+}
+
+.cph-scroller__card--blog .cph-scroller__card-content {
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	padding: 30px;
+	color: #fff;
+}
+
+.cph-scroller__card--blog .cph-scroller__card-name {
+	margin: 0 0 5px;
+	font-family: 'area-normal', sans-serif;
+	font-size: 26px;
+	font-weight: 600;
+	line-height: 1.3;
+	color: #fff;
+	text-transform: uppercase;
+}
+
+.cph-scroller__card-category {
+	margin: 0;
+	font-family: 'area-normal', sans-serif;
+	font-size: 22px;
+	font-weight: 400;
+	line-height: 1.3;
+	color: #fff;
+	text-transform: uppercase;
+}
+
+.cph-scroller__card-date {
+	position: absolute;
+	bottom: 30px;
+	left: 30px;
+	margin: 0;
+	font-family: 'aktiv-grotesk', sans-serif;
+	font-size: 20px;
+	font-weight: 400;
+	color: rgba(255, 255, 255, 0.8);
+}
+
+/* ==========================================================================
+   Responsive Adjustments
+   ========================================================================== */
+
+@media (max-width: 1199px) {
+	.cph-scroller {
+		--card-width: 35vw;
+		--gap: 80px;
+		--content-inset: 220px;
+	}
+
+	.cph-scroller__arrow {
+		width: 120px;
+		height: 60px;
+	}
+
+	.cph-scroller__arrow svg {
+		width: 45px;
+	}
+
+	.cph-scroller__card-button {
+		width: 240px;
+		padding: 16px 18px;
+		font-size: 18px;
+	}
+}
+
+@media (max-width: 999px) {
+	.cph-scroller {
+		--card-width: 50vw;
+		--gap: 40px;
+		--arrow-offset: 20px;
+		--content-inset: 140px;
+	}
+
+	.cph-scroller__arrow {
+		width: 100px;
+		height: 50px;
+	}
+
+	.cph-scroller__arrow svg {
+		width: 35px;
+	}
+
+	.cph-scroller__card-name {
+		font-size: 24px;
+	}
+
+	.cph-scroller__card-title {
+		font-size: 18px;
+		margin-bottom: 25px;
+	}
+
+	.cph-scroller__card-button {
+		width: 220px;
+		padding: 14px 16px;
+		font-size: 16px;
+	}
+
+	.cph-scroller__card--blog .cph-scroller__card-name {
+		font-size: 20px;
+	}
+
+	.cph-scroller__card-category {
+		font-size: 18px;
+	}
+
+	.cph-scroller__card-date {
+		font-size: 16px;
+	}
+}
+
+@media (max-width: 690px) {
+	.cph-scroller {
+		--card-width: 75vw;
+		--gap: 20px;
+		--arrow-offset: 15px;
+		--content-inset: 90px;
+	}
+
+	.cph-scroller__arrow {
+		width: 70px;
+		height: 40px;
+	}
+
+	.cph-scroller__arrow svg {
+		width: 28px;
+	}
+
+	.cph-scroller__card-image {
+		border-radius: 15px;
+	}
+
+	.cph-scroller__card-name {
+		font-size: 20px;
+	}
+
+	.cph-scroller__card-title {
+		font-size: 16px;
+		line-height: 1.5;
+		margin-bottom: 20px;
+	}
+
+	.cph-scroller__card-button {
+		width: 100%;
+		max-width: 200px;
+		padding: 12px 14px;
+		font-size: 14px;
+	}
+
+	.cph-scroller__card--blog .cph-scroller__card-content {
+		padding: 20px;
+	}
+
+	.cph-scroller__card--blog .cph-scroller__card-name {
+		font-size: 18px;
+	}
+
+	.cph-scroller__card-category {
+		font-size: 16px;
+	}
+
+	.cph-scroller__card-date {
+		font-size: 14px;
+		bottom: 20px;
+		left: 20px;
+	}
+}
+
+/* ==========================================================================
+   Empty State
+   ========================================================================== */
+
+.cph-scroller-empty {
+	padding: 40px;
+	text-align: center;
+	font-family: 'aktiv-grotesk', sans-serif;
+	font-size: 18px;
+	color: #666;
+}
+
+/* ==========================================================================
+   Team Member Popup
+   ========================================================================== */
+
+.cph-team-popup {
+	position: fixed;
+	inset: 0;
+	z-index: 99999;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	opacity: 0;
+	visibility: hidden;
+	transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.cph-team-popup[aria-hidden="false"] {
+	opacity: 1;
+	visibility: visible;
+}
+
+.cph-team-popup__backdrop {
+	position: absolute;
+	inset: 0;
+	background: rgba(232, 232, 232, 0.59);
+	backdrop-filter: blur(30px);
+	-webkit-backdrop-filter: blur(30px);
+}
+
+.cph-team-popup__container {
+	position: relative;
+	z-index: 1;
+	width: 85vw;
+	max-height: 90vh;
+	margin: 0 auto;
+	padding: 80px 0;
+	overflow-y: auto;
+	transform: translateY(20px);
+	opacity: 0;
+	transition: transform 0.4s ease, opacity 0.4s ease;
+}
+
+.cph-team-popup[aria-hidden="false"] .cph-team-popup__container {
+	transform: translateY(0);
+	opacity: 1;
+}
+
+.cph-team-popup__close {
+	position: fixed;
+	top: 80px;
+	right: calc((100vw - 85vw) / 2 - 70px);
+	z-index: 10;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 56px;
+	height: 56px;
+	padding: 0;
+	background: transparent;
+	border: none;
+	color: #000;
+	cursor: pointer;
+	transition: transform 0.3s ease;
+}
+
+.cph-team-popup__close:hover {
+	transform: scale(1.1);
+}
+
+.cph-team-popup__close svg {
+	width: 40px;
+	height: 40px;
+}
+
+.cph-team-popup__content {
+	display: grid;
+	grid-template-columns: 405px 1fr;
+	gap: 60px;
+	align-items: start;
+}
+
+.cph-team-popup__image-col {
+	position: sticky;
+	top: 0;
+}
+
+.cph-team-popup__image {
+	width: 405px;
+	height: 473px;
+	border-radius: 25px;
+	overflow: hidden;
+	background: #e8e8e8;
+}
+
+.cph-team-popup__image img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+
+.cph-team-popup__text-col {
+	padding-top: 0;
+}
+
+.cph-team-popup__name {
+	margin: 0 0 8px;
+	font-family: 'area-normal', 'area-normal', sans-serif;
+	font-size: 35px;
+	font-weight: 400;
+	line-height: 1.2;
+	letter-spacing: 0.02em;
+	color: #000;
+}
+
+.cph-team-popup__title {
+	margin: 0 0 40px;
+	font-family: 'area-normal', 'area-normal', sans-serif;
+	font-size: 24px;
+	font-weight: 400;
+	line-height: 1.4;
+	letter-spacing: 0.02em;
+	color: #000;
+}
+
+.cph-team-popup__bio {
+	font-family: 'aktiv-grotesk', sans-serif;
+	font-size: 22px;
+	font-weight: 400;
+	line-height: 2.08;
+	color: #000;
+}
+
+.cph-team-popup__bio p {
+	margin: 0 0 20px;
+}
+
+.cph-team-popup__bio p:last-child {
+	margin-bottom: 0;
+}
+
+/* Loading State */
+.cph-team-popup__loading {
+	position: absolute;
+	inset: 0;
+	z-index: 5;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background: rgba(232, 232, 232, 0.8);
+	opacity: 0;
+	visibility: hidden;
+	transition: opacity 0.2s ease, visibility 0.2s ease;
+}
+
+.cph-team-popup.is-loading .cph-team-popup__loading {
+	opacity: 1;
+	visibility: visible;
+}
+
+.cph-team-popup__spinner {
+	width: 48px;
+	height: 48px;
+	border: 3px solid rgba(0, 0, 0, 0.1);
+	border-top-color: #000;
+	border-radius: 50%;
+	animation: cph-popup-spin 0.8s linear infinite;
+}
+
+@keyframes cph-popup-spin {
+	to {
+		transform: rotate(360deg);
+	}
+}
+
+/* Body lock when popup is open */
+body.cph-popup-open {
+	overflow: hidden;
+}
+
+/* ==========================================================================
+   Team Popup - Tablet (max-width: 1199px)
+   ========================================================================== */
+
+@media (max-width: 1199px) {
+	.cph-team-popup__container {
+		width: 90vw;
+		padding: 60px 0;
+	}
+
+	.cph-team-popup__close {
+		top: 60px;
+		right: calc((100vw - 90vw) / 2 - 60px);
+	}
+
+	.cph-team-popup__content {
+		grid-template-columns: 320px 1fr;
+		gap: 40px;
+	}
+
+	.cph-team-popup__image {
+		width: 320px;
+		height: 380px;
+	}
+
+	.cph-team-popup__name {
+		font-size: 30px;
+	}
+
+	.cph-team-popup__title {
+		font-size: 20px;
+		margin-bottom: 30px;
+	}
+
+	.cph-team-popup__bio {
+		font-size: 18px;
+		line-height: 1.9;
+	}
+}
+
+/* ==========================================================================
+   Team Popup - Mobile (max-width: 999px)
+   ========================================================================== */
+
+@media (max-width: 999px) {
+	.cph-team-popup__container {
+		width: 100%;
+		max-height: 100vh;
+		padding: 80px 30px 40px;
+		overflow-y: auto;
+	}
+
+	.cph-team-popup__close {
+		position: fixed;
+		top: 20px;
+		right: 20px;
+		width: 44px;
+		height: 44px;
+	}
+
+	.cph-team-popup__close svg {
+		width: 30px;
+		height: 30px;
+	}
+
+	.cph-team-popup__content {
+		display: flex;
+		flex-direction: column;
+		gap: 30px;
+	}
+
+	.cph-team-popup__image-col {
+		position: relative;
+		width: 100%;
+		max-width: 320px;
+		margin: 0 auto;
+	}
+
+	.cph-team-popup__image {
+		width: 100%;
+		height: auto;
+		aspect-ratio: 405 / 473;
+	}
+
+	.cph-team-popup__text-col {
+		padding-top: 0;
+	}
+
+	.cph-team-popup__name {
+		font-size: 28px;
+	}
+
+	.cph-team-popup__title {
+		font-size: 18px;
+		margin-bottom: 25px;
+	}
+
+	.cph-team-popup__bio {
+		font-size: 16px;
+		line-height: 1.8;
+	}
+
+	.cph-team-popup__bio p {
+		margin-bottom: 16px;
+	}
+}
+
+/* ==========================================================================
+   Team Popup - Small Mobile (max-width: 599px)
+   ========================================================================== */
+
+@media (max-width: 690px) {
+	.cph-team-popup__container {
+		padding: 70px 20px 30px;
+	}
+
+	.cph-team-popup__close {
+		top: 15px;
+		right: 15px;
+		width: 40px;
+		height: 40px;
+	}
+
+	.cph-team-popup__close svg {
+		width: 24px;
+		height: 24px;
+	}
+
+	.cph-team-popup__image-col {
+		max-width: 280px;
+	}
+
+	.cph-team-popup__image {
+		border-radius: 15px;
+	}
+
+	.cph-team-popup__name {
+		font-size: 24px;
+	}
+
+	.cph-team-popup__title {
+		font-size: 16px;
+		margin-bottom: 20px;
+	}
+
+	.cph-team-popup__bio {
+		font-size: 15px;
+		line-height: 1.7;
+	}
+}

@@ -1,0 +1,227 @@
+/**
+ * CPH Stats Photos - Styles
+ *
+ * Photo grid with statistics overlay on hover or random reveal.
+ *
+ * @package Salient_Child
+ * @since   1.0.0
+ */
+
+/* -----------------------------------------------------------------------------
+ * BASE STYLES
+ * -------------------------------------------------------------------------- */
+
+.cph-stats-photos {
+	--container-height: 500px;
+	--image-alignment: center center;
+	--overlay-color: #000000;
+	--overlay-opacity: 0.4;
+	--text-color: #ffffff;
+	--value-font-size: 72px;
+	--label-font-size: 16px;
+
+	display: flex;
+	width: 100%;
+	height: var(--container-height);
+	overflow: hidden;
+}
+
+.cph-stats-photos__item {
+	position: relative;
+	flex: 1;
+	overflow: hidden;
+}
+
+.cph-stats-photos__image-wrap {
+	position: absolute;
+	inset: 0;
+	overflow: hidden;
+}
+
+.cph-stats-photos__image {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	object-position: var(--image-alignment);
+	transition: transform 0.5s ease;
+}
+
+/* Subtle zoom on hover */
+.cph-stats-photos__item:hover .cph-stats-photos__image {
+	transform: scale(1.05);
+}
+
+/* Overlay */
+.cph-stats-photos__overlay {
+	position: absolute;
+	inset: 0;
+	background-color: var(--overlay-color);
+	opacity: 0;
+	transition: opacity 0.4s ease;
+	pointer-events: none;
+}
+
+/* Content container */
+.cph-stats-photos__content {
+	position: absolute;
+	inset: 0;
+	display: flex;
+	flex-direction: column;
+	padding: 30px;
+	opacity: 0;
+	transition: opacity 0.4s ease;
+	pointer-events: none;
+}
+
+/* Typography */
+.cph-stats-photos__value {
+	font-family: "Area Normal", sans-serif;
+	font-weight: 700;
+	font-size: var(--value-font-size);
+	color: var(--text-color);
+	line-height: 1;
+	letter-spacing: -0.02em;
+}
+
+.cph-stats-photos__label {
+	font-family: "Area Normal", sans-serif;
+	font-weight: 400;
+	font-size: var(--label-font-size);
+	color: var(--text-color);
+	text-transform: uppercase;
+	line-height: 1.3;
+	margin-top: 8px;
+	letter-spacing: 0.05em;
+}
+
+/* -----------------------------------------------------------------------------
+ * TEXT ALIGNMENT MODIFIERS
+ * -------------------------------------------------------------------------- */
+
+.cph-stats-photos--align-left .cph-stats-photos__content {
+	align-items: flex-start;
+	text-align: left;
+}
+
+.cph-stats-photos--align-center .cph-stats-photos__content {
+	align-items: center;
+	text-align: center;
+}
+
+.cph-stats-photos--align-right .cph-stats-photos__content {
+	align-items: flex-end;
+	text-align: right;
+}
+
+/* -----------------------------------------------------------------------------
+ * TEXT PLACEMENT MODIFIERS
+ * -------------------------------------------------------------------------- */
+
+.cph-stats-photos--placement-top .cph-stats-photos__content {
+	justify-content: flex-start;
+}
+
+.cph-stats-photos--placement-middle .cph-stats-photos__content {
+	justify-content: center;
+}
+
+.cph-stats-photos--placement-bottom .cph-stats-photos__content {
+	justify-content: flex-end;
+}
+
+/* -----------------------------------------------------------------------------
+ * HOVER BEHAVIOR
+ * -------------------------------------------------------------------------- */
+
+/* Show stats on hover */
+.cph-stats-photos--hover .cph-stats-photos__item--has-stats:hover .cph-stats-photos__overlay {
+	opacity: var(--overlay-opacity);
+}
+
+.cph-stats-photos--hover .cph-stats-photos__item--has-stats:hover .cph-stats-photos__content {
+	opacity: 1;
+}
+
+/* -----------------------------------------------------------------------------
+ * RANDOM/ACTIVE STATE
+ * When JS adds .is-active class for random reveal
+ * -------------------------------------------------------------------------- */
+
+.cph-stats-photos__item--has-stats.is-active .cph-stats-photos__overlay {
+	opacity: var(--overlay-opacity);
+}
+
+.cph-stats-photos__item--has-stats.is-active .cph-stats-photos__content {
+	opacity: 1;
+}
+
+/* -----------------------------------------------------------------------------
+ * RESPONSIVE - TABLET
+ * -------------------------------------------------------------------------- */
+
+@media only screen and (max-width: 999px) {
+	.cph-stats-photos {
+		--value-font-size: 48px;
+		--label-font-size: 14px;
+	}
+
+	.cph-stats-photos__content {
+		padding: 20px;
+	}
+}
+
+/* -----------------------------------------------------------------------------
+ * RESPONSIVE - MOBILE
+ * Stack photos vertically on mobile
+ * -------------------------------------------------------------------------- */
+
+@media only screen and (max-width: 690px) {
+	.cph-stats-photos {
+		--value-font-size: 36px;
+		--label-font-size: 12px;
+
+		flex-direction: column;
+		height: auto;
+	}
+
+	.cph-stats-photos__item {
+		flex: none;
+		height: var(--container-height, 300px);
+	}
+
+	.cph-stats-photos__content {
+		padding: 15px;
+	}
+
+	/* On mobile, always show stats if they exist (touch devices) */
+	.cph-stats-photos--hover .cph-stats-photos__item--has-stats .cph-stats-photos__overlay {
+		opacity: var(--overlay-opacity);
+	}
+
+	.cph-stats-photos--hover .cph-stats-photos__item--has-stats .cph-stats-photos__content {
+		opacity: 1;
+	}
+}
+
+/* -----------------------------------------------------------------------------
+ * SALIENT OVERRIDES
+ * -------------------------------------------------------------------------- */
+
+/* Override Salient's default image styles */
+.row .col .cph-stats-photos__image {
+	width: 100% !important;
+	height: 100%;
+	max-width: none;
+	object-fit: cover;
+}
+
+/* Ensure image wrap fills the item */
+.row .col .cph-stats-photos__image-wrap {
+	position: absolute;
+	inset: 0;
+}
+
+/* Ensure items fill available space */
+.row .col .cph-stats-photos__item {
+	min-width: 0;
+}

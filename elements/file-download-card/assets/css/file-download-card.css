@@ -1,0 +1,522 @@
+/**
+ * File Download Card
+ *
+ * A refined download card component for Mira Mar Sarasota.
+ * Aesthetic: Mediterranean luxury - warm, architectural, unhurried elegance.
+ */
+
+/* ========================================
+   CSS Custom Properties
+   ======================================== */
+
+.file-download-card {
+    /* Default theme (light) */
+    --fdc-bg: #F3ECE7;
+    --fdc-text: #4B0108;
+    --fdc-text-muted: rgba(75, 1, 8, 0.6);
+    --fdc-button-bg: #4B0108;
+    --fdc-button-text: #F3ECE7;
+    --fdc-button-hover-bg: #6B1118;
+    --fdc-overlay: rgba(75, 1, 8, 0.85);
+    --fdc-shadow: rgba(75, 1, 8, 0.08);
+    --fdc-shadow-hover: rgba(75, 1, 8, 0.15);
+    --fdc-border: rgba(75, 1, 8, 0.1);
+}
+
+/* ========================================
+   WPBakery Equal Height Support
+   ======================================== */
+
+/* Make the wrapper inside columns flex so cards can stretch
+   when placed in equal-height rows (vc_row-o-equal-height) */
+.vc_column-inner > .wpb_wrapper:has(.file-download-card) {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+/* ========================================
+   Base Card
+   ======================================== */
+
+.file-download-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    background: var(--fdc-bg);
+    overflow: hidden;
+    transition:
+        transform 0.5s cubic-bezier(0.23, 1, 0.32, 1),
+        box-shadow 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+    box-shadow:
+        0 2px 8px var(--fdc-shadow),
+        0 8px 24px var(--fdc-shadow);
+}
+
+.file-download-card:hover {
+    transform: translateY(-4px);
+    box-shadow:
+        0 8px 24px var(--fdc-shadow-hover),
+        0 24px 48px var(--fdc-shadow);
+}
+
+/* ========================================
+   Image Container
+   ======================================== */
+
+.file-download-card__image {
+    position: relative;
+    aspect-ratio: 4 / 3;
+    overflow: hidden;
+    background: var(--fdc-border);
+}
+
+/* Aspect Ratio Variants */
+.file-download-card__image--4-3 {
+    aspect-ratio: 4 / 3;
+}
+
+.file-download-card__image--16-9 {
+    aspect-ratio: 16 / 9;
+}
+
+.file-download-card__image--3-4 {
+    aspect-ratio: 3 / 4;
+}
+
+.file-download-card__preview-link {
+    display: block;
+    width: 100%;
+    height: 100%;
+    text-decoration: none;
+    cursor: zoom-in;
+}
+
+.file-download-card__image img,
+.row .col .file-download-card__image img {
+    width: 100%;
+    height: 100%;
+    max-width: 100%;
+    object-fit: cover;
+    margin-bottom: 0;
+    transition: transform 0.7s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.file-download-card:hover .file-download-card__image img {
+    transform: scale(1.05);
+}
+
+/* Preview Icon Overlay */
+.file-download-card__preview-icon {
+    position: absolute;
+    bottom: 12px;
+    right: 12px;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--fdc-overlay);
+    border-radius: 50%;
+    opacity: 0;
+    transform: scale(0.8);
+    transition:
+        opacity 0.4s ease,
+        transform 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.file-download-card__preview-icon svg {
+    width: 18px;
+    height: 18px;
+    color: var(--fdc-bg);
+    stroke-width: 2;
+}
+
+.file-download-card__image:hover .file-download-card__preview-icon {
+    opacity: 1;
+    transform: scale(1);
+}
+
+/* Subtle gradient vignette on hover */
+.file-download-card__image::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        to top,
+        rgba(75, 1, 8, 0.1) 0%,
+        transparent 40%
+    );
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    pointer-events: none;
+}
+
+.file-download-card:hover .file-download-card__image::after {
+    opacity: 1;
+}
+
+/* ========================================
+   Content Area
+   ======================================== */
+
+.file-download-card__content {
+    display: flex;
+    flex-direction: column;
+    padding: 24px;
+    gap: 8px;
+    flex: 1;
+}
+
+.file-download-card__title {
+    margin: 0;
+    font-size: 1.125rem;
+    font-weight: 500;
+    line-height: 1.35;
+    color: var(--fdc-text);
+    letter-spacing: 0.01em;
+}
+
+.file-download-card__meta {
+    margin: 0;
+    font-size: 0.8125rem;
+    font-weight: 400;
+    color: var(--fdc-text-muted);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+/* ========================================
+   Download Button
+   ======================================== */
+
+.file-download-card__button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-top: auto;
+    padding: 14px 24px;
+    background: var(--fdc-button-bg);
+    color: var(--fdc-button-text);
+    font-size: 0.875rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    transition:
+        background-color 0.3s ease,
+        transform 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.file-download-card__button:hover {
+    background: var(--fdc-button-hover-bg);
+    color: var(--fdc-button-text);
+}
+
+.file-download-card__button:active {
+    transform: scale(0.98);
+}
+
+.file-download-card__button-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.3s ease;
+}
+
+.file-download-card__button-icon svg {
+    width: 18px;
+    height: 18px;
+}
+
+.file-download-card__button:hover .file-download-card__button-icon {
+    transform: translateY(2px);
+}
+
+/* ========================================
+   Border Radius Variants
+   ======================================== */
+
+.file-download-card--radius-none {
+    border-radius: 0;
+}
+
+.file-download-card--radius-none .file-download-card__button {
+    border-radius: 0;
+}
+
+.file-download-card--radius-sm {
+    border-radius: 8px;
+}
+
+.file-download-card--radius-sm .file-download-card__button {
+    border-radius: 0 0 8px 8px;
+}
+
+.file-download-card--radius-md {
+    border-radius: 16px;
+}
+
+.file-download-card--radius-md .file-download-card__button {
+    border-radius: 0 0 16px 16px;
+}
+
+.file-download-card--radius-lg {
+    border-radius: 24px;
+}
+
+.file-download-card--radius-lg .file-download-card__button {
+    border-radius: 0 0 24px 24px;
+}
+
+/* ========================================
+   Shadow Variants
+   ======================================== */
+
+/* Custom shadow color support */
+.file-download-card[style*="--fdc-shadow-color"] {
+    --fdc-shadow: var(--fdc-shadow-color);
+    --fdc-shadow-hover: var(--fdc-shadow-color);
+}
+
+/* No shadow */
+.file-download-card--no-shadow {
+    box-shadow: none;
+}
+
+.file-download-card--no-shadow:hover {
+    box-shadow: none;
+    transform: none;
+}
+
+/* Light shadow */
+.file-download-card--shadow-light {
+    box-shadow:
+        0 1px 4px rgba(0, 0, 0, 0.04),
+        0 4px 12px rgba(0, 0, 0, 0.04);
+}
+
+.file-download-card--shadow-light[style*="--fdc-shadow-color"] {
+    box-shadow:
+        0 1px 4px color-mix(in srgb, var(--fdc-shadow-color) 15%, transparent),
+        0 4px 12px color-mix(in srgb, var(--fdc-shadow-color) 10%, transparent);
+}
+
+.file-download-card--shadow-light:hover {
+    box-shadow:
+        0 4px 12px rgba(0, 0, 0, 0.08),
+        0 12px 24px rgba(0, 0, 0, 0.06);
+}
+
+.file-download-card--shadow-light[style*="--fdc-shadow-color"]:hover {
+    box-shadow:
+        0 4px 12px color-mix(in srgb, var(--fdc-shadow-color) 25%, transparent),
+        0 12px 24px color-mix(in srgb, var(--fdc-shadow-color) 15%, transparent);
+}
+
+/* Medium shadow (default) */
+.file-download-card--shadow-medium {
+    box-shadow:
+        0 2px 8px rgba(0, 0, 0, 0.08),
+        0 8px 24px rgba(0, 0, 0, 0.08);
+}
+
+.file-download-card--shadow-medium[style*="--fdc-shadow-color"] {
+    box-shadow:
+        0 2px 8px color-mix(in srgb, var(--fdc-shadow-color) 25%, transparent),
+        0 8px 24px color-mix(in srgb, var(--fdc-shadow-color) 20%, transparent);
+}
+
+.file-download-card--shadow-medium:hover {
+    box-shadow:
+        0 8px 24px rgba(0, 0, 0, 0.15),
+        0 24px 48px rgba(0, 0, 0, 0.1);
+}
+
+.file-download-card--shadow-medium[style*="--fdc-shadow-color"]:hover {
+    box-shadow:
+        0 8px 24px color-mix(in srgb, var(--fdc-shadow-color) 35%, transparent),
+        0 24px 48px color-mix(in srgb, var(--fdc-shadow-color) 25%, transparent);
+}
+
+/* Strong shadow */
+.file-download-card--shadow-strong {
+    box-shadow:
+        0 4px 16px rgba(0, 0, 0, 0.12),
+        0 16px 48px rgba(0, 0, 0, 0.15);
+}
+
+.file-download-card--shadow-strong[style*="--fdc-shadow-color"] {
+    box-shadow:
+        0 4px 16px color-mix(in srgb, var(--fdc-shadow-color) 35%, transparent),
+        0 16px 48px color-mix(in srgb, var(--fdc-shadow-color) 30%, transparent);
+}
+
+.file-download-card--shadow-strong:hover {
+    box-shadow:
+        0 12px 32px rgba(0, 0, 0, 0.2),
+        0 32px 64px rgba(0, 0, 0, 0.15);
+}
+
+.file-download-card--shadow-strong[style*="--fdc-shadow-color"]:hover {
+    box-shadow:
+        0 12px 32px color-mix(in srgb, var(--fdc-shadow-color) 45%, transparent),
+        0 32px 64px color-mix(in srgb, var(--fdc-shadow-color) 35%, transparent);
+}
+
+/* ========================================
+   Color Scheme: Light (Default)
+   ======================================== */
+
+.file-download-card--light {
+    --fdc-bg: #F3ECE7;
+    --fdc-text: #4B0108;
+    --fdc-text-muted: rgba(75, 1, 8, 0.6);
+    --fdc-button-bg: #4B0108;
+    --fdc-button-text: #F3ECE7;
+    --fdc-button-hover-bg: #6B1118;
+    --fdc-overlay: rgba(75, 1, 8, 0.85);
+    --fdc-shadow: rgba(75, 1, 8, 0.08);
+    --fdc-shadow-hover: rgba(75, 1, 8, 0.15);
+    --fdc-border: rgba(75, 1, 8, 0.1);
+}
+
+/* ========================================
+   Color Scheme: Dark
+   ======================================== */
+
+.file-download-card--dark {
+    --fdc-bg: #4B0108;
+    --fdc-text: #F3ECE7;
+    --fdc-text-muted: rgba(243, 236, 231, 0.7);
+    --fdc-button-bg: #F3ECE7;
+    --fdc-button-text: #4B0108;
+    --fdc-button-hover-bg: #fff;
+    --fdc-overlay: rgba(243, 236, 231, 0.9);
+    --fdc-shadow: rgba(0, 0, 0, 0.2);
+    --fdc-shadow-hover: rgba(0, 0, 0, 0.35);
+    --fdc-border: rgba(243, 236, 231, 0.15);
+}
+
+.file-download-card--dark .file-download-card__preview-icon svg {
+    color: #4B0108;
+}
+
+.file-download-card--dark .file-download-card__image::after {
+    background: linear-gradient(
+        to top,
+        rgba(243, 236, 231, 0.08) 0%,
+        transparent 40%
+    );
+}
+
+/* ========================================
+   Color Scheme: Accent Colors
+   Uses --fdc-accent-color set via inline style
+   ======================================== */
+
+.file-download-card--accent,
+.file-download-card--extra-1,
+.file-download-card--extra-2,
+.file-download-card--extra-3 {
+    --fdc-bg: var(--fdc-accent-color);
+    --fdc-text: #fff;
+    --fdc-text-muted: rgba(255, 255, 255, 0.75);
+    --fdc-button-bg: rgba(255, 255, 255, 0.95);
+    --fdc-button-text: var(--fdc-accent-color);
+    --fdc-button-hover-bg: #fff;
+    --fdc-overlay: rgba(255, 255, 255, 0.9);
+    --fdc-shadow: rgba(0, 0, 0, 0.15);
+    --fdc-shadow-hover: rgba(0, 0, 0, 0.25);
+    --fdc-border: rgba(255, 255, 255, 0.2);
+}
+
+.file-download-card--accent .file-download-card__preview-icon svg,
+.file-download-card--extra-1 .file-download-card__preview-icon svg,
+.file-download-card--extra-2 .file-download-card__preview-icon svg,
+.file-download-card--extra-3 .file-download-card__preview-icon svg {
+    color: var(--fdc-accent-color);
+}
+
+.file-download-card--accent .file-download-card__image::after,
+.file-download-card--extra-1 .file-download-card__image::after,
+.file-download-card--extra-2 .file-download-card__image::after,
+.file-download-card--extra-3 .file-download-card__image::after {
+    background: linear-gradient(
+        to top,
+        rgba(0, 0, 0, 0.1) 0%,
+        transparent 40%
+    );
+}
+
+/* ========================================
+   Color Scheme: Custom
+   Uses --fdc-bg-color, --fdc-text-color, --fdc-button-color
+   ======================================== */
+
+.file-download-card--custom {
+    --fdc-bg: var(--fdc-bg-color, #F3ECE7);
+    --fdc-text: var(--fdc-text-color, #4B0108);
+    --fdc-text-muted: var(--fdc-text-color, rgba(75, 1, 8, 0.6));
+    --fdc-button-bg: var(--fdc-button-color, #4B0108);
+    --fdc-button-text: var(--fdc-bg-color, #F3ECE7);
+    --fdc-button-hover-bg: var(--fdc-button-color, #6B1118);
+    --fdc-overlay: var(--fdc-button-color, rgba(75, 1, 8, 0.85));
+    --fdc-shadow: rgba(0, 0, 0, 0.1);
+    --fdc-shadow-hover: rgba(0, 0, 0, 0.18);
+    --fdc-border: rgba(0, 0, 0, 0.1);
+}
+
+.file-download-card--custom .file-download-card__text-muted {
+    opacity: 0.7;
+}
+
+.file-download-card--custom .file-download-card__preview-icon svg {
+    color: var(--fdc-bg-color, #F3ECE7);
+}
+
+/* ========================================
+   Responsive Adjustments
+   ======================================== */
+
+@media (max-width: 768px) {
+    .file-download-card__content {
+        padding: 20px;
+    }
+
+    .file-download-card__title {
+        font-size: 1rem;
+    }
+
+    .file-download-card__button {
+        padding: 12px 20px;
+        font-size: 0.8125rem;
+    }
+
+    .file-download-card__preview-icon {
+        width: 32px;
+        height: 32px;
+        bottom: 10px;
+        right: 10px;
+    }
+
+    .file-download-card__preview-icon svg {
+        width: 16px;
+        height: 16px;
+    }
+}
+
+/* Reduce motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+    .file-download-card,
+    .file-download-card__image img,
+    .file-download-card__preview-icon,
+    .file-download-card__button,
+    .file-download-card__button-icon {
+        transition: none;
+    }
+}

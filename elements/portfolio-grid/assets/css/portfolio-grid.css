@@ -1,0 +1,483 @@
+/**
+ * CPH Portfolio Grid - Styles
+ *
+ * Grid layouts and card styling for the CPH Portfolio Grid WPBakery element.
+ *
+ * @package Salient_Child
+ * @since   1.0.0
+ */
+
+/* =============================================================================
+   GRID CONTAINER
+   ============================================================================= */
+
+.cph-portfolio-grid {
+	display: grid;
+	gap: var(--grid-gap, 20px);
+	width: 100%;
+}
+
+/* =============================================================================
+   LAYOUT: HOMEPAGE BENTO (3 cards)
+   =============================================================================
+   +-------------+-------------+
+   |             |   Slot 2    |
+   |   Slot 1    +-------------+
+   |   (tall)    |   Slot 3    |
+   +-------------+-------------+
+*/
+
+.cph-portfolio-grid--homepage-bento {
+	grid-template-columns: 1fr 1fr;
+	grid-template-rows: var(--card-height, 525px) var(--card-height, 525px);
+}
+
+.cph-portfolio-grid--homepage-bento .cph-card--slot-1 {
+	grid-row: 1 / 3;
+}
+
+/* =============================================================================
+   LAYOUT: PROJECTS GRID (featured-2col)
+   =============================================================================
+   Dynamic layout where featured posts span full width,
+   regular posts flow in 2-column rows.
+
+   +---------------------------+
+   |   Featured Post           |  <- marked featured
+   +-------------+-------------+
+   |   Post 2    |   Post 3    |  <- regular posts
+   +-------------+-------------+
+   |   Featured Post           |  <- marked featured
+   +-------------+-------------+
+   |   Post 5    |   Post 6    |
+   +---------------------------+
+   |   Orphan (full width)     |  <- last odd post expands
+   +---------------------------+
+*/
+
+.cph-portfolio-grid--featured-2col {
+	grid-template-columns: 1fr 1fr;
+}
+
+/* Full-width cards (featured or orphan) */
+.cph-portfolio-grid--featured-2col .cph-card--full-width {
+	grid-column: 1 / -1;
+	min-height: calc(var(--card-height, 525px) * 1.2);
+}
+
+/* =============================================================================
+   CARD BASE STYLES
+   ============================================================================= */
+
+.cph-card {
+	backface-visibility: hidden;
+	color: var(--text-color, #fff);
+	display: block;
+	min-height: var(--card-height, 525px);
+	outline: 1px solid transparent; /* Prevents subpixel gaps during animations */
+	overflow: hidden;
+	position: relative;
+	text-decoration: none;
+	transform: translateZ(0); /* Force GPU layer */
+}
+
+/* Large cards in bento/featured layouts */
+.cph-card--large {
+	min-height: var(--card-height, 525px);
+}
+
+/* Bento layout: let grid control heights */
+.cph-portfolio-grid--homepage-bento .cph-card {
+	height: 100%;
+	min-height: 0;
+}
+
+/* =============================================================================
+   CARD IMAGE
+   ============================================================================= */
+
+.cph-card__image {
+	inset: -1px; /* Slight overflow to cover subpixel gaps */
+	position: absolute;
+	z-index: 1;
+}
+
+.cph-card__image img,
+.row .col .cph-card__image img,
+.cph-card__image video,
+.row .col .cph-card__image video {
+	height: 100%;
+	inset: 0;
+	object-fit: cover;
+	position: absolute;
+	transition: transform 0.6s ease;
+	width: 100%;
+}
+
+.cph-card:hover .cph-card__image img,
+.cph-card:hover .cph-card__image video {
+	transform: scale(1.05);
+}
+
+/* =============================================================================
+   CARD OVERLAY
+   ============================================================================= */
+
+.cph-card__overlay {
+	background: var(--overlay-color, #000);
+	inset: 0;
+	mix-blend-mode: var(--overlay-blend-mode, normal);
+	opacity: var(--overlay-opacity, 0.2);
+	position: absolute;
+	transition: opacity 0.3s ease, background 0.3s ease, mix-blend-mode 0.3s ease;
+	z-index: 2;
+}
+
+.cph-card:hover .cph-card__overlay {
+	background: var(--overlay-color-hover, var(--overlay-color, #000));
+	mix-blend-mode: var(--overlay-blend-mode-hover, var(--overlay-blend-mode, normal));
+	opacity: var(--overlay-opacity-hover, 0.3);
+}
+
+/* Cards with extra content get darker overlay (logo/excerpt) */
+.cph-card--has-extra .cph-card__overlay {
+	opacity: 0.64;
+}
+
+.cph-card--has-extra:hover .cph-card__overlay {
+	opacity: 0.7;
+}
+
+/* =============================================================================
+   CARD EXTRA CONTENT (Logo + Excerpt)
+   ============================================================================= */
+
+.cph-card__extra {
+	left: 20%;
+	position: absolute;
+	right: 20%;
+	text-align: left;
+	top: 50%;
+	transform: translateY(-60%);
+	z-index: 3;
+}
+
+.cph-card__logo {
+	display: block;
+	height: auto !important;
+	margin-bottom: 50px !important;
+	margin-left: auto;
+	margin-right: auto;
+	max-width: 70% !important;
+}
+
+.cph-card__excerpt {
+	color: var(--text-color, #fff);
+	font-family: 'aktiv-grotesk', sans-serif;
+	font-size: 22px;
+	line-height: 2.08;
+	margin: 0;
+	max-width: 514px;
+}
+
+/* =============================================================================
+   CARD CONTENT (Location + Arrow)
+   ============================================================================= */
+
+.cph-card__content {
+	align-items: center;
+	bottom: 40px;
+	display: flex;
+	gap: 20px;
+	justify-content: space-between;
+	left: 40px;
+	position: absolute;
+	right: 40px;
+	z-index: 3;
+}
+
+.cph-card__location {
+	color: var(--text-color, #fff);
+	font-family: 'area-normal', sans-serif;
+	font-size: var(--location-font-size, 30px);
+	font-weight: 400;
+	letter-spacing: var(--location-letter-spacing, 1.5px);
+	line-height: 1.2;
+	text-transform: uppercase;
+}
+
+/* =============================================================================
+   ARROW BUTTON (Pill shape)
+   ============================================================================= */
+
+.cph-card__arrow {
+	color: var(--text-color, #fff);
+	flex-shrink: 0;
+	height: 50px;
+	transition: transform 0.3s ease;
+	width: 140px;
+}
+
+.cph-card__arrow svg {
+	display: block;
+	height: 100%;
+	width: 100%;
+}
+
+.cph-card:hover .cph-card__arrow {
+	transform: translateX(5px);
+}
+
+/* =============================================================================
+   RESPONSIVE: TABLET
+   ============================================================================= */
+
+@media (max-width: 1199px) {
+
+	/* Homepage Bento - rows still use card height */
+	.cph-portfolio-grid--homepage-bento {
+		grid-template-rows: var(--card-height, 400px) var(--card-height, 400px);
+	}
+
+	/* Projects Grid - full-width cards slightly shorter on tablet */
+	.cph-portfolio-grid--featured-2col .cph-card--full-width {
+		min-height: calc(var(--card-height, 400px) * 1.15);
+	}
+
+	/* Typography adjustments */
+	.cph-card__location {
+		font-size: 24px;
+	}
+
+	.cph-card__excerpt {
+		font-size: 18px;
+	}
+
+	.cph-card__arrow {
+		height: 42px;
+		width: 120px;
+	}
+
+	.cph-card__content {
+		bottom: 30px;
+		left: 30px;
+		right: 30px;
+	}
+
+	.cph-card__extra {
+		left: 30px;
+		right: 30px;
+	}
+
+	.cph-card__logo {
+		max-width: 250px;
+	}
+}
+
+/* =============================================================================
+   RESPONSIVE: MOBILE
+   ============================================================================= */
+
+@media (max-width: 999px) {
+
+	/* All grids stack on mobile */
+	.cph-portfolio-grid--homepage-bento,
+	.cph-portfolio-grid--featured-2col {
+		grid-template-columns: 1fr;
+		grid-template-rows: auto;
+		min-height: auto;
+	}
+
+	/* Reset grid spans */
+	.cph-portfolio-grid--homepage-bento .cph-card--slot-1 {
+		grid-column: auto;
+		grid-row: auto;
+	}
+
+	/* Projects Grid - full-width cards use same height as regular on mobile */
+	.cph-portfolio-grid--featured-2col .cph-card--full-width {
+		grid-column: auto;
+		min-height: var(--card-height, 400px);
+	}
+
+	/* Card heights */
+	.cph-card {
+		min-height: 350px;
+	}
+
+	.cph-card--large {
+		min-height: 400px;
+	}
+
+	.cph-portfolio-grid--homepage-bento .cph-card {
+		height: 100%;
+		min-height: 0;
+	}
+
+	/* Content positioning */
+	.cph-card__content {
+		bottom: 25px;
+		left: 25px;
+		right: 25px;
+	}
+
+	.cph-card__extra {
+		left: 25px;
+		right: 25px;
+		transform: translateY(-55%);
+	}
+
+	/* Typography */
+	.cph-card__location {
+		font-size: 20px;
+		letter-spacing: 1px;
+	}
+
+	.cph-card__excerpt {
+		font-size: 16px;
+		line-height: 1.8;
+	}
+
+	.cph-card__logo {
+		margin-bottom: 20px;
+		max-width: 200px;
+	}
+
+	/* Arrow */
+	.cph-card__arrow {
+		height: 36px;
+		width: 100px;
+	}
+}
+
+/* =============================================================================
+   RESPONSIVE: SMALL MOBILE
+   ============================================================================= */
+
+@media (max-width: 599px) {
+
+	.cph-card {
+		min-height: 300px;
+	}
+
+	.cph-portfolio-grid--homepage-bento .cph-card {
+		height: 100%;
+		min-height: 0;
+	}
+
+	.cph-card__content {
+		align-items: flex-start;
+		bottom: 20px;
+		flex-direction: column;
+		gap: 15px;
+		left: 20px;
+		right: 20px;
+	}
+
+	.cph-card__location {
+		font-size: 18px;
+	}
+
+	.cph-card__arrow {
+		align-self: flex-end;
+		height: 32px;
+		width: 90px;
+	}
+
+	.cph-card__extra {
+		left: 20px;
+		right: 20px;
+	}
+
+	.cph-card__excerpt {
+		font-size: 14px;
+	}
+
+	.cph-card__logo {
+		max-width: 160px;
+	}
+}
+
+/* =============================================================================
+   EMPTY CARD STATE (When no Portfolio selected)
+   ============================================================================= */
+
+.cph-card:empty {
+	display: none;
+}
+
+/* =============================================================================
+   NO CONTENT STATE (Portfolio exists but has no page content)
+   ============================================================================= */
+
+/* No-content cards: hover effects work, but no pointer cursor */
+.cph-card--no-content {
+	cursor: default;
+}
+
+/* =============================================================================
+   LOWER THIRD EFFECT (Title hover animation)
+   ============================================================================= */
+
+/* Container needs position context for the bar */
+.cph-portfolio-grid--lower-third .cph-card__location {
+	position: relative;
+	z-index: 1;
+}
+
+/* The animated bar (pseudo-element) */
+.cph-portfolio-grid--lower-third .cph-card__location::before {
+	background: var(--lower-third-bar-color, #fff);
+	content: '';
+	height: calc(100% + 40px); /* 20px padding top + bottom */
+	left: -40px; /* Pin to card edge (content is 40px from edge) */
+	position: absolute;
+	top: 50%;
+	transform: translateY(-45%) scaleX(0); /* -45% to visually center with uppercase text */
+	transform-origin: left center;
+	transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+	width: calc(100% + 80px + 40px); /* full text + left offset + 40px right extension */
+	z-index: -1;
+}
+
+/* Animate bar on card hover */
+.cph-portfolio-grid--lower-third .cph-card:hover .cph-card__location::before {
+	transform: translateY(-45%) scaleX(1);
+}
+
+/* Change text color on hover */
+.cph-portfolio-grid--lower-third .cph-card:hover .cph-card__location {
+	color: var(--lower-third-text-color, var(--text-color, #fff));
+	transition: color 0.3s ease 0.1s; /* Slight delay so bar appears first */
+}
+
+/* Responsive: adjust left offset for tablet */
+@media (max-width: 1199px) {
+	.cph-portfolio-grid--lower-third .cph-card__location::before {
+		left: -30px;
+		width: calc(100% + 60px + 40px);
+	}
+}
+
+/* Responsive: adjust left offset for mobile */
+@media (max-width: 999px) {
+	.cph-portfolio-grid--lower-third .cph-card__location::before {
+		left: -25px;
+		width: calc(100% + 50px + 40px);
+	}
+}
+
+/* Responsive: adjust for small mobile */
+@media (max-width: 599px) {
+	.cph-portfolio-grid--lower-third .cph-card__location::before {
+		left: -20px;
+		width: calc(100% + 40px + 30px); /* Slightly less extension on small screens */
+	}
+}
+
+/* =============================================================================
+   ANIMATION INTEGRATION (optional GSAP classes)
+   =============================================================================
+   The .fx-up and .curtain-wipe classes are handled by GSAP JavaScript.
+   No CSS declarations needed here.
+   ============================================================================= */
