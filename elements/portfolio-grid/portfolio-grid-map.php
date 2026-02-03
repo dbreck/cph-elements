@@ -387,6 +387,46 @@ return array(
 		),
 
 		array(
+			'type'        => 'textfield',
+			'heading'     => esc_html__( 'Logo Width', 'cph-elements' ),
+			'param_name'  => 'logo_max_width',
+			'value'       => '70%',
+			'description' => esc_html__( 'Forces all logos to the same width. Any CSS unit: 70%, 250px, 20vw, etc.', 'cph-elements' ),
+		),
+
+		array(
+			'type'        => 'dropdown',
+			'heading'     => esc_html__( 'Logo Blend Mode', 'cph-elements' ),
+			'param_name'  => 'logo_blend_mode',
+			'value'       => array(
+				esc_html__( 'Normal', 'cph-elements' )     => 'normal',
+				esc_html__( 'Screen', 'cph-elements' )     => 'screen',
+				esc_html__( 'Multiply', 'cph-elements' )   => 'multiply',
+				esc_html__( 'Lighten', 'cph-elements' )    => 'lighten',
+				esc_html__( 'Darken', 'cph-elements' )     => 'darken',
+				esc_html__( 'Overlay', 'cph-elements' )    => 'overlay',
+				esc_html__( 'Soft Light', 'cph-elements' ) => 'soft-light',
+				esc_html__( 'Hard Light', 'cph-elements' ) => 'hard-light',
+				esc_html__( 'Luminosity', 'cph-elements' ) => 'luminosity',
+			),
+			'std'         => 'normal',
+			'description' => esc_html__( 'Blend mode for logo area. Screen makes dark logo backgrounds transparent; Multiply makes light backgrounds transparent.', 'cph-elements' ),
+		),
+
+		array(
+			'type'        => 'nectar_range_slider',
+			'heading'     => esc_html__( 'Logo Brightness', 'cph-elements' ),
+			'param_name'  => 'logo_brightness',
+			'value'       => '100',
+			'options'     => array(
+				'min'  => '0',
+				'max'  => '2000',
+				'step' => '50',
+			),
+			'description' => esc_html__( '100 = normal. Values above 500 push logos toward white. 0 = black.', 'cph-elements' ),
+		),
+
+		array(
 			'type'        => 'checkbox',
 			'heading'     => esc_html__( 'Show Arrow Button', 'cph-elements' ),
 			'param_name'  => 'show_arrow',
@@ -424,7 +464,7 @@ return array(
 				'max'  => '100',
 				'step' => '5',
 			),
-			'description' => esc_html__( 'Overlay opacity in default state (%). Cards with logo/excerpt use 64%.', 'cph-elements' ),
+			'description' => esc_html__( 'Overlay opacity in default state (%).', 'cph-elements' ),
 		),
 
 		array(
@@ -465,7 +505,7 @@ return array(
 				'max'  => '100',
 				'step' => '5',
 			),
-			'description' => esc_html__( 'Overlay opacity on hover (%). Cards with logo/excerpt use 70%.', 'cph-elements' ),
+			'description' => esc_html__( 'Overlay opacity on hover (%).', 'cph-elements' ),
 		),
 
 		array(

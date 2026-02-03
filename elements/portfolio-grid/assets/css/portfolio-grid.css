@@ -97,7 +97,7 @@
    ============================================================================= */
 
 .cph-card__image {
-	inset: -1px; /* Slight overflow to cover subpixel gaps */
+	inset: -5px; /* Overflow to cover subpixel gaps in grid layouts */
 	position: absolute;
 	z-index: 1;
 }
@@ -139,21 +139,13 @@
 	opacity: var(--overlay-opacity-hover, 0.3);
 }
 
-/* Cards with extra content get darker overlay (logo/excerpt) */
-.cph-card--has-extra .cph-card__overlay {
-	opacity: 0.64;
-}
-
-.cph-card--has-extra:hover .cph-card__overlay {
-	opacity: 0.7;
-}
-
 /* =============================================================================
    CARD EXTRA CONTENT (Logo + Excerpt)
    ============================================================================= */
 
 .cph-card__extra {
 	left: 20%;
+	mix-blend-mode: var(--logo-blend-mode, normal);
 	position: absolute;
 	right: 20%;
 	text-align: left;
@@ -162,13 +154,16 @@
 	z-index: 3;
 }
 
-.cph-card__logo {
+.cph-card__logo,
+.row .col .cph-card__logo {
 	display: block;
+	filter: brightness(var(--logo-brightness, 1));
 	height: auto !important;
 	margin-bottom: 50px !important;
 	margin-left: auto;
 	margin-right: auto;
-	max-width: 70% !important;
+	max-width: none !important;
+	width: var(--logo-max-width, 70%) !important;
 }
 
 .cph-card__excerpt {
@@ -268,10 +263,6 @@
 		left: 30px;
 		right: 30px;
 	}
-
-	.cph-card__logo {
-		max-width: 250px;
-	}
 }
 
 /* =============================================================================
@@ -340,7 +331,6 @@
 
 	.cph-card__logo {
 		margin-bottom: 20px;
-		max-width: 200px;
 	}
 
 	/* Arrow */
@@ -393,9 +383,6 @@
 		font-size: 14px;
 	}
 
-	.cph-card__logo {
-		max-width: 160px;
-	}
 }
 
 /* =============================================================================

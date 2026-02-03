@@ -50,11 +50,47 @@ if ( ! function_exists( 'cph_register_project_status_taxonomy' ) ) {
 			'query_var'         => true,
 			'rewrite'           => array( 'slug' => 'project-status' ),
 			'show_in_rest'      => true,
+			'meta_box_cb'       => 'cph_project_status_meta_box',
 		);
 
 		register_taxonomy( 'project-status', array( 'portfolio' ), $args );
 	}
 	add_action( 'init', 'cph_register_project_status_taxonomy' );
+}
+
+if ( ! function_exists( 'cph_project_status_meta_box' ) ) {
+	/**
+	 * Render Project Status as a simple dropdown in the post editor.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param WP_Post $post The current post object.
+	 * @return void
+	 */
+	function cph_project_status_meta_box( $post ) {
+		$taxonomy = 'project-status';
+		$terms    = get_terms( array(
+			'taxonomy'   => $taxonomy,
+			'hide_empty' => false,
+			'orderby'    => 'name',
+			'order'      => 'ASC',
+		) );
+
+		$current = wp_get_object_terms( $post->ID, $taxonomy, array( 'fields' => 'ids' ) );
+		$current = ! empty( $current ) && ! is_wp_error( $current ) ? $current[0] : 0;
+
+		wp_nonce_field( 'cph_project_status_nonce', 'cph_project_status_nonce' );
+		?>
+		<select name="tax_input[<?php echo esc_attr( $taxonomy ); ?>]" id="project-status-select" style="width:100%;">
+			<option value=""><?php esc_html_e( '— Select —', 'cph-elements' ); ?></option>
+			<?php foreach ( $terms as $term ) : ?>
+				<option value="<?php echo esc_attr( $term->slug ); ?>" <?php selected( $current, $term->term_id ); ?>>
+					<?php echo esc_html( $term->name ); ?>
+				</option>
+			<?php endforeach; ?>
+		</select>
+		<?php
+	}
 }
 
 if ( ! function_exists( 'cph_create_default_project_status_terms' ) ) {

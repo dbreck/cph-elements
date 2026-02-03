@@ -269,6 +269,10 @@ function cph_portfolio_grid_shortcode( $atts ) {
 			'lower_third_enabled'       => '',
 			'lower_third_bar_color'     => '#ffffff',
 			'lower_third_text_color'    => '',
+			// Logo styling.
+			'logo_max_width'            => '70%',
+			'logo_blend_mode'           => 'normal',
+			'logo_brightness'           => '100',
 			// Other styling.
 			'text_color'                => '#ffffff',
 			'show_arrow'                => 'yes',
@@ -342,6 +346,10 @@ function cph_portfolio_grid_shortcode( $atts ) {
 		'--text-color: ' . esc_attr( $atts['text_color'] ),
 		'--location-font-size: ' . esc_attr( $atts['location_font_size'] ),
 		'--location-letter-spacing: ' . esc_attr( $atts['location_letter_spacing'] ),
+		// Logo.
+		'--logo-max-width: ' . esc_attr( $atts['logo_max_width'] ),
+		'--logo-blend-mode: ' . esc_attr( $atts['logo_blend_mode'] ),
+		'--logo-brightness: ' . ( (int) $atts['logo_brightness'] / 100 ),
 		// Overlay - Default.
 		'--overlay-color: ' . esc_attr( $atts['overlay_color'] ),
 		'--overlay-opacity: ' . ( (int) $atts['overlay_opacity'] / 100 ),
