@@ -86,6 +86,20 @@ return array(
 
 		array(
 			'type'        => 'dropdown',
+			'heading'     => esc_html__( 'Order By', 'cph-elements' ),
+			'param_name'  => 'orderby',
+			'value'       => array(
+				esc_html__( 'Menu Order', 'cph-elements' )      => 'menu_order',
+				esc_html__( 'Date (Newest First)', 'cph-elements' ) => 'date_desc',
+				esc_html__( 'Date (Oldest First)', 'cph-elements' ) => 'date_asc',
+				esc_html__( 'Title', 'cph-elements' )           => 'title',
+			),
+			'std'         => 'menu_order',
+			'description' => esc_html__( 'Menu Order requires the Simple Custom Post Order plugin for drag-and-drop sorting.', 'cph-elements' ),
+		),
+
+		array(
+			'type'        => 'dropdown',
 			'heading'     => esc_html__('Category', 'cph-elements'),
 			'param_name'  => 'category',
 			'value'       => cph_get_category_options(),

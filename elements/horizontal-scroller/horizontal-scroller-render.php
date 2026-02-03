@@ -30,6 +30,7 @@ function cph_horizontal_scroller_shortcode( $atts ) {
 		array(
 			'post_type'            => 'bti_team',
 			'posts_per_page'       => '6',
+			'orderby'              => 'menu_order',
 			'category'             => '',
 			'direction'            => 'left',
 			'card_width'           => '25vw',
@@ -53,15 +54,38 @@ function cph_horizontal_scroller_shortcode( $atts ) {
 	);
 
 	// Build query args.
-	// Posts ordered by date ASC (oldest first in DOM = on left, newest = on right).
-	$direction   = sanitize_text_field( $atts['direction'] );
-	$query_args  = array(
-		'post_type'      => sanitize_text_field( $atts['post_type'] ),
+	$direction  = sanitize_text_field( $atts['direction'] );
+	$post_type  = sanitize_text_field( $atts['post_type'] );
+	$orderby    = sanitize_text_field( $atts['orderby'] );
+	$query_args = array(
+		'post_type'      => $post_type,
 		'posts_per_page' => absint( $atts['posts_per_page'] ),
 		'post_status'    => 'publish',
-		'orderby'        => 'date',
-		'order'          => 'ASC',
 	);
+
+	// Set ordering based on element setting.
+	switch ( $orderby ) {
+		case 'date_desc':
+			$query_args['orderby'] = 'date';
+			$query_args['order']   = 'DESC';
+			break;
+
+		case 'date_asc':
+			$query_args['orderby'] = 'date';
+			$query_args['order']   = 'ASC';
+			break;
+
+		case 'title':
+			$query_args['orderby'] = 'title';
+			$query_args['order']   = 'ASC';
+			break;
+
+		case 'menu_order':
+		default:
+			$query_args['orderby'] = 'menu_order';
+			$query_args['order']   = 'ASC';
+			break;
+	}
 
 	// Add category filter for blog posts.
 	if ( 'post' === $atts['post_type'] && ! empty( $atts['category'] ) ) {
