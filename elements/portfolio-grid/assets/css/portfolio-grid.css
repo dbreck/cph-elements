@@ -584,7 +584,7 @@
 .cph-zigzag__filter {
 	display: flex;
 	flex-wrap: wrap;
-	gap: 8px 24px;
+	gap: 8px 10vw;
 	justify-content: center;
 	margin-bottom: 48px;
 }
@@ -592,19 +592,19 @@
 .cph-zigzag__filter-btn {
 	background: transparent;
 	border: none;
-	color: #999;
+	color: #000;
 	cursor: pointer;
 	font-family: 'Poppins', sans-serif;
-	font-size: 13px;
-	font-weight: 600;
-	letter-spacing: 0.12em;
+	font-size: max(16px, 1.7vw);
+	font-weight: 500;
+	letter-spacing: 0.01em;
 	padding: 8px 4px;
-	text-transform: uppercase;
-	transition: color 0.3s ease;
+	text-transform: capitalize;
+	transition: color 0.3s ease !important;
 }
 
 .cph-zigzag__filter-btn:hover {
-	color: #333;
+	color: #bbcb81 !important;
 }
 
 .cph-zigzag__filter-btn.is-active {
@@ -672,11 +672,11 @@
 .cph-zigzag__eyebrow {
 	color: var(--ag-olive, #87A80E);
 	display: inline-block;
-	font-family: 'Merriweather Sans', sans-serif;
-	font-size: 12px;
-	font-weight: 700;
-	letter-spacing: 0.2em;
-	margin-bottom: 16px;
+	font-family: 'Poppins', sans-serif;
+	font-size: max(16px, 1.5vw);
+	font-weight: 600;
+	letter-spacing: 0.05em;
+	margin-bottom: 20px;
 	text-transform: uppercase;
 }
 
@@ -688,24 +688,27 @@
 	font-size: clamp(28px, 3vw, 42px);
 	font-weight: 300;
 	line-height: 1.2;
-	margin: 0 0 32px;
+	margin: 0 0 40px;
 }
 
 /* ── Button ──────────────────────────────────────────────────────────────── */
 
 .cph-zigzag__btn {
-	border: 1px solid #333;
+	border: 2px solid var(--ag-olive, #87A80E);
 	border-radius: 50px;
-	color: #333;
+	color: #221F20;
 	display: inline-block;
 	font-family: 'Poppins', sans-serif;
-	font-size: 12px;
+	font-size: max(16px, 1vw);
 	font-weight: 600;
-	letter-spacing: 0.15em;
-	padding: 14px 36px;
+	letter-spacing: 0.05em;
+	margin-top: 40px;
+	padding: 24px 60px;
+	text-box-edge: cap alphabetic;
+	text-box-trim: trim-both;
 	text-decoration: none;
 	text-transform: uppercase;
-	transition: border-color 0.3s ease, color 0.3s ease;
+	transition: border-color 0.3s ease, color 0.3s ease, background 0.3s ease;
 }
 
 a.cph-zigzag__btn:hover {
