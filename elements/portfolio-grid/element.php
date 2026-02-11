@@ -30,7 +30,13 @@ return array(
 				'priority' => 100,
 			),
 		),
-		'js'  => array(),
+		'js'  => array(
+			array(
+				'handle'   => 'cph-portfolio-grid',
+				'file'     => 'assets/js/portfolio-grid.js',
+				'priority' => 60,
+			),
+		),
 	),
 
 	'gsap' => array(),

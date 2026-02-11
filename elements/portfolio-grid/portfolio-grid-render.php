@@ -84,13 +84,15 @@ function cph_render_card( $card, $slot, $settings, $show_logo = false, $show_exc
 	}
 
 	// Determine what to display.
-	$display_logo    = $show_logo && ! empty( $card['logo'] );
-	$display_excerpt = $show_excerpt && ! empty( $card['excerpt'] );
-	$display_video   = $show_video && ! empty( $card['video'] );
-	$has_extra       = $display_logo || $display_excerpt;
-	$has_content     = ! empty( $card['has_content'] );
-	$animation       = 'none' !== $settings['animation'] ? $settings['animation'] : '';
-	$stagger_delay   = (float) $settings['animation_stagger'] * ( $slot - 1 );
+	$display_logo      = $show_logo && ! empty( $card['logo'] );
+	$display_excerpt   = $show_excerpt && ! empty( $card['excerpt'] );
+	$display_video     = $show_video && ! empty( $card['video'] );
+	$has_extra         = $display_logo || $display_excerpt;
+	$has_content       = ! empty( $card['has_content'] );
+	$content_position  = isset( $settings['content_position'] ) ? $settings['content_position'] : 'bottom-stretch';
+	$button_type       = isset( $settings['button_type'] ) ? $settings['button_type'] : 'arrow';
+	$animation         = 'none' !== $settings['animation'] ? $settings['animation'] : '';
+	$stagger_delay     = (float) $settings['animation_stagger'] * ( $slot - 1 );
 
 	// Build classes.
 	$classes = array(
@@ -114,6 +116,10 @@ function cph_render_card( $card, $slot, $settings, $show_logo = false, $show_exc
 		$classes[] = 'cph-card--no-content';
 	}
 
+	if ( 'middle-center' === $content_position ) {
+		$classes[] = 'cph-card--middle-center';
+	}
+
 	// Animation classes.
 	if ( ! empty( $animation ) ) {
 		if ( 'fade-up' === $animation ) {
@@ -126,9 +132,9 @@ function cph_render_card( $card, $slot, $settings, $show_logo = false, $show_exc
 	}
 
 	// Determine wrapper element (link vs div).
-	$tag        = $has_content ? 'a' : 'div';
-	$href_attr  = $has_content ? ' href="' . esc_url( $card['permalink'] ) . '"' : '';
-	$show_arrow = $has_content && 'yes' === $settings['show_arrow'];
+	$tag          = $has_content ? 'a' : 'div';
+	$href_attr    = $has_content ? ' href="' . esc_url( $card['permalink'] ) . '"' : '';
+	$show_button  = $has_content && 'none' !== $button_type;
 
 	ob_start();
 	?>
@@ -165,10 +171,12 @@ function cph_render_card( $card, $slot, $settings, $show_logo = false, $show_exc
 
 		<div class="cph-card__content">
 			<span class="cph-card__location"><?php echo esc_html( $card['title'] ); ?></span>
-			<?php if ( $show_arrow ) : ?>
+			<?php if ( $show_button && 'arrow' === $button_type ) : ?>
 				<span class="cph-card__arrow">
 					<?php echo cph_get_arrow_svg(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 				</span>
+			<?php elseif ( $show_button && 'text' === $button_type ) : ?>
+				<span class="cph-card__text-btn"><?php echo esc_html( $settings['button_text'] ); ?></span>
 			<?php endif; ?>
 		</div>
 	</<?php echo $tag; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
@@ -202,10 +210,14 @@ function cph_get_arrow_svg() {
 function cph_get_slot_ids( $layout, $atts ) {
 	$slots = array();
 
-	if ( 'homepage-bento' === $layout ) {
+	if ( 'homepage-bento' === $layout || 'homepage-bento-4' === $layout ) {
 		$slots[1] = isset( $atts['slot_1'] ) ? (int) $atts['slot_1'] : 0;
 		$slots[2] = isset( $atts['slot_2'] ) ? (int) $atts['slot_2'] : 0;
 		$slots[3] = isset( $atts['slot_3'] ) ? (int) $atts['slot_3'] : 0;
+
+		if ( 'homepage-bento-4' === $layout ) {
+			$slots[4] = isset( $atts['slot_4'] ) ? (int) $atts['slot_4'] : 0;
+		}
 	}
 
 	return $slots;
@@ -224,6 +236,7 @@ function cph_get_bento_show_logo_settings( $atts ) {
 		1 => isset( $atts['slot_1_show_logo'] ) && 'yes' === $atts['slot_1_show_logo'],
 		2 => isset( $atts['slot_2_show_logo'] ) && 'yes' === $atts['slot_2_show_logo'],
 		3 => isset( $atts['slot_3_show_logo'] ) && 'yes' === $atts['slot_3_show_logo'],
+		4 => isset( $atts['slot_4_show_logo'] ) && 'yes' === $atts['slot_4_show_logo'],
 	);
 }
 
@@ -240,6 +253,59 @@ function cph_get_bento_show_video_settings( $atts ) {
 		1 => isset( $atts['slot_1_show_video'] ) && 'yes' === $atts['slot_1_show_video'],
 		2 => isset( $atts['slot_2_show_video'] ) && 'yes' === $atts['slot_2_show_video'],
 		3 => isset( $atts['slot_3_show_video'] ) && 'yes' === $atts['slot_3_show_video'],
+		4 => isset( $atts['slot_4_show_video'] ) && 'yes' === $atts['slot_4_show_video'],
+	);
+}
+
+/**
+ * Get show_excerpt settings for homepage-bento layouts.
+ *
+ * @since 1.1.0
+ *
+ * @param array $atts Shortcode attributes.
+ * @return array Array of booleans keyed by slot number.
+ */
+function cph_get_bento_show_excerpt_settings( $atts ) {
+	return array(
+		1 => isset( $atts['slot_1_show_excerpt'] ) && 'yes' === $atts['slot_1_show_excerpt'],
+		2 => isset( $atts['slot_2_show_excerpt'] ) && 'yes' === $atts['slot_2_show_excerpt'],
+		3 => isset( $atts['slot_3_show_excerpt'] ) && 'yes' === $atts['slot_3_show_excerpt'],
+		4 => isset( $atts['slot_4_show_excerpt'] ) && 'yes' === $atts['slot_4_show_excerpt'],
+	);
+}
+
+/**
+ * Get content_position settings for homepage-bento.
+ *
+ * @since 1.1.0
+ *
+ * @param array $atts Shortcode attributes.
+ * @return array Array of position strings keyed by slot number.
+ */
+function cph_get_bento_content_position_settings( $atts ) {
+	return array(
+		1 => ! empty( $atts['slot_1_content_position'] ) ? $atts['slot_1_content_position'] : 'bottom-stretch',
+		2 => ! empty( $atts['slot_2_content_position'] ) ? $atts['slot_2_content_position'] : 'bottom-stretch',
+		3 => ! empty( $atts['slot_3_content_position'] ) ? $atts['slot_3_content_position'] : 'bottom-stretch',
+		4 => ! empty( $atts['slot_4_content_position'] ) ? $atts['slot_4_content_position'] : 'bottom-stretch',
+	);
+}
+
+/**
+ * Get button_type settings for homepage-bento.
+ *
+ * @since 1.1.0
+ *
+ * @param array  $atts     Shortcode attributes.
+ * @param string $fallback Global button type fallback.
+ * @return array Array of button type strings keyed by slot number.
+ */
+function cph_get_bento_button_type_settings( $atts, $fallback ) {
+	return array(
+		1 => ! empty( $atts['slot_1_button_type'] ) ? $atts['slot_1_button_type'] : $fallback,
+		2 => ! empty( $atts['slot_2_button_type'] ) ? $atts['slot_2_button_type'] : $fallback,
+		3 => ! empty( $atts['slot_3_button_type'] ) ? $atts['slot_3_button_type'] : $fallback,
+		4 => ! empty( $atts['slot_4_button_type'] ) ? $atts['slot_4_button_type'] : $fallback,
 	);
 }
 
@@ -257,6 +323,9 @@ function cph_portfolio_grid_shortcode( $atts ) {
 		array(
 			'layout'                    => 'homepage-bento',
 			'gap'                       => '20',
+			'grid_height'               => '',
+			'grid_height_tablet'        => '',
+			'grid_height_phone'         => '',
 			// Overlay - Default.
 			'overlay_color'             => '#000000',
 			'overlay_opacity'           => '20',
@@ -276,6 +345,9 @@ function cph_portfolio_grid_shortcode( $atts ) {
 			// Other styling.
 			'text_color'                => '#ffffff',
 			'show_arrow'                => 'yes',
+			'content_position'          => 'bottom-stretch',
+			'button_type'               => '',
+			'button_text'               => 'Read More',
 			'card_height'               => '525px',
 			'card_height_tablet'        => '',
 			'card_height_phone'         => '',
@@ -289,12 +361,27 @@ function cph_portfolio_grid_shortcode( $atts ) {
 			'slot_1'                    => '',
 			'slot_1_show_logo'          => '',
 			'slot_1_show_video'         => '',
+			'slot_1_show_excerpt'       => '',
+			'slot_1_content_position'   => '',
+			'slot_1_button_type'        => '',
 			'slot_2'                    => '',
 			'slot_2_show_logo'          => '',
 			'slot_2_show_video'         => '',
+			'slot_2_show_excerpt'       => '',
+			'slot_2_content_position'   => '',
+			'slot_2_button_type'        => '',
 			'slot_3'                    => '',
 			'slot_3_show_logo'          => '',
 			'slot_3_show_video'         => '',
+			'slot_3_show_excerpt'       => '',
+			'slot_3_content_position'   => '',
+			'slot_3_button_type'        => '',
+			'slot_4'                    => '',
+			'slot_4_show_logo'          => '',
+			'slot_4_show_video'         => '',
+			'slot_4_show_excerpt'       => '',
+			'slot_4_content_position'   => '',
+			'slot_4_button_type'        => '',
 			// Featured-2col settings.
 			'category'                  => '',
 			'status'                    => '',
@@ -302,6 +389,13 @@ function cph_portfolio_grid_shortcode( $atts ) {
 			'show_logo'                 => '',
 			'show_excerpt'              => '',
 			'show_video'                => '',
+			// Zigzag settings.
+			'heading_tag'               => 'h3',
+			'show_filter'               => 'yes',
+			'show_eyebrow'              => 'yes',
+			'zigzag_button_text'        => 'VIEW PROJECT',
+			'zigzag_row_height'         => '500px',
+			'zigzag_row_gap'            => '40px',
 		),
 		$atts,
 		'cph_portfolio_grid'
@@ -314,6 +408,12 @@ function cph_portfolio_grid_shortcode( $atts ) {
 	static $instance_id = 0;
 	++$instance_id;
 	$grid_id = 'cph-portfolio-grid-' . $instance_id;
+
+	// Determine global button type (backward compat with show_arrow).
+	$global_button_type = $atts['button_type'];
+	if ( empty( $global_button_type ) ) {
+		$global_button_type = ( 'yes' === $atts['show_arrow'] ) ? 'arrow' : 'none';
+	}
 
 	// Build settings array for card rendering.
 	$settings = array(
@@ -329,9 +429,11 @@ function cph_portfolio_grid_shortcode( $atts ) {
 		'lower_third_enabled'      => $atts['lower_third_enabled'],
 		'lower_third_bar_color'    => $atts['lower_third_bar_color'],
 		'lower_third_text_color'   => $atts['lower_third_text_color'],
-		// Other.
+		// Content & Button.
 		'text_color'               => $atts['text_color'],
-		'show_arrow'               => $atts['show_arrow'],
+		'content_position'         => $atts['content_position'],
+		'button_type'              => $global_button_type,
+		'button_text'              => $atts['button_text'],
 		'card_height'              => $atts['card_height'],
 		'location_font_size'       => $atts['location_font_size'],
 		'location_letter_spacing'  => $atts['location_letter_spacing'],
@@ -339,9 +441,13 @@ function cph_portfolio_grid_shortcode( $atts ) {
 		'animation_stagger'        => $atts['animation_stagger'],
 	);
 
+	// Determine if grid height is constrained (bento layouts only).
+	$is_constrained = ! empty( $atts['grid_height'] ) && in_array( $layout, array( 'homepage-bento', 'homepage-bento-4' ), true );
+
 	// Build responsive CSS using style block (not inline) for proper media query support.
 	$desktop_vars = array(
 		'--grid-gap: ' . $gap . 'px',
+		$is_constrained ? '--grid-height: ' . esc_attr( $atts['grid_height'] ) : '',
 		'--card-height: ' . esc_attr( $atts['card_height'] ),
 		'--text-color: ' . esc_attr( $atts['text_color'] ),
 		'--location-font-size: ' . esc_attr( $atts['location_font_size'] ),
@@ -361,11 +467,18 @@ function cph_portfolio_grid_shortcode( $atts ) {
 		// Lower Third.
 		'--lower-third-bar-color: ' . esc_attr( $atts['lower_third_bar_color'] ),
 		'--lower-third-text-color: ' . esc_attr( ! empty( $atts['lower_third_text_color'] ) ? $atts['lower_third_text_color'] : $atts['text_color'] ),
+		// Zigzag.
+		'zigzag' === $layout ? '--zigzag-row-height: ' . esc_attr( $atts['zigzag_row_height'] ) : '',
+		'zigzag' === $layout ? '--zigzag-row-gap: ' . esc_attr( $atts['zigzag_row_gap'] ) : '',
 	);
-	$element_css = '#' . esc_attr( $grid_id ) . ' { ' . implode( '; ', $desktop_vars ) . '; }';
+	$desktop_vars = array_filter( $desktop_vars );
+	$element_css  = '#' . esc_attr( $grid_id ) . ' { ' . implode( '; ', $desktop_vars ) . '; }';
 
 	// Tablet styles (max-width: 999px).
 	$tablet_vars = array();
+	if ( ! empty( $atts['grid_height_tablet'] ) ) {
+		$tablet_vars[] = '--grid-height: ' . esc_attr( $atts['grid_height_tablet'] );
+	}
 	if ( ! empty( $atts['card_height_tablet'] ) ) {
 		$tablet_vars[] = '--card-height: ' . esc_attr( $atts['card_height_tablet'] );
 	}
@@ -378,6 +491,9 @@ function cph_portfolio_grid_shortcode( $atts ) {
 
 	// Phone styles (max-width: 690px).
 	$phone_vars = array();
+	if ( ! empty( $atts['grid_height_phone'] ) ) {
+		$phone_vars[] = '--grid-height: ' . esc_attr( $atts['grid_height_phone'] );
+	}
 	if ( ! empty( $atts['card_height_phone'] ) ) {
 		$phone_vars[] = '--card-height: ' . esc_attr( $atts['card_height_phone'] );
 	}
@@ -394,6 +510,10 @@ function cph_portfolio_grid_shortcode( $atts ) {
 		'cph-portfolio-grid--' . $layout,
 	);
 
+	if ( $is_constrained ) {
+		$grid_classes[] = 'cph-portfolio-grid--constrained';
+	}
+
 	if ( 'yes' === $atts['lower_third_enabled'] ) {
 		$grid_classes[] = 'cph-portfolio-grid--lower-third';
 	}
@@ -403,23 +523,35 @@ function cph_portfolio_grid_shortcode( $atts ) {
 	<style><?php echo $element_css; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></style>
 	<div id="<?php echo esc_attr( $grid_id ); ?>" class="<?php echo esc_attr( implode( ' ', $grid_classes ) ); ?>">
 		<?php
-		if ( 'homepage-bento' === $layout ) {
+		if ( 'homepage-bento' === $layout || 'homepage-bento-4' === $layout ) {
 			// Homepage Bento: manual slot selection.
-			$slots       = cph_get_slot_ids( $layout, $atts );
-			$show_logos  = cph_get_bento_show_logo_settings( $atts );
-			$show_videos = cph_get_bento_show_video_settings( $atts );
+			$slots             = cph_get_slot_ids( $layout, $atts );
+			$show_logos        = cph_get_bento_show_logo_settings( $atts );
+			$show_videos       = cph_get_bento_show_video_settings( $atts );
+			$show_excerpts     = cph_get_bento_show_excerpt_settings( $atts );
+			$content_positions = cph_get_bento_content_position_settings( $atts );
+			$button_types      = cph_get_bento_button_type_settings( $atts, $global_button_type );
 
 			foreach ( $slots as $slot_num => $post_id ) {
-				$card       = cph_get_card_data( $post_id );
-				$show_logo  = isset( $show_logos[ $slot_num ] ) ? $show_logos[ $slot_num ] : false;
-				$show_video = isset( $show_videos[ $slot_num ] ) ? $show_videos[ $slot_num ] : false;
-				$size_class = ( 1 === $slot_num );
+				$card         = cph_get_card_data( $post_id );
+				$show_logo    = isset( $show_logos[ $slot_num ] ) ? $show_logos[ $slot_num ] : false;
+				$show_video   = isset( $show_videos[ $slot_num ] ) ? $show_videos[ $slot_num ] : false;
+				$show_excerpt = isset( $show_excerpts[ $slot_num ] ) ? $show_excerpts[ $slot_num ] : false;
+				$size_class   = ( 1 === $slot_num );
 
-				echo cph_render_card( $card, $slot_num, $settings, $show_logo, $show_logo, $size_class, $show_video ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+				// Per-slot overrides.
+				$slot_settings                     = $settings;
+				$slot_settings['content_position'] = $content_positions[ $slot_num ];
+				$slot_settings['button_type']      = $button_types[ $slot_num ];
+
+				echo cph_render_card( $card, $slot_num, $slot_settings, $show_logo, $show_excerpt, $size_class, $show_video ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 			}
 		} elseif ( 'featured-2col' === $layout ) {
 			// Projects Grid: auto-populate from post order with featured support.
 			echo cph_render_featured_2col_grid( $atts, $settings ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+		} elseif ( 'zigzag' === $layout ) {
+			// Zigzag: alternating image/text rows with category filter.
+			echo cph_render_zigzag_grid( $atts, $settings ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		}
 		?>
 	</div>
@@ -567,6 +699,160 @@ function cph_flush_card_buffer( $buffer, $slot_number, $settings, $show_logo, $s
 	}
 
 	return $output;
+}
+
+/**
+ * Render the zigzag grid layout.
+ *
+ * Alternating 50/50 rows: odd rows have image-left/text-right,
+ * even rows flip. Includes an optional category filter bar.
+ *
+ * @since 1.2.0
+ *
+ * @param array $atts     Shortcode attributes.
+ * @param array $settings Card rendering settings.
+ * @return string HTML output.
+ */
+function cph_render_zigzag_grid( $atts, $settings ) {
+	// Build query args.
+	$posts_per_page = ! empty( $atts['posts_per_page'] ) ? (int) $atts['posts_per_page'] : -1;
+
+	$query_args = array(
+		'post_type'      => 'portfolio',
+		'posts_per_page' => $posts_per_page,
+		'post_status'    => 'publish',
+		'orderby'        => array(
+			'menu_order' => 'ASC',
+			'date'       => 'DESC',
+		),
+	);
+
+	// Build tax_query for category and status filters.
+	$category = sanitize_text_field( $atts['category'] );
+	$status   = sanitize_text_field( $atts['status'] );
+
+	$tax_query = array();
+
+	if ( ! empty( $category ) ) {
+		$tax_query[] = array(
+			'taxonomy' => 'project-type',
+			'field'    => 'slug',
+			'terms'    => $category,
+		);
+	}
+
+	if ( ! empty( $status ) ) {
+		$tax_query[] = array(
+			'taxonomy' => 'project-status',
+			'field'    => 'slug',
+			'terms'    => $status,
+		);
+	}
+
+	if ( ! empty( $tax_query ) ) {
+		if ( count( $tax_query ) > 1 ) {
+			$tax_query['relation'] = 'AND';
+		}
+		$query_args['tax_query'] = $tax_query; // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query
+	}
+
+	$query = new WP_Query( $query_args );
+
+	if ( ! $query->have_posts() ) {
+		return '<p class="cph-portfolio-grid-empty">' . esc_html__( 'No projects found.', 'cph-elements' ) . '</p>';
+	}
+
+	// Settings.
+	$heading_tag  = in_array( $atts['heading_tag'], array( 'h1', 'h2', 'h3', 'h4', 'h5', 'h6' ), true ) ? $atts['heading_tag'] : 'h3';
+	$show_filter  = 'yes' === $atts['show_filter'];
+	$show_eyebrow = 'yes' === $atts['show_eyebrow'];
+	$button_text  = ! empty( $atts['zigzag_button_text'] ) ? $atts['zigzag_button_text'] : 'VIEW PROJECT';
+
+	// Collect all posts and their categories for filter bar.
+	$posts_data  = array();
+	$all_terms   = array(); // slug => name.
+
+	while ( $query->have_posts() ) {
+		$query->the_post();
+		$post_id = get_the_ID();
+		$card    = cph_get_card_data( $post_id );
+
+		if ( ! $card ) {
+			continue;
+		}
+
+		// Get project-type terms.
+		$terms      = wp_get_post_terms( $post_id, 'project-type' );
+		$term_slugs = array();
+		$term_names = array();
+
+		if ( ! is_wp_error( $terms ) && ! empty( $terms ) ) {
+			foreach ( $terms as $term ) {
+				$term_slugs[] = $term->slug;
+				$term_names[] = $term->name;
+				if ( ! isset( $all_terms[ $term->slug ] ) ) {
+					$all_terms[ $term->slug ] = $term->name;
+				}
+			}
+		}
+
+		$posts_data[] = array(
+			'card'       => $card,
+			'term_slugs' => $term_slugs,
+			'term_names' => $term_names,
+		);
+	}
+
+	wp_reset_postdata();
+
+	ob_start();
+
+	// Filter bar.
+	if ( $show_filter && count( $all_terms ) >= 2 ) {
+		?>
+		<nav class="cph-zigzag__filter" aria-label="<?php esc_attr_e( 'Project filter', 'cph-elements' ); ?>">
+			<button class="cph-zigzag__filter-btn is-active" data-filter="" type="button"><?php esc_html_e( 'All', 'cph-elements' ); ?></button>
+			<?php foreach ( $all_terms as $slug => $name ) : ?>
+				<button class="cph-zigzag__filter-btn" data-filter="<?php echo esc_attr( $slug ); ?>" type="button"><?php echo esc_html( $name ); ?></button>
+			<?php endforeach; ?>
+		</nav>
+		<?php
+	}
+
+	// Rows.
+	?>
+	<div class="cph-zigzag__rows">
+		<?php foreach ( $posts_data as $post_item ) :
+			$card       = $post_item['card'];
+			$cat_attr   = implode( ' ', $post_item['term_slugs'] );
+			$eyebrow    = $show_eyebrow && ! empty( $post_item['term_names'] ) ? $post_item['term_names'][0] : '';
+			$has_link   = ! empty( $card['has_content'] );
+		?>
+		<div class="cph-zigzag__row" data-categories="<?php echo esc_attr( $cat_attr ); ?>">
+			<div class="cph-zigzag__image">
+				<?php if ( ! empty( $card['image'] ) ) : ?>
+					<img src="<?php echo esc_url( $card['image'] ); ?>"
+					     alt="<?php echo esc_attr( $card['title'] ); ?>"
+					     loading="lazy" />
+				<?php endif; ?>
+			</div>
+			<div class="cph-zigzag__text">
+				<?php if ( ! empty( $eyebrow ) ) : ?>
+					<span class="cph-zigzag__eyebrow"><?php echo esc_html( $eyebrow ); ?></span>
+				<?php endif; ?>
+				<<?php echo esc_attr( $heading_tag ); ?> class="cph-zigzag__title"><?php echo esc_html( $card['title'] ); ?></<?php echo esc_attr( $heading_tag ); ?>>
+				<?php if ( $has_link ) : ?>
+					<a class="cph-zigzag__btn" href="<?php echo esc_url( $card['permalink'] ); ?>"><?php echo esc_html( $button_text ); ?></a>
+				<?php else : ?>
+					<span class="cph-zigzag__btn cph-zigzag__btn--disabled"><?php echo esc_html( $button_text ); ?></span>
+				<?php endif; ?>
+			</div>
+		</div>
+		<?php endforeach; ?>
+	</div>
+	<?php
+
+	return ob_get_clean();
 }
 
 // Register the shortcode.

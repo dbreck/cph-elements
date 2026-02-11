@@ -36,6 +36,50 @@
 	grid-row: 1 / 3;
 }
 
+/* Constrained: fixed total height, equal rows */
+.cph-portfolio-grid--homepage-bento.cph-portfolio-grid--constrained {
+	grid-template-rows: 1fr 1fr;
+	height: var(--grid-height);
+}
+
+/* =============================================================================
+   LAYOUT: HOMEPAGE BENTO (4 cards)
+   =============================================================================
+   +------------------+---------+---------+
+   |                  | Slot 2  | Slot 3  |
+   |    Slot 1        | (square)| (square)|
+   |    (tall left)   +---------+---------+
+   |                  |      Slot 4       |
+   |                  |   (wide bottom)   |
+   +------------------+-------------------+
+*/
+
+.cph-portfolio-grid--homepage-bento-4 {
+	grid-template-columns: 747fr 420fr 419fr;
+	grid-template-rows: var(--card-height, 525px) calc(var(--card-height, 525px) * 0.81);
+}
+
+.cph-portfolio-grid--homepage-bento-4 .cph-card--slot-1 {
+	grid-column: 1;
+	grid-row: 1 / 3;
+}
+
+.cph-portfolio-grid--homepage-bento-4 .cph-card--slot-4 {
+	grid-column: 2 / 4;
+}
+
+/* Bento-4 layout: let grid control heights */
+.cph-portfolio-grid--homepage-bento-4 .cph-card {
+	height: 100%;
+	min-height: 0;
+}
+
+/* Constrained: fixed total height, proportional rows */
+.cph-portfolio-grid--homepage-bento-4.cph-portfolio-grid--constrained {
+	grid-template-rows: 1fr 0.81fr;
+	height: var(--grid-height);
+}
+
 /* =============================================================================
    LAYOUT: PROJECTS GRID (featured-2col)
    =============================================================================
@@ -202,6 +246,20 @@
 }
 
 /* =============================================================================
+   CONTENT POSITION: MIDDLE CENTER STACKED
+   ============================================================================= */
+
+.cph-card--middle-center .cph-card__content {
+	align-items: center;
+	bottom: 0;
+	flex-direction: column;
+	gap: 20px;
+	justify-content: center;
+	text-align: center;
+	top: 0;
+}
+
+/* =============================================================================
    ARROW BUTTON (Pill shape)
    ============================================================================= */
 
@@ -224,6 +282,29 @@
 }
 
 /* =============================================================================
+   TEXT BUTTON (Pill shape with label)
+   ============================================================================= */
+
+.cph-card__text-btn {
+	border: 1px solid var(--text-color, #fff);
+	border-radius: 25px;
+	color: var(--text-color, #fff);
+	flex-shrink: 0;
+	font-family: 'area-normal', sans-serif;
+	font-size: 12px;
+	font-weight: 400;
+	letter-spacing: 2.5px;
+	padding: 14px 32px;
+	text-transform: uppercase;
+	transition: background 0.3s ease, color 0.3s ease;
+}
+
+.cph-card:hover .cph-card__text-btn {
+	background: var(--text-color, #fff);
+	color: var(--overlay-color, #000);
+}
+
+/* =============================================================================
    RESPONSIVE: TABLET
    ============================================================================= */
 
@@ -232,6 +313,10 @@
 	/* Homepage Bento - rows still use card height */
 	.cph-portfolio-grid--homepage-bento {
 		grid-template-rows: var(--card-height, 400px) var(--card-height, 400px);
+	}
+
+	.cph-portfolio-grid--homepage-bento-4 {
+		grid-template-rows: var(--card-height, 400px) calc(var(--card-height, 400px) * 0.81);
 	}
 
 	/* Projects Grid - full-width cards slightly shorter on tablet */
@@ -251,6 +336,11 @@
 	.cph-card__arrow {
 		height: 42px;
 		width: 120px;
+	}
+
+	.cph-card__text-btn {
+		font-size: 11px;
+		padding: 12px 28px;
 	}
 
 	.cph-card__content {
@@ -273,6 +363,7 @@
 
 	/* All grids stack on mobile */
 	.cph-portfolio-grid--homepage-bento,
+	.cph-portfolio-grid--homepage-bento-4,
 	.cph-portfolio-grid--featured-2col {
 		grid-template-columns: 1fr;
 		grid-template-rows: auto;
@@ -280,9 +371,14 @@
 	}
 
 	/* Reset grid spans */
-	.cph-portfolio-grid--homepage-bento .cph-card--slot-1 {
+	.cph-portfolio-grid--homepage-bento .cph-card--slot-1,
+	.cph-portfolio-grid--homepage-bento-4 .cph-card--slot-1 {
 		grid-column: auto;
 		grid-row: auto;
+	}
+
+	.cph-portfolio-grid--homepage-bento-4 .cph-card--slot-4 {
+		grid-column: auto;
 	}
 
 	/* Projects Grid - full-width cards use same height as regular on mobile */
@@ -300,7 +396,8 @@
 		min-height: 400px;
 	}
 
-	.cph-portfolio-grid--homepage-bento .cph-card {
+	.cph-portfolio-grid--homepage-bento .cph-card,
+	.cph-portfolio-grid--homepage-bento-4 .cph-card {
 		height: 100%;
 		min-height: 0;
 	}
@@ -338,6 +435,12 @@
 		height: 36px;
 		width: 100px;
 	}
+
+	.cph-card__text-btn {
+		font-size: 10px;
+		letter-spacing: 2px;
+		padding: 10px 24px;
+	}
 }
 
 /* =============================================================================
@@ -350,7 +453,8 @@
 		min-height: 300px;
 	}
 
-	.cph-portfolio-grid--homepage-bento .cph-card {
+	.cph-portfolio-grid--homepage-bento .cph-card,
+	.cph-portfolio-grid--homepage-bento-4 .cph-card {
 		height: 100%;
 		min-height: 0;
 	}
@@ -372,6 +476,12 @@
 		align-self: flex-end;
 		height: 32px;
 		width: 90px;
+	}
+
+	.cph-card__text-btn {
+		align-self: center;
+		font-size: 10px;
+		padding: 10px 22px;
 	}
 
 	.cph-card__extra {
@@ -459,6 +569,234 @@
 	.cph-portfolio-grid--lower-third .cph-card__location::before {
 		left: -20px;
 		width: calc(100% + 40px + 30px); /* Slightly less extension on small screens */
+	}
+}
+
+/* =============================================================================
+   LAYOUT: ZIGZAG
+   =============================================================================
+   Alternating 50/50 rows. Odd rows: image-left / text-right.
+   Even rows: image-right / text-left (via CSS order swap).
+   ============================================================================= */
+
+/* ── Filter Bar ──────────────────────────────────────────────────────────── */
+
+.cph-zigzag__filter {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px 24px;
+	justify-content: center;
+	margin-bottom: 48px;
+}
+
+.cph-zigzag__filter-btn {
+	background: transparent;
+	border: none;
+	color: #999;
+	cursor: pointer;
+	font-family: 'Poppins', sans-serif;
+	font-size: 13px;
+	font-weight: 600;
+	letter-spacing: 0.12em;
+	padding: 8px 4px;
+	text-transform: uppercase;
+	transition: color 0.3s ease;
+}
+
+.cph-zigzag__filter-btn:hover {
+	color: #333;
+}
+
+.cph-zigzag__filter-btn.is-active {
+	color: var(--ag-olive, #87A80E);
+}
+
+/* ── Row Container ───────────────────────────────────────────────────────── */
+
+.cph-zigzag__rows {
+	display: flex;
+	flex-direction: column;
+	gap: var(--zigzag-row-gap, 40px);
+}
+
+/* ── Individual Row ──────────────────────────────────────────────────────── */
+
+.cph-zigzag__row {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	min-height: var(--zigzag-row-height, 500px);
+	transition: opacity 0.3s ease;
+}
+
+/* Even rows: flip image to right, text to left */
+.cph-zigzag__row:nth-child(even) .cph-zigzag__image {
+	order: 2;
+}
+
+.cph-zigzag__row:nth-child(even) .cph-zigzag__text {
+	order: 1;
+}
+
+/* ── Image Panel ─────────────────────────────────────────────────────────── */
+
+.cph-zigzag__image {
+	overflow: hidden;
+	position: relative;
+}
+
+.cph-zigzag__image img,
+.row .col .cph-zigzag__image img {
+	display: block;
+	height: 100%;
+	object-fit: cover;
+	transition: transform 0.6s ease;
+	width: 100%;
+}
+
+.cph-zigzag__row:hover .cph-zigzag__image img {
+	transform: scale(1.03);
+}
+
+/* ── Text Panel ──────────────────────────────────────────────────────────── */
+
+.cph-zigzag__text {
+	align-items: flex-start;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	padding: 48px 64px;
+}
+
+/* ── Eyebrow ─────────────────────────────────────────────────────────────── */
+
+.cph-zigzag__eyebrow {
+	color: var(--ag-olive, #87A80E);
+	display: inline-block;
+	font-family: 'Merriweather Sans', sans-serif;
+	font-size: 12px;
+	font-weight: 700;
+	letter-spacing: 0.2em;
+	margin-bottom: 16px;
+	text-transform: uppercase;
+}
+
+/* ── Title ───────────────────────────────────────────────────────────────── */
+
+.cph-zigzag__title {
+	color: #333;
+	font-family: 'Poppins', sans-serif;
+	font-size: clamp(28px, 3vw, 42px);
+	font-weight: 300;
+	line-height: 1.2;
+	margin: 0 0 32px;
+}
+
+/* ── Button ──────────────────────────────────────────────────────────────── */
+
+.cph-zigzag__btn {
+	border: 1px solid #333;
+	border-radius: 50px;
+	color: #333;
+	display: inline-block;
+	font-family: 'Poppins', sans-serif;
+	font-size: 12px;
+	font-weight: 600;
+	letter-spacing: 0.15em;
+	padding: 14px 36px;
+	text-decoration: none;
+	text-transform: uppercase;
+	transition: border-color 0.3s ease, color 0.3s ease;
+}
+
+a.cph-zigzag__btn:hover {
+	border-color: var(--ag-olive, #87A80E);
+	color: var(--ag-olive, #87A80E);
+}
+
+.cph-zigzag__btn--disabled {
+	cursor: default;
+	opacity: 0.4;
+}
+
+/* ── Hidden rows (filter) ────────────────────────────────────────────────── */
+
+.cph-zigzag__row[style*="display: none"] {
+	/* Prevent layout shift from gap on hidden items */
+}
+
+/* ── Zigzag Responsive: Tablet ───────────────────────────────────────────── */
+
+@media (max-width: 1199px) {
+	.cph-zigzag__text {
+		padding: 40px 48px;
+	}
+
+	.cph-zigzag__title {
+		font-size: clamp(24px, 2.8vw, 36px);
+		margin-bottom: 24px;
+	}
+
+	.cph-zigzag__btn {
+		font-size: 11px;
+		padding: 12px 28px;
+	}
+}
+
+/* ── Zigzag Responsive: Mobile ───────────────────────────────────────────── */
+
+@media (max-width: 999px) {
+	.cph-zigzag__row {
+		grid-template-columns: 1fr;
+		min-height: auto;
+	}
+
+	/* Reset order: image always on top */
+	.cph-zigzag__row:nth-child(even) .cph-zigzag__image,
+	.cph-zigzag__row:nth-child(even) .cph-zigzag__text {
+		order: unset;
+	}
+
+	.cph-zigzag__image {
+		min-height: 300px;
+	}
+
+	.cph-zigzag__text {
+		padding: 32px 24px;
+	}
+
+	.cph-zigzag__title {
+		font-size: clamp(22px, 5vw, 32px);
+		margin-bottom: 20px;
+	}
+
+	.cph-zigzag__filter {
+		gap: 6px 16px;
+		margin-bottom: 32px;
+	}
+
+	.cph-zigzag__filter-btn {
+		font-size: 11px;
+	}
+}
+
+/* ── Zigzag Responsive: Small Mobile ─────────────────────────────────────── */
+
+@media (max-width: 599px) {
+	.cph-zigzag__image {
+		min-height: 240px;
+	}
+
+	.cph-zigzag__text {
+		padding: 24px 20px;
+	}
+
+	.cph-zigzag__title {
+		font-size: 22px;
+	}
+
+	.cph-zigzag__btn {
+		font-size: 10px;
+		padding: 10px 24px;
 	}
 }
 

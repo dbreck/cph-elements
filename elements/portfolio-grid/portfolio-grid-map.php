@@ -71,7 +71,9 @@ function cph_get_project_status_dropdown() {
 // Layout presets configuration.
 $layout_presets = array(
 	esc_html__( 'Homepage Bento (3 cards)', 'cph-elements' ) => 'homepage-bento',
+	esc_html__( 'Homepage Bento (4 cards)', 'cph-elements' ) => 'homepage-bento-4',
 	esc_html__( 'Projects Grid', 'cph-elements' )            => 'featured-2col',
+	esc_html__( 'Zigzag', 'cph-elements' )                   => 'zigzag',
 );
 
 // Gap options.
@@ -87,6 +89,19 @@ $animation_options = array(
 	esc_html__( 'None', 'cph-elements' )         => 'none',
 	esc_html__( 'Fade Up', 'cph-elements' )      => 'fade-up',
 	esc_html__( 'Curtain Wipe', 'cph-elements' ) => 'curtain-wipe',
+);
+
+// Content position options.
+$content_position_options = array(
+	esc_html__( 'Bottom Stretch', 'cph-elements' )        => 'bottom-stretch',
+	esc_html__( 'Middle Center Stacked', 'cph-elements' ) => 'middle-center',
+);
+
+// Button type options.
+$button_type_options = array(
+	esc_html__( 'Arrow', 'cph-elements' ) => 'arrow',
+	esc_html__( 'Text', 'cph-elements' )  => 'text',
+	esc_html__( 'None', 'cph-elements' )  => 'none',
 );
 
 // Mix-blend-mode options.
@@ -109,15 +124,36 @@ $blend_mode_options = array(
 	esc_html__( 'Luminosity', 'cph-elements' ) => 'luminosity',
 );
 
-// Autocomplete settings for portfolio fields.
-$autocomplete_settings = array(
-	'multiple'       => false,
-	'sortable'       => false,
-	'groups'         => false,
-	'unique_values'  => true,
-	'display_inline' => true,
-	'values'         => array(),
-);
+/**
+ * Get portfolio posts for dropdown.
+ *
+ * @since 1.1.0
+ *
+ * @return array Posts formatted for WPBakery dropdown (Title => ID).
+ */
+function cph_get_portfolio_posts_dropdown() {
+	$posts = get_posts(
+		array(
+			'post_type'      => 'portfolio',
+			'post_status'    => 'publish',
+			'posts_per_page' => -1,
+			'orderby'        => array(
+				'menu_order' => 'ASC',
+				'title'      => 'ASC',
+			),
+		)
+	);
+
+	$options = array(
+		esc_html__( '— Select Project —', 'cph-elements' ) => '',
+	);
+
+	foreach ( $posts as $post ) {
+		$options[ $post->post_title ] = $post->ID;
+	}
+
+	return $options;
+}
 
 return array(
 	'name'        => esc_html__( 'CPH Portfolio Grid', 'cph-elements' ),
@@ -128,8 +164,14 @@ return array(
 	'params'      => array(
 
 		/*
+		 * =====================================================================
+		 * TAB: GENERAL (default)
+		 * =====================================================================
+		 */
+
+		/*
 		 * ─────────────────────────────────────────────────────────────────
-		 * LAYOUT SETTINGS
+		 * LAYOUT
 		 * ─────────────────────────────────────────────────────────────────
 		 */
 		array(
@@ -145,7 +187,7 @@ return array(
 			'value'       => $layout_presets,
 			'std'         => 'homepage-bento',
 			'admin_label' => true,
-			'description' => esc_html__( 'Homepage Bento: manually select 3 projects. Projects Grid: auto-populate from post order with featured support.', 'cph-elements' ),
+			'description' => esc_html__( 'Homepage Bento: manually select projects for a bento grid. Projects Grid: auto-populate from post order with featured support.', 'cph-elements' ),
 		),
 
 		array(
@@ -157,9 +199,51 @@ return array(
 			'description' => esc_html__( 'Space between cards.', 'cph-elements' ),
 		),
 
+		// Desktop Grid Height.
+		array(
+			'type'             => 'textfield',
+			'heading'          => '<span class="group-title">' . esc_html__( 'Grid Height', 'cph-elements' ) . '</span>',
+			'param_name'       => 'grid_height',
+			'value'            => '',
+			'edit_field_class' => 'vc_col-sm-12 desktop grid-height-device-group',
+			'dependency'       => array(
+				'element' => 'layout',
+				'value'   => array( 'homepage-bento', 'homepage-bento-4' ),
+			),
+			'description'      => esc_html__( 'Constrain the total grid height. Leave empty for auto height based on card height. Any CSS unit: 800px, 70vh, etc.', 'cph-elements' ),
+		),
+
+		// Tablet Grid Height.
+		array(
+			'type'             => 'textfield',
+			'heading'          => '<span class="attr-title">' . esc_html__( 'Height', 'cph-elements' ) . '</span>',
+			'param_name'       => 'grid_height_tablet',
+			'value'            => '',
+			'edit_field_class' => 'vc_col-sm-12 tablet grid-height-device-group',
+			'dependency'       => array(
+				'element' => 'layout',
+				'value'   => array( 'homepage-bento', 'homepage-bento-4' ),
+			),
+			'description'      => '',
+		),
+
+		// Phone Grid Height.
+		array(
+			'type'             => 'textfield',
+			'heading'          => '<span class="attr-title">' . esc_html__( 'Height', 'cph-elements' ) . '</span>',
+			'param_name'       => 'grid_height_phone',
+			'value'            => '',
+			'edit_field_class' => 'vc_col-sm-12 phone grid-height-device-group',
+			'dependency'       => array(
+				'element' => 'layout',
+				'value'   => array( 'homepage-bento', 'homepage-bento-4' ),
+			),
+			'description'      => '',
+		),
+
 		/*
 		 * ─────────────────────────────────────────────────────────────────
-		 * CARD ASSIGNMENTS - HOMEPAGE BENTO (3 slots)
+		 * CARD ASSIGNMENTS - HOMEPAGE BENTO LAYOUTS
 		 * ─────────────────────────────────────────────────────────────────
 		 */
 		array(
@@ -168,116 +252,312 @@ return array(
 			'param_name' => 'group_header_assignments',
 			'dependency' => array(
 				'element' => 'layout',
-				'value'   => array( 'homepage-bento' ),
+				'value'   => array( 'homepage-bento', 'homepage-bento-4' ),
 			),
 		),
 
+		// ── Slot 1 ──────────────────────────────────────────────────────
+
 		array(
-			'type'        => 'autocomplete',
+			'type'        => 'dropdown',
 			'heading'     => esc_html__( 'Slot 1 - Large Left', 'cph-elements' ),
 			'param_name'  => 'slot_1',
-			'settings'    => $autocomplete_settings,
+			'value'       => cph_get_portfolio_posts_dropdown(),
 			'dependency'  => array(
 				'element' => 'layout',
-				'value'   => array( 'homepage-bento' ),
+				'value'   => array( 'homepage-bento', 'homepage-bento-4' ),
 			),
 			'description' => esc_html__( 'Select Portfolio project for the tall left card.', 'cph-elements' ),
 		),
 
 		array(
-			'type'        => 'checkbox',
-			'heading'     => esc_html__( 'Show Logo on Slot 1', 'cph-elements' ),
-			'param_name'  => 'slot_1_show_logo',
-			'value'       => array( esc_html__( 'Yes', 'cph-elements' ) => 'yes' ),
-			'dependency'  => array(
+			'type'             => 'checkbox',
+			'heading'          => esc_html__( 'Show Logo', 'cph-elements' ),
+			'param_name'       => 'slot_1_show_logo',
+			'value'            => array( esc_html__( 'Yes', 'cph-elements' ) => 'yes' ),
+			'edit_field_class' => 'vc_col-sm-4',
+			'dependency'       => array(
 				'element' => 'layout',
-				'value'   => array( 'homepage-bento' ),
+				'value'   => array( 'homepage-bento', 'homepage-bento-4' ),
 			),
-			'description' => esc_html__( 'Display the project logo (Custom Thumbnail) on this card.', 'cph-elements' ),
 		),
 
 		array(
-			'type'        => 'checkbox',
-			'heading'     => esc_html__( 'Show Video on Slot 1', 'cph-elements' ),
-			'param_name'  => 'slot_1_show_video',
-			'value'       => array( esc_html__( 'Yes', 'cph-elements' ) => 'yes' ),
-			'dependency'  => array(
+			'type'             => 'checkbox',
+			'heading'          => esc_html__( 'Show Video', 'cph-elements' ),
+			'param_name'       => 'slot_1_show_video',
+			'value'            => array( esc_html__( 'Yes', 'cph-elements' ) => 'yes' ),
+			'edit_field_class' => 'vc_col-sm-4',
+			'dependency'       => array(
 				'element' => 'layout',
-				'value'   => array( 'homepage-bento' ),
+				'value'   => array( 'homepage-bento', 'homepage-bento-4' ),
 			),
-			'description' => esc_html__( 'Display video background if project has a Lightbox/Single Project Video set.', 'cph-elements' ),
 		),
 
 		array(
-			'type'        => 'autocomplete',
+			'type'             => 'checkbox',
+			'heading'          => esc_html__( 'Show Excerpt', 'cph-elements' ),
+			'param_name'       => 'slot_1_show_excerpt',
+			'value'            => array( esc_html__( 'Yes', 'cph-elements' ) => 'yes' ),
+			'edit_field_class' => 'vc_col-sm-4',
+			'dependency'       => array(
+				'element' => 'layout',
+				'value'   => array( 'homepage-bento', 'homepage-bento-4' ),
+			),
+		),
+
+		array(
+			'type'             => 'dropdown',
+			'heading'          => esc_html__( 'Content Position', 'cph-elements' ),
+			'param_name'       => 'slot_1_content_position',
+			'value'            => $content_position_options,
+			'std'              => 'bottom-stretch',
+			'edit_field_class' => 'vc_col-sm-6',
+			'dependency'       => array(
+				'element' => 'layout',
+				'value'   => array( 'homepage-bento', 'homepage-bento-4' ),
+			),
+		),
+
+		array(
+			'type'             => 'dropdown',
+			'heading'          => esc_html__( 'Button Type', 'cph-elements' ),
+			'param_name'       => 'slot_1_button_type',
+			'value'            => $button_type_options,
+			'std'              => 'arrow',
+			'edit_field_class' => 'vc_col-sm-6',
+			'dependency'       => array(
+				'element' => 'layout',
+				'value'   => array( 'homepage-bento', 'homepage-bento-4' ),
+			),
+		),
+
+		// ── Slot 2 ──────────────────────────────────────────────────────
+
+		array(
+			'type'        => 'dropdown',
 			'heading'     => esc_html__( 'Slot 2 - Top Right', 'cph-elements' ),
 			'param_name'  => 'slot_2',
-			'settings'    => $autocomplete_settings,
+			'value'       => cph_get_portfolio_posts_dropdown(),
 			'dependency'  => array(
 				'element' => 'layout',
-				'value'   => array( 'homepage-bento' ),
+				'value'   => array( 'homepage-bento', 'homepage-bento-4' ),
 			),
 			'description' => esc_html__( 'Select Portfolio project for top right card.', 'cph-elements' ),
 		),
 
 		array(
-			'type'        => 'checkbox',
-			'heading'     => esc_html__( 'Show Logo on Slot 2', 'cph-elements' ),
-			'param_name'  => 'slot_2_show_logo',
-			'value'       => array( esc_html__( 'Yes', 'cph-elements' ) => 'yes' ),
-			'dependency'  => array(
+			'type'             => 'checkbox',
+			'heading'          => esc_html__( 'Show Logo', 'cph-elements' ),
+			'param_name'       => 'slot_2_show_logo',
+			'value'            => array( esc_html__( 'Yes', 'cph-elements' ) => 'yes' ),
+			'edit_field_class' => 'vc_col-sm-4',
+			'dependency'       => array(
 				'element' => 'layout',
-				'value'   => array( 'homepage-bento' ),
+				'value'   => array( 'homepage-bento', 'homepage-bento-4' ),
 			),
-			'description' => esc_html__( 'Display the project logo (Custom Thumbnail) on this card.', 'cph-elements' ),
 		),
 
 		array(
-			'type'        => 'checkbox',
-			'heading'     => esc_html__( 'Show Video on Slot 2', 'cph-elements' ),
-			'param_name'  => 'slot_2_show_video',
-			'value'       => array( esc_html__( 'Yes', 'cph-elements' ) => 'yes' ),
-			'dependency'  => array(
+			'type'             => 'checkbox',
+			'heading'          => esc_html__( 'Show Video', 'cph-elements' ),
+			'param_name'       => 'slot_2_show_video',
+			'value'            => array( esc_html__( 'Yes', 'cph-elements' ) => 'yes' ),
+			'edit_field_class' => 'vc_col-sm-4',
+			'dependency'       => array(
 				'element' => 'layout',
-				'value'   => array( 'homepage-bento' ),
+				'value'   => array( 'homepage-bento', 'homepage-bento-4' ),
 			),
-			'description' => esc_html__( 'Display video background if project has a Lightbox/Single Project Video set.', 'cph-elements' ),
 		),
 
 		array(
-			'type'        => 'autocomplete',
-			'heading'     => esc_html__( 'Slot 3 - Bottom Right', 'cph-elements' ),
+			'type'             => 'checkbox',
+			'heading'          => esc_html__( 'Show Excerpt', 'cph-elements' ),
+			'param_name'       => 'slot_2_show_excerpt',
+			'value'            => array( esc_html__( 'Yes', 'cph-elements' ) => 'yes' ),
+			'edit_field_class' => 'vc_col-sm-4',
+			'dependency'       => array(
+				'element' => 'layout',
+				'value'   => array( 'homepage-bento', 'homepage-bento-4' ),
+			),
+		),
+
+		array(
+			'type'             => 'dropdown',
+			'heading'          => esc_html__( 'Content Position', 'cph-elements' ),
+			'param_name'       => 'slot_2_content_position',
+			'value'            => $content_position_options,
+			'std'              => 'bottom-stretch',
+			'edit_field_class' => 'vc_col-sm-6',
+			'dependency'       => array(
+				'element' => 'layout',
+				'value'   => array( 'homepage-bento', 'homepage-bento-4' ),
+			),
+		),
+
+		array(
+			'type'             => 'dropdown',
+			'heading'          => esc_html__( 'Button Type', 'cph-elements' ),
+			'param_name'       => 'slot_2_button_type',
+			'value'            => $button_type_options,
+			'std'              => 'arrow',
+			'edit_field_class' => 'vc_col-sm-6',
+			'dependency'       => array(
+				'element' => 'layout',
+				'value'   => array( 'homepage-bento', 'homepage-bento-4' ),
+			),
+		),
+
+		// ── Slot 3 ──────────────────────────────────────────────────────
+
+		array(
+			'type'        => 'dropdown',
+			'heading'     => esc_html__( 'Slot 3 - Top Right / Bottom Right', 'cph-elements' ),
 			'param_name'  => 'slot_3',
-			'settings'    => $autocomplete_settings,
+			'value'       => cph_get_portfolio_posts_dropdown(),
 			'dependency'  => array(
 				'element' => 'layout',
-				'value'   => array( 'homepage-bento' ),
+				'value'   => array( 'homepage-bento', 'homepage-bento-4' ),
 			),
-			'description' => esc_html__( 'Select Portfolio project for bottom right card.', 'cph-elements' ),
+			'description' => esc_html__( 'Select Portfolio project. Position depends on layout.', 'cph-elements' ),
 		),
 
 		array(
-			'type'        => 'checkbox',
-			'heading'     => esc_html__( 'Show Logo on Slot 3', 'cph-elements' ),
-			'param_name'  => 'slot_3_show_logo',
-			'value'       => array( esc_html__( 'Yes', 'cph-elements' ) => 'yes' ),
-			'dependency'  => array(
+			'type'             => 'checkbox',
+			'heading'          => esc_html__( 'Show Logo', 'cph-elements' ),
+			'param_name'       => 'slot_3_show_logo',
+			'value'            => array( esc_html__( 'Yes', 'cph-elements' ) => 'yes' ),
+			'edit_field_class' => 'vc_col-sm-4',
+			'dependency'       => array(
 				'element' => 'layout',
-				'value'   => array( 'homepage-bento' ),
+				'value'   => array( 'homepage-bento', 'homepage-bento-4' ),
 			),
-			'description' => esc_html__( 'Display the project logo (Custom Thumbnail) on this card.', 'cph-elements' ),
 		),
 
 		array(
-			'type'        => 'checkbox',
-			'heading'     => esc_html__( 'Show Video on Slot 3', 'cph-elements' ),
-			'param_name'  => 'slot_3_show_video',
-			'value'       => array( esc_html__( 'Yes', 'cph-elements' ) => 'yes' ),
+			'type'             => 'checkbox',
+			'heading'          => esc_html__( 'Show Video', 'cph-elements' ),
+			'param_name'       => 'slot_3_show_video',
+			'value'            => array( esc_html__( 'Yes', 'cph-elements' ) => 'yes' ),
+			'edit_field_class' => 'vc_col-sm-4',
+			'dependency'       => array(
+				'element' => 'layout',
+				'value'   => array( 'homepage-bento', 'homepage-bento-4' ),
+			),
+		),
+
+		array(
+			'type'             => 'checkbox',
+			'heading'          => esc_html__( 'Show Excerpt', 'cph-elements' ),
+			'param_name'       => 'slot_3_show_excerpt',
+			'value'            => array( esc_html__( 'Yes', 'cph-elements' ) => 'yes' ),
+			'edit_field_class' => 'vc_col-sm-4',
+			'dependency'       => array(
+				'element' => 'layout',
+				'value'   => array( 'homepage-bento', 'homepage-bento-4' ),
+			),
+		),
+
+		array(
+			'type'             => 'dropdown',
+			'heading'          => esc_html__( 'Content Position', 'cph-elements' ),
+			'param_name'       => 'slot_3_content_position',
+			'value'            => $content_position_options,
+			'std'              => 'bottom-stretch',
+			'edit_field_class' => 'vc_col-sm-6',
+			'dependency'       => array(
+				'element' => 'layout',
+				'value'   => array( 'homepage-bento', 'homepage-bento-4' ),
+			),
+		),
+
+		array(
+			'type'             => 'dropdown',
+			'heading'          => esc_html__( 'Button Type', 'cph-elements' ),
+			'param_name'       => 'slot_3_button_type',
+			'value'            => $button_type_options,
+			'std'              => 'arrow',
+			'edit_field_class' => 'vc_col-sm-6',
+			'dependency'       => array(
+				'element' => 'layout',
+				'value'   => array( 'homepage-bento', 'homepage-bento-4' ),
+			),
+		),
+
+		// ── Slot 4 (4-card layout only) ─────────────────────────────────
+
+		array(
+			'type'        => 'dropdown',
+			'heading'     => esc_html__( 'Slot 4 - Wide Bottom Right', 'cph-elements' ),
+			'param_name'  => 'slot_4',
+			'value'       => cph_get_portfolio_posts_dropdown(),
 			'dependency'  => array(
 				'element' => 'layout',
-				'value'   => array( 'homepage-bento' ),
+				'value'   => array( 'homepage-bento-4' ),
 			),
-			'description' => esc_html__( 'Display video background if project has a Lightbox/Single Project Video set.', 'cph-elements' ),
+			'description' => esc_html__( 'Select Portfolio project for the wide bottom-right card.', 'cph-elements' ),
+		),
+
+		array(
+			'type'             => 'checkbox',
+			'heading'          => esc_html__( 'Show Logo', 'cph-elements' ),
+			'param_name'       => 'slot_4_show_logo',
+			'value'            => array( esc_html__( 'Yes', 'cph-elements' ) => 'yes' ),
+			'edit_field_class' => 'vc_col-sm-4',
+			'dependency'       => array(
+				'element' => 'layout',
+				'value'   => array( 'homepage-bento-4' ),
+			),
+		),
+
+		array(
+			'type'             => 'checkbox',
+			'heading'          => esc_html__( 'Show Video', 'cph-elements' ),
+			'param_name'       => 'slot_4_show_video',
+			'value'            => array( esc_html__( 'Yes', 'cph-elements' ) => 'yes' ),
+			'edit_field_class' => 'vc_col-sm-4',
+			'dependency'       => array(
+				'element' => 'layout',
+				'value'   => array( 'homepage-bento-4' ),
+			),
+		),
+
+		array(
+			'type'             => 'checkbox',
+			'heading'          => esc_html__( 'Show Excerpt', 'cph-elements' ),
+			'param_name'       => 'slot_4_show_excerpt',
+			'value'            => array( esc_html__( 'Yes', 'cph-elements' ) => 'yes' ),
+			'edit_field_class' => 'vc_col-sm-4',
+			'dependency'       => array(
+				'element' => 'layout',
+				'value'   => array( 'homepage-bento-4' ),
+			),
+		),
+
+		array(
+			'type'             => 'dropdown',
+			'heading'          => esc_html__( 'Content Position', 'cph-elements' ),
+			'param_name'       => 'slot_4_content_position',
+			'value'            => $content_position_options,
+			'std'              => 'bottom-stretch',
+			'edit_field_class' => 'vc_col-sm-6',
+			'dependency'       => array(
+				'element' => 'layout',
+				'value'   => array( 'homepage-bento-4' ),
+			),
+		),
+
+		array(
+			'type'             => 'dropdown',
+			'heading'          => esc_html__( 'Button Type', 'cph-elements' ),
+			'param_name'       => 'slot_4_button_type',
+			'value'            => $button_type_options,
+			'std'              => 'arrow',
+			'edit_field_class' => 'vc_col-sm-6',
+			'dependency'       => array(
+				'element' => 'layout',
+				'value'   => array( 'homepage-bento-4' ),
+			),
 		),
 
 		/*
@@ -291,7 +571,7 @@ return array(
 			'param_name' => 'group_header_projects_grid',
 			'dependency' => array(
 				'element' => 'layout',
-				'value'   => array( 'featured-2col' ),
+				'value'   => array( 'featured-2col', 'zigzag' ),
 			),
 		),
 
@@ -302,7 +582,7 @@ return array(
 			'value'       => cph_get_portfolio_categories_dropdown(),
 			'dependency'  => array(
 				'element' => 'layout',
-				'value'   => array( 'featured-2col' ),
+				'value'   => array( 'featured-2col', 'zigzag' ),
 			),
 			'description' => esc_html__( 'Filter by category or show all projects.', 'cph-elements' ),
 		),
@@ -314,7 +594,7 @@ return array(
 			'value'       => cph_get_project_status_dropdown(),
 			'dependency'  => array(
 				'element' => 'layout',
-				'value'   => array( 'featured-2col' ),
+				'value'   => array( 'featured-2col', 'zigzag' ),
 			),
 			'description' => esc_html__( 'Filter by Active or Completed status.', 'cph-elements' ),
 		),
@@ -326,7 +606,7 @@ return array(
 			'value'       => '',
 			'dependency'  => array(
 				'element' => 'layout',
-				'value'   => array( 'featured-2col' ),
+				'value'   => array( 'featured-2col', 'zigzag' ),
 			),
 			'description' => esc_html__( 'Leave blank for unlimited. Projects display in menu order.', 'cph-elements' ),
 		),
@@ -364,18 +644,197 @@ return array(
 				'element' => 'layout',
 				'value'   => array( 'featured-2col' ),
 			),
-			'description' => esc_html__( 'Display video background on cards if a project has a Lightbox/Single Project Video set. Video autoplays muted and loops.', 'cph-elements' ),
+			'description' => esc_html__( 'Display video background on cards that have a video set.', 'cph-elements' ),
+		),
+
+		array(
+			'type'        => 'dropdown',
+			'heading'     => esc_html__( 'Content Position', 'cph-elements' ),
+			'param_name'  => 'content_position',
+			'value'       => $content_position_options,
+			'std'         => 'bottom-stretch',
+			'dependency'  => array(
+				'element' => 'layout',
+				'value'   => array( 'featured-2col' ),
+			),
+			'description' => esc_html__( 'Position of the title and button within each card.', 'cph-elements' ),
+		),
+
+		array(
+			'type'        => 'dropdown',
+			'heading'     => esc_html__( 'Button Type', 'cph-elements' ),
+			'param_name'  => 'button_type',
+			'value'       => $button_type_options,
+			'std'         => 'arrow',
+			'dependency'  => array(
+				'element' => 'layout',
+				'value'   => array( 'featured-2col' ),
+			),
+			'description' => esc_html__( 'Arrow shows the pill-shaped arrow. Text shows a pill button with custom text.', 'cph-elements' ),
 		),
 
 		/*
 		 * ─────────────────────────────────────────────────────────────────
-		 * CARD STYLING
+		 * ZIGZAG SETTINGS
 		 * ─────────────────────────────────────────────────────────────────
 		 */
 		array(
 			'type'       => 'nectar_group_header',
-			'heading'    => esc_html__( 'Card Styling', 'cph-elements' ),
-			'param_name' => 'group_header_styling',
+			'heading'    => esc_html__( 'Zigzag Settings', 'cph-elements' ),
+			'param_name' => 'group_header_zigzag',
+			'dependency' => array(
+				'element' => 'layout',
+				'value'   => array( 'zigzag' ),
+			),
+		),
+
+		array(
+			'type'        => 'dropdown',
+			'heading'     => esc_html__( 'Heading Tag', 'cph-elements' ),
+			'param_name'  => 'heading_tag',
+			'value'       => array(
+				'H1' => 'h1',
+				'H2' => 'h2',
+				'H3' => 'h3',
+				'H4' => 'h4',
+				'H5' => 'h5',
+				'H6' => 'h6',
+			),
+			'std'         => 'h3',
+			'dependency'  => array(
+				'element' => 'layout',
+				'value'   => array( 'zigzag' ),
+			),
+			'description' => esc_html__( 'HTML heading tag for project titles.', 'cph-elements' ),
+		),
+
+		array(
+			'type'             => 'checkbox',
+			'heading'          => esc_html__( 'Show Category Filter', 'cph-elements' ),
+			'param_name'       => 'show_filter',
+			'value'            => array( esc_html__( 'Yes', 'cph-elements' ) => 'yes' ),
+			'std'              => 'yes',
+			'edit_field_class' => 'vc_col-sm-6',
+			'dependency'       => array(
+				'element' => 'layout',
+				'value'   => array( 'zigzag' ),
+			),
+			'description'      => esc_html__( 'Show filter bar to filter projects by category.', 'cph-elements' ),
+		),
+
+		array(
+			'type'             => 'checkbox',
+			'heading'          => esc_html__( 'Show Eyebrow', 'cph-elements' ),
+			'param_name'       => 'show_eyebrow',
+			'value'            => array( esc_html__( 'Yes', 'cph-elements' ) => 'yes' ),
+			'std'              => 'yes',
+			'edit_field_class' => 'vc_col-sm-6',
+			'dependency'       => array(
+				'element' => 'layout',
+				'value'   => array( 'zigzag' ),
+			),
+			'description'      => esc_html__( 'Show project-type taxonomy term above the title.', 'cph-elements' ),
+		),
+
+		array(
+			'type'        => 'textfield',
+			'heading'     => esc_html__( 'Button Text', 'cph-elements' ),
+			'param_name'  => 'zigzag_button_text',
+			'value'       => 'VIEW PROJECT',
+			'dependency'  => array(
+				'element' => 'layout',
+				'value'   => array( 'zigzag' ),
+			),
+			'description' => esc_html__( 'Button label on each zigzag row.', 'cph-elements' ),
+		),
+
+		array(
+			'type'             => 'textfield',
+			'heading'          => esc_html__( 'Row Height', 'cph-elements' ),
+			'param_name'       => 'zigzag_row_height',
+			'value'            => '500px',
+			'edit_field_class' => 'vc_col-sm-6',
+			'dependency'       => array(
+				'element' => 'layout',
+				'value'   => array( 'zigzag' ),
+			),
+			'description'      => esc_html__( 'Min-height per row. Any CSS value.', 'cph-elements' ),
+		),
+
+		array(
+			'type'             => 'textfield',
+			'heading'          => esc_html__( 'Row Gap', 'cph-elements' ),
+			'param_name'       => 'zigzag_row_gap',
+			'value'            => '40px',
+			'edit_field_class' => 'vc_col-sm-6',
+			'dependency'       => array(
+				'element' => 'layout',
+				'value'   => array( 'zigzag' ),
+			),
+			'description'      => esc_html__( 'Vertical space between rows. Any CSS value.', 'cph-elements' ),
+		),
+
+		/*
+		 * =====================================================================
+		 * TAB: STYLE
+		 * =====================================================================
+		 */
+
+		/*
+		 * ─────────────────────────────────────────────────────────────────
+		 * CARD SIZING
+		 * ─────────────────────────────────────────────────────────────────
+		 */
+		array(
+			'type'       => 'nectar_group_header',
+			'heading'    => esc_html__( 'Card Sizing', 'cph-elements' ),
+			'param_name' => 'group_header_sizing',
+			'group'      => esc_html__( 'Style', 'cph-elements' ),
+		),
+
+		// Desktop Card Height.
+		array(
+			'type'             => 'textfield',
+			'heading'          => '<span class="group-title">' . esc_html__( 'Card Height', 'cph-elements' ) . '</span>',
+			'param_name'       => 'card_height',
+			'value'            => '525px',
+			'edit_field_class' => 'vc_col-sm-12 desktop card-height-device-group',
+			'group'            => esc_html__( 'Style', 'cph-elements' ),
+			'description'      => esc_html__( 'Height for standard cards.', 'cph-elements' ),
+		),
+
+		// Tablet Card Height.
+		array(
+			'type'             => 'textfield',
+			'heading'          => '<span class="attr-title">' . esc_html__( 'Height', 'cph-elements' ) . '</span>',
+			'param_name'       => 'card_height_tablet',
+			'value'            => '',
+			'edit_field_class' => 'vc_col-sm-12 tablet card-height-device-group',
+			'group'            => esc_html__( 'Style', 'cph-elements' ),
+			'description'      => '',
+		),
+
+		// Phone Card Height.
+		array(
+			'type'             => 'textfield',
+			'heading'          => '<span class="attr-title">' . esc_html__( 'Height', 'cph-elements' ) . '</span>',
+			'param_name'       => 'card_height_phone',
+			'value'            => '',
+			'edit_field_class' => 'vc_col-sm-12 phone card-height-device-group',
+			'group'            => esc_html__( 'Style', 'cph-elements' ),
+			'description'      => '',
+		),
+
+		/*
+		 * ─────────────────────────────────────────────────────────────────
+		 * COLORS & TEXT
+		 * ─────────────────────────────────────────────────────────────────
+		 */
+		array(
+			'type'       => 'nectar_group_header',
+			'heading'    => esc_html__( 'Colors & Text', 'cph-elements' ),
+			'param_name' => 'group_header_colors',
+			'group'      => esc_html__( 'Style', 'cph-elements' ),
 		),
 
 		array(
@@ -383,7 +842,83 @@ return array(
 			'heading'     => esc_html__( 'Text Color', 'cph-elements' ),
 			'param_name'  => 'text_color',
 			'value'       => '#ffffff',
+			'group'       => esc_html__( 'Style', 'cph-elements' ),
 			'description' => esc_html__( 'Location text and excerpt color.', 'cph-elements' ),
+		),
+
+		// Desktop Location Font Size.
+		array(
+			'type'             => 'textfield',
+			'heading'          => '<span class="group-title">' . esc_html__( 'Location Font Size', 'cph-elements' ) . '</span>',
+			'param_name'       => 'location_font_size',
+			'value'            => '30px',
+			'edit_field_class' => 'vc_col-sm-12 desktop location-font-size-device-group',
+			'group'            => esc_html__( 'Style', 'cph-elements' ),
+			'description'      => esc_html__( 'Font size for location text.', 'cph-elements' ),
+		),
+
+		// Tablet Location Font Size.
+		array(
+			'type'             => 'textfield',
+			'heading'          => '<span class="attr-title">' . esc_html__( 'Font Size', 'cph-elements' ) . '</span>',
+			'param_name'       => 'location_font_size_tablet',
+			'value'            => '',
+			'edit_field_class' => 'vc_col-sm-12 tablet location-font-size-device-group',
+			'group'            => esc_html__( 'Style', 'cph-elements' ),
+			'description'      => '',
+		),
+
+		// Phone Location Font Size.
+		array(
+			'type'             => 'textfield',
+			'heading'          => '<span class="attr-title">' . esc_html__( 'Font Size', 'cph-elements' ) . '</span>',
+			'param_name'       => 'location_font_size_phone',
+			'value'            => '',
+			'edit_field_class' => 'vc_col-sm-12 phone location-font-size-device-group',
+			'group'            => esc_html__( 'Style', 'cph-elements' ),
+			'description'      => '',
+		),
+
+		array(
+			'type'        => 'textfield',
+			'heading'     => esc_html__( 'Letter Spacing', 'cph-elements' ),
+			'param_name'  => 'location_letter_spacing',
+			'value'       => '1.5px',
+			'group'       => esc_html__( 'Style', 'cph-elements' ),
+			'description' => esc_html__( 'Letter spacing for location text.', 'cph-elements' ),
+		),
+
+		/*
+		 * ─────────────────────────────────────────────────────────────────
+		 * BUTTON
+		 * ─────────────────────────────────────────────────────────────────
+		 */
+		array(
+			'type'       => 'nectar_group_header',
+			'heading'    => esc_html__( 'Button', 'cph-elements' ),
+			'param_name' => 'group_header_button',
+			'group'      => esc_html__( 'Style', 'cph-elements' ),
+		),
+
+		array(
+			'type'        => 'textfield',
+			'heading'     => esc_html__( 'Button Text', 'cph-elements' ),
+			'param_name'  => 'button_text',
+			'value'       => 'Read More',
+			'group'       => esc_html__( 'Style', 'cph-elements' ),
+			'description' => esc_html__( 'Text displayed inside the button when Button Type is set to Text.', 'cph-elements' ),
+		),
+
+		/*
+		 * ─────────────────────────────────────────────────────────────────
+		 * LOGO
+		 * ─────────────────────────────────────────────────────────────────
+		 */
+		array(
+			'type'       => 'nectar_group_header',
+			'heading'    => esc_html__( 'Logo', 'cph-elements' ),
+			'param_name' => 'group_header_logo',
+			'group'      => esc_html__( 'Style', 'cph-elements' ),
 		),
 
 		array(
@@ -391,6 +926,7 @@ return array(
 			'heading'     => esc_html__( 'Logo Width', 'cph-elements' ),
 			'param_name'  => 'logo_max_width',
 			'value'       => '70%',
+			'group'       => esc_html__( 'Style', 'cph-elements' ),
 			'description' => esc_html__( 'Forces all logos to the same width. Any CSS unit: 70%, 250px, 20vw, etc.', 'cph-elements' ),
 		),
 
@@ -410,7 +946,8 @@ return array(
 				esc_html__( 'Luminosity', 'cph-elements' ) => 'luminosity',
 			),
 			'std'         => 'normal',
-			'description' => esc_html__( 'Blend mode for logo area. Screen makes dark logo backgrounds transparent; Multiply makes light backgrounds transparent.', 'cph-elements' ),
+			'group'       => esc_html__( 'Style', 'cph-elements' ),
+			'description' => esc_html__( 'Screen makes dark logo backgrounds transparent; Multiply makes light backgrounds transparent.', 'cph-elements' ),
 		),
 
 		array(
@@ -423,17 +960,15 @@ return array(
 				'max'  => '2000',
 				'step' => '50',
 			),
+			'group'       => esc_html__( 'Style', 'cph-elements' ),
 			'description' => esc_html__( '100 = normal. Values above 500 push logos toward white. 0 = black.', 'cph-elements' ),
 		),
 
-		array(
-			'type'        => 'checkbox',
-			'heading'     => esc_html__( 'Show Arrow Button', 'cph-elements' ),
-			'param_name'  => 'show_arrow',
-			'value'       => array( esc_html__( 'Yes', 'cph-elements' ) => 'yes' ),
-			'std'         => 'yes',
-			'description' => esc_html__( 'Display the pill-shaped arrow button on cards.', 'cph-elements' ),
-		),
+		/*
+		 * =====================================================================
+		 * TAB: OVERLAY
+		 * =====================================================================
+		 */
 
 		/*
 		 * ─────────────────────────────────────────────────────────────────
@@ -442,21 +977,23 @@ return array(
 		 */
 		array(
 			'type'       => 'nectar_group_header',
-			'heading'    => esc_html__( 'Overlay - Default', 'cph-elements' ),
+			'heading'    => esc_html__( 'Default State', 'cph-elements' ),
 			'param_name' => 'group_header_overlay_default',
+			'group'      => esc_html__( 'Overlay', 'cph-elements' ),
 		),
 
 		array(
 			'type'        => 'colorpicker',
-			'heading'     => esc_html__( 'Default Overlay Color', 'cph-elements' ),
+			'heading'     => esc_html__( 'Overlay Color', 'cph-elements' ),
 			'param_name'  => 'overlay_color',
 			'value'       => '#000000',
+			'group'       => esc_html__( 'Overlay', 'cph-elements' ),
 			'description' => esc_html__( 'Overlay color in default state.', 'cph-elements' ),
 		),
 
 		array(
 			'type'        => 'nectar_range_slider',
-			'heading'     => esc_html__( 'Default Overlay Opacity', 'cph-elements' ),
+			'heading'     => esc_html__( 'Overlay Opacity', 'cph-elements' ),
 			'param_name'  => 'overlay_opacity',
 			'value'       => '20',
 			'options'     => array(
@@ -464,15 +1001,17 @@ return array(
 				'max'  => '100',
 				'step' => '5',
 			),
+			'group'       => esc_html__( 'Overlay', 'cph-elements' ),
 			'description' => esc_html__( 'Overlay opacity in default state (%).', 'cph-elements' ),
 		),
 
 		array(
 			'type'        => 'dropdown',
-			'heading'     => esc_html__( 'Default Blend Mode', 'cph-elements' ),
+			'heading'     => esc_html__( 'Blend Mode', 'cph-elements' ),
 			'param_name'  => 'overlay_blend_mode',
 			'value'       => $blend_mode_options,
 			'std'         => 'normal',
+			'group'       => esc_html__( 'Overlay', 'cph-elements' ),
 			'description' => esc_html__( 'Mix-blend-mode for overlay in default state.', 'cph-elements' ),
 		),
 
@@ -483,8 +1022,9 @@ return array(
 		 */
 		array(
 			'type'       => 'nectar_group_header',
-			'heading'    => esc_html__( 'Overlay - Hover', 'cph-elements' ),
+			'heading'    => esc_html__( 'Hover State', 'cph-elements' ),
 			'param_name' => 'group_header_overlay_hover',
+			'group'      => esc_html__( 'Overlay', 'cph-elements' ),
 		),
 
 		array(
@@ -492,6 +1032,7 @@ return array(
 			'heading'     => esc_html__( 'Hover Overlay Color', 'cph-elements' ),
 			'param_name'  => 'overlay_color_hover',
 			'value'       => '',
+			'group'       => esc_html__( 'Overlay', 'cph-elements' ),
 			'description' => esc_html__( 'Overlay color on hover. Leave empty to use default color.', 'cph-elements' ),
 		),
 
@@ -505,6 +1046,7 @@ return array(
 				'max'  => '100',
 				'step' => '5',
 			),
+			'group'       => esc_html__( 'Overlay', 'cph-elements' ),
 			'description' => esc_html__( 'Overlay opacity on hover (%).', 'cph-elements' ),
 		),
 
@@ -514,18 +1056,20 @@ return array(
 			'param_name'  => 'overlay_blend_mode_hover',
 			'value'       => $blend_mode_options,
 			'std'         => 'normal',
-			'description' => esc_html__( 'Mix-blend-mode for overlay on hover. Leave as None to use default.', 'cph-elements' ),
+			'group'       => esc_html__( 'Overlay', 'cph-elements' ),
+			'description' => esc_html__( 'Mix-blend-mode for overlay on hover.', 'cph-elements' ),
 		),
 
 		/*
 		 * ─────────────────────────────────────────────────────────────────
-		 * TITLE HOVER EFFECT (Lower Third)
+		 * LOWER THIRD (Title Hover Effect)
 		 * ─────────────────────────────────────────────────────────────────
 		 */
 		array(
 			'type'       => 'nectar_group_header',
 			'heading'    => esc_html__( 'Title Hover Effect', 'cph-elements' ),
 			'param_name' => 'group_header_title_hover',
+			'group'      => esc_html__( 'Overlay', 'cph-elements' ),
 		),
 
 		array(
@@ -533,6 +1077,7 @@ return array(
 			'heading'     => esc_html__( 'Enable Lower Third Effect', 'cph-elements' ),
 			'param_name'  => 'lower_third_enabled',
 			'value'       => array( esc_html__( 'Yes', 'cph-elements' ) => 'yes' ),
+			'group'       => esc_html__( 'Overlay', 'cph-elements' ),
 			'description' => esc_html__( 'Animate a background bar behind the title on hover, like a video lower third.', 'cph-elements' ),
 		),
 
@@ -541,6 +1086,7 @@ return array(
 			'heading'     => esc_html__( 'Bar Color', 'cph-elements' ),
 			'param_name'  => 'lower_third_bar_color',
 			'value'       => '#ffffff',
+			'group'       => esc_html__( 'Overlay', 'cph-elements' ),
 			'dependency'  => array(
 				'element' => 'lower_third_enabled',
 				'value'   => array( 'yes' ),
@@ -553,6 +1099,7 @@ return array(
 			'heading'     => esc_html__( 'Text Color on Hover', 'cph-elements' ),
 			'param_name'  => 'lower_third_text_color',
 			'value'       => '',
+			'group'       => esc_html__( 'Overlay', 'cph-elements' ),
 			'dependency'  => array(
 				'element' => 'lower_third_enabled',
 				'value'   => array( 'yes' ),
@@ -560,94 +1107,16 @@ return array(
 			'description' => esc_html__( 'Title text color when bar is shown. Leave empty to keep default.', 'cph-elements' ),
 		),
 
-		// Desktop Card Height.
-		array(
-			'type'             => 'textfield',
-			'heading'          => '<span class="group-title">' . esc_html__( 'Card Height', 'cph-elements' ) . '</span>',
-			'param_name'       => 'card_height',
-			'value'            => '525px',
-			'edit_field_class' => 'vc_col-sm-12 desktop card-height-device-group',
-			'description'      => esc_html__( 'Height for standard cards.', 'cph-elements' ),
-		),
-
-		// Tablet Card Height.
-		array(
-			'type'             => 'textfield',
-			'heading'          => '<span class="attr-title">' . esc_html__( 'Height', 'cph-elements' ) . '</span>',
-			'param_name'       => 'card_height_tablet',
-			'value'            => '',
-			'edit_field_class' => 'vc_col-sm-12 tablet card-height-device-group',
-			'description'      => '',
-		),
-
-		// Phone Card Height.
-		array(
-			'type'             => 'textfield',
-			'heading'          => '<span class="attr-title">' . esc_html__( 'Height', 'cph-elements' ) . '</span>',
-			'param_name'       => 'card_height_phone',
-			'value'            => '',
-			'edit_field_class' => 'vc_col-sm-12 phone card-height-device-group',
-			'description'      => '',
-		),
-
 		/*
-		 * ─────────────────────────────────────────────────────────────────
-		 * TYPOGRAPHY
-		 * ─────────────────────────────────────────────────────────────────
+		 * =====================================================================
+		 * TAB: ANIMATION
+		 * =====================================================================
 		 */
 		array(
 			'type'       => 'nectar_group_header',
-			'heading'    => esc_html__( 'Typography', 'cph-elements' ),
-			'param_name' => 'group_header_typography',
-		),
-
-		// Desktop Location Font Size.
-		array(
-			'type'             => 'textfield',
-			'heading'          => '<span class="group-title">' . esc_html__( 'Location Font Size', 'cph-elements' ) . '</span>',
-			'param_name'       => 'location_font_size',
-			'value'            => '30px',
-			'edit_field_class' => 'vc_col-sm-12 desktop location-font-size-device-group',
-			'description'      => esc_html__( 'Font size for location text.', 'cph-elements' ),
-		),
-
-		// Tablet Location Font Size.
-		array(
-			'type'             => 'textfield',
-			'heading'          => '<span class="attr-title">' . esc_html__( 'Font Size', 'cph-elements' ) . '</span>',
-			'param_name'       => 'location_font_size_tablet',
-			'value'            => '',
-			'edit_field_class' => 'vc_col-sm-12 tablet location-font-size-device-group',
-			'description'      => '',
-		),
-
-		// Phone Location Font Size.
-		array(
-			'type'             => 'textfield',
-			'heading'          => '<span class="attr-title">' . esc_html__( 'Font Size', 'cph-elements' ) . '</span>',
-			'param_name'       => 'location_font_size_phone',
-			'value'            => '',
-			'edit_field_class' => 'vc_col-sm-12 phone location-font-size-device-group',
-			'description'      => '',
-		),
-
-		array(
-			'type'        => 'textfield',
-			'heading'     => esc_html__( 'Letter Spacing', 'cph-elements' ),
-			'param_name'  => 'location_letter_spacing',
-			'value'       => '1.5px',
-			'description' => esc_html__( 'Letter spacing for location text.', 'cph-elements' ),
-		),
-
-		/*
-		 * ─────────────────────────────────────────────────────────────────
-		 * ANIMATION
-		 * ─────────────────────────────────────────────────────────────────
-		 */
-		array(
-			'type'       => 'nectar_group_header',
-			'heading'    => esc_html__( 'Animation', 'cph-elements' ),
+			'heading'    => esc_html__( 'Scroll Animation', 'cph-elements' ),
 			'param_name' => 'group_header_animation',
+			'group'      => esc_html__( 'Animation', 'cph-elements' ),
 		),
 
 		array(
@@ -656,6 +1125,7 @@ return array(
 			'param_name'  => 'animation',
 			'value'       => $animation_options,
 			'std'         => 'none',
+			'group'       => esc_html__( 'Animation', 'cph-elements' ),
 			'description' => esc_html__( 'Scroll-triggered animation for cards.', 'cph-elements' ),
 		),
 
@@ -664,6 +1134,7 @@ return array(
 			'heading'     => esc_html__( 'Animation Stagger', 'cph-elements' ),
 			'param_name'  => 'animation_stagger',
 			'value'       => '0.15',
+			'group'       => esc_html__( 'Animation', 'cph-elements' ),
 			'dependency'  => array(
 				'element'            => 'animation',
 				'value_not_equal_to' => array( 'none' ),
