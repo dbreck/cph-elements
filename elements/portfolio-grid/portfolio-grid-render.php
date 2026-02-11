@@ -808,7 +808,7 @@ function cph_render_zigzag_grid( $atts, $settings ) {
 	ob_start();
 
 	// Filter bar.
-	if ( $show_filter && count( $all_terms ) >= 2 ) {
+	if ( $show_filter && ! empty( $all_terms ) ) {
 		?>
 		<nav class="cph-zigzag__filter" aria-label="<?php esc_attr_e( 'Project filter', 'cph-elements' ); ?>">
 			<button class="cph-zigzag__filter-btn is-active" data-filter="" type="button"><?php esc_html_e( 'All', 'cph-elements' ); ?></button>
