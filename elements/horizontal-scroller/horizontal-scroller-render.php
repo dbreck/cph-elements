@@ -48,6 +48,15 @@ function cph_horizontal_scroller_shortcode( $atts ) {
 			'content_inset_tablet' => '',
 			'content_inset_phone'  => '',
 			'el_class'             => '',
+			'team_category'        => '',
+			'show_filter'          => 'no',
+			'show_short_bio'       => 'yes',
+			'button_text'          => '+ LOAD MORE',
+			'button_style'         => 'text-link',
+			'arrow_mode'           => 'single',
+			'border_radius'        => '25px',
+			'max_height'           => '',
+			'visible_cards'        => '',
 		),
 		$atts,
 		'cph_horizontal_scroller'
@@ -92,6 +101,17 @@ function cph_horizontal_scroller_shortcode( $atts ) {
 		$query_args['category_name'] = sanitize_text_field( $atts['category'] );
 	}
 
+	// Add team category filter.
+	if ( 'bti_team' === $atts['post_type'] && ! empty( $atts['team_category'] ) ) {
+		$query_args['tax_query'] = array(
+			array(
+				'taxonomy' => 'bti_team_category',
+				'field'    => 'slug',
+				'terms'    => sanitize_text_field( $atts['team_category'] ),
+			),
+		);
+	}
+
 	$query = new WP_Query( $query_args );
 
 	if ( ! $query->have_posts() ) {
@@ -114,6 +134,8 @@ function cph_horizontal_scroller_shortcode( $atts ) {
 	$content_inset_phone  = sanitize_text_field( $atts['content_inset_phone'] );
 	$el_class             = sanitize_html_class( $atts['el_class'] );
 	$post_type            = sanitize_text_field( $atts['post_type'] );
+	$border_radius        = sanitize_text_field( $atts['border_radius'] );
+	$max_height           = sanitize_text_field( $atts['max_height'] );
 
 	// Use custom aspect ratio if "custom" is selected.
 	if ( 'custom' === $aspect_ratio ) {
@@ -128,7 +150,11 @@ function cph_horizontal_scroller_shortcode( $atts ) {
 		'--gap: ' . esc_attr( $gap ),
 		'--arrow-offset: ' . esc_attr( $arrow_offset ),
 		'--content-inset: ' . esc_attr( $content_inset ),
+		'--card-border-radius: ' . esc_attr( $border_radius ),
 	);
+	if ( ! empty( $max_height ) ) {
+		$desktop_vars[] = '--card-max-height: ' . esc_attr( $max_height );
+	}
 
 	$element_css = '#' . esc_attr( $scroller_id ) . ' { ' . implode( '; ', $desktop_vars ) . '; }';
 
@@ -178,6 +204,11 @@ function cph_horizontal_scroller_shortcode( $atts ) {
 		$classes[] = $el_class;
 	}
 
+	$arrow_mode = sanitize_text_field( $atts['arrow_mode'] );
+	if ( 'both' === $arrow_mode ) {
+		$classes[] = 'cph-scroller--arrows-both';
+	}
+
 	ob_start();
 
 	// Output element CSS (includes responsive media queries).
@@ -186,13 +217,52 @@ function cph_horizontal_scroller_shortcode( $atts ) {
 	<div id="<?php echo esc_attr( $scroller_id ); ?>"
 		 class="<?php echo esc_attr( implode( ' ', $classes ) ); ?>"
 		 data-direction="<?php echo esc_attr( $direction ); ?>"
-		 data-post-type="<?php echo esc_attr( $post_type ); ?>">
+		 data-post-type="<?php echo esc_attr( $post_type ); ?>"
+		 data-arrow-mode="<?php echo esc_attr( $arrow_mode ); ?>"
+		 data-visible-cards="<?php echo esc_attr( sanitize_text_field( $atts['visible_cards'] ) ); ?>">
 
-		<button class="cph-scroller__arrow" type="button" aria-label="<?php esc_attr_e( 'Scroll carousel', 'cph-elements' ); ?>">
-			<svg width="60" height="12" viewBox="0 0 60 12" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-				<path d="M0 6H58M58 6L53 1M58 6L53 11" stroke="currentColor" stroke-width="1"/>
-			</svg>
-		</button>
+		<?php
+		$show_filter = sanitize_text_field( $atts['show_filter'] );
+		if ( 'yes' === $show_filter && 'bti_team' === $post_type ) :
+			$filter_terms = get_terms(
+				array(
+					'taxonomy'   => 'bti_team_category',
+					'hide_empty' => true,
+				)
+			);
+			if ( ! is_wp_error( $filter_terms ) && ! empty( $filter_terms ) ) :
+			?>
+			<nav class="cph-scroller__filter" aria-label="<?php esc_attr_e( 'Team filter', 'cph-elements' ); ?>">
+				<button class="cph-scroller__filter-btn is-active" data-filter="" type="button"><?php esc_html_e( 'All', 'cph-elements' ); ?></button>
+				<?php foreach ( $filter_terms as $term ) : ?>
+					<button class="cph-scroller__filter-btn" data-filter="<?php echo esc_attr( $term->slug ); ?>" type="button"><?php echo esc_html( $term->name ); ?></button>
+				<?php endforeach; ?>
+			</nav>
+			<?php
+			endif;
+		endif;
+		?>
+
+		<?php if ( 'single' === $arrow_mode ) : ?>
+			<button class="cph-scroller__arrow" type="button" aria-label="<?php esc_attr_e( 'Scroll carousel', 'cph-elements' ); ?>">
+				<svg width="60" height="12" viewBox="0 0 60 12" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+					<path d="M0 6H58M58 6L53 1M58 6L53 11" stroke="currentColor" stroke-width="1"/>
+				</svg>
+			</button>
+		<?php endif; ?>
+
+		<?php if ( 'both' === $arrow_mode ) : ?>
+			<button class="cph-scroller__arrow cph-scroller__arrow--prev" type="button" aria-label="<?php esc_attr_e( 'Previous', 'cph-elements' ); ?>">
+				<svg width="60" height="12" viewBox="0 0 60 12" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+					<path d="M60 6H2M2 6L7 1M2 6L7 11" stroke="currentColor" stroke-width="1"/>
+				</svg>
+			</button>
+			<button class="cph-scroller__arrow cph-scroller__arrow--next" type="button" aria-label="<?php esc_attr_e( 'Next', 'cph-elements' ); ?>">
+				<svg width="60" height="12" viewBox="0 0 60 12" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+					<path d="M0 6H58M58 6L53 1M58 6L53 11" stroke="currentColor" stroke-width="1"/>
+				</svg>
+			</button>
+		<?php endif; ?>
 
 		<div class="cph-scroller__viewport">
 			<div class="cph-scroller__track">
@@ -202,7 +272,7 @@ function cph_horizontal_scroller_shortcode( $atts ) {
 					$post_id = get_the_ID();
 
 					if ( 'bti_team' === $post_type ) {
-						echo cph_render_team_card( $post_id );
+						echo cph_render_team_card( $post_id, $atts );
 					} else {
 						echo cph_render_blog_card( $post_id );
 					}
@@ -224,18 +294,27 @@ add_shortcode( 'cph_horizontal_scroller', 'cph_horizontal_scroller_shortcode' );
  *
  * @since 1.0.0
  *
- * @param int $post_id Post ID.
+ * @param int   $post_id Post ID.
+ * @param array $atts    Shortcode attributes.
  * @return string Card HTML.
  */
-function cph_render_team_card( $post_id ) {
+function cph_render_team_card( $post_id, $atts = array() ) {
 	$name      = get_the_title( $post_id );
 	$job_title = get_post_meta( $post_id, '_bti_team_job_title', true );
+	$short_bio = get_post_meta( $post_id, '_bti_team_short_bio', true );
 	$image_url = get_the_post_thumbnail_url( $post_id, 'large' );
 	$permalink = get_permalink( $post_id );
 
+	$show_short_bio = isset( $atts['show_short_bio'] ) ? $atts['show_short_bio'] : 'yes';
+	$btn_text       = isset( $atts['button_text'] ) ? $atts['button_text'] : '+ LOAD MORE';
+	$btn_style      = isset( $atts['button_style'] ) ? $atts['button_style'] : 'text-link';
+
+	$terms          = wp_get_post_terms( $post_id, 'bti_team_category', array( 'fields' => 'slugs' ) );
+	$categories_str = ! is_wp_error( $terms ) ? implode( ' ', $terms ) : '';
+
 	ob_start();
 	?>
-	<article class="cph-scroller__card cph-scroller__card--team" data-post-id="<?php echo esc_attr( $post_id ); ?>">
+	<article class="cph-scroller__card cph-scroller__card--team" data-post-id="<?php echo esc_attr( $post_id ); ?>" data-categories="<?php echo esc_attr( $categories_str ); ?>">
 		<div class="cph-scroller__card-image">
 			<?php if ( $image_url ) : ?>
 				<img src="<?php echo esc_url( $image_url ); ?>"
@@ -248,9 +327,16 @@ function cph_render_team_card( $post_id ) {
 			<?php if ( $job_title ) : ?>
 				<p class="cph-scroller__card-title"><?php echo esc_html( $job_title ); ?></p>
 			<?php endif; ?>
-			<button class="cph-scroller__card-button" type="button" data-team-id="<?php echo esc_attr( $post_id ); ?>" data-text="<?php esc_attr_e( 'Read More', 'cph-elements' ); ?>">
-				<span><?php esc_html_e( 'Read More', 'cph-elements' ); ?></span>
-			</button>
+			<?php if ( 'yes' === $show_short_bio && $short_bio ) : ?>
+				<p class="cph-scroller__card-bio"><?php echo esc_html( $short_bio ); ?></p>
+			<?php endif; ?>
+			<?php if ( 'text-link' === $btn_style ) : ?>
+				<button class="cph-scroller__card-button cph-scroller__card-button--text" type="button" data-team-id="<?php echo esc_attr( $post_id ); ?>"><?php echo esc_html( $btn_text ); ?></button>
+			<?php else : ?>
+				<button class="cph-scroller__card-button" type="button" data-team-id="<?php echo esc_attr( $post_id ); ?>" data-text="<?php echo esc_attr( $btn_text ); ?>">
+					<span><?php echo esc_html( $btn_text ); ?></span>
+				</button>
+			<?php endif; ?>
 		</div>
 	</article>
 	<?php

@@ -111,6 +111,81 @@ return array(
 			),
 		),
 
+		array(
+			'type'        => 'dropdown',
+			'heading'     => esc_html__( 'Team Category', 'cph-elements' ),
+			'param_name'  => 'team_category',
+			'value'       => function_exists( 'cph_get_team_categories_for_dropdown' )
+				? cph_get_team_categories_for_dropdown()
+				: array( esc_html__( 'All Categories', 'cph-elements' ) => '' ),
+			'std'         => '',
+			'description' => esc_html__( 'Filter by team category.', 'cph-elements' ),
+			'dependency'  => array(
+				'element' => 'post_type',
+				'value'   => array( 'bti_team' ),
+			),
+		),
+
+		array(
+			'type'        => 'dropdown',
+			'heading'     => esc_html__( 'Show Filter Tabs', 'cph-elements' ),
+			'param_name'  => 'show_filter',
+			'value'       => array(
+				esc_html__( 'No', 'cph-elements' )  => 'no',
+				esc_html__( 'Yes', 'cph-elements' ) => 'yes',
+			),
+			'std'         => 'no',
+			'description' => esc_html__( 'Show category filter tabs above the scroller.', 'cph-elements' ),
+			'dependency'  => array(
+				'element' => 'post_type',
+				'value'   => array( 'bti_team' ),
+			),
+		),
+
+		array(
+			'type'        => 'dropdown',
+			'heading'     => esc_html__( 'Show Short Bio', 'cph-elements' ),
+			'param_name'  => 'show_short_bio',
+			'value'       => array(
+				esc_html__( 'Yes', 'cph-elements' ) => 'yes',
+				esc_html__( 'No', 'cph-elements' )  => 'no',
+			),
+			'std'         => 'yes',
+			'description' => esc_html__( 'Show short bio excerpt on team cards.', 'cph-elements' ),
+			'dependency'  => array(
+				'element' => 'post_type',
+				'value'   => array( 'bti_team' ),
+			),
+		),
+
+		array(
+			'type'        => 'textfield',
+			'heading'     => esc_html__( 'Button Text', 'cph-elements' ),
+			'param_name'  => 'button_text',
+			'value'       => '+ LOAD MORE',
+			'description' => esc_html__( 'Text label for the card button.', 'cph-elements' ),
+			'dependency'  => array(
+				'element' => 'post_type',
+				'value'   => array( 'bti_team' ),
+			),
+		),
+
+		array(
+			'type'        => 'dropdown',
+			'heading'     => esc_html__( 'Button Style', 'cph-elements' ),
+			'param_name'  => 'button_style',
+			'value'       => array(
+				esc_html__( 'Text Link', 'cph-elements' )  => 'text-link',
+				esc_html__( 'Pill Button', 'cph-elements' ) => 'pill',
+			),
+			'std'         => 'text-link',
+			'description' => esc_html__( 'Button appearance style.', 'cph-elements' ),
+			'dependency'  => array(
+				'element' => 'post_type',
+				'value'   => array( 'bti_team' ),
+			),
+		),
+
 		/*
 		 * ─────────────────────────────────────────────────────────────────
 		 * LAYOUT SETTINGS
@@ -160,6 +235,21 @@ return array(
 			'value'            => '',
 			'edit_field_class' => 'vc_col-sm-12 phone card-width-device-group',
 			'description'      => '',
+		),
+
+		array(
+			'type'        => 'dropdown',
+			'heading'     => esc_html__( 'Visible Cards', 'cph-elements' ),
+			'param_name'  => 'visible_cards',
+			'value'       => array(
+				esc_html__( 'Auto (use Card Width)', 'cph-elements' ) => '',
+				'2' => '2',
+				'3' => '3',
+				'4' => '4',
+				'5' => '5',
+			),
+			'std'         => '',
+			'description' => esc_html__( 'Show exactly this many cards. Overrides Card Width.', 'cph-elements' ),
 		),
 
 		array(
@@ -271,6 +361,34 @@ return array(
 			'value'            => '',
 			'edit_field_class' => 'vc_col-sm-12 phone content-inset-device-group',
 			'description'      => '',
+		),
+
+		array(
+			'type'        => 'textfield',
+			'heading'     => esc_html__( 'Image Max Height', 'cph-elements' ),
+			'param_name'  => 'max_height',
+			'value'       => '',
+			'description' => esc_html__( 'Maximum height for card images. Any CSS value: 400px, 50vh. Leave empty for no limit.', 'cph-elements' ),
+		),
+
+		array(
+			'type'        => 'textfield',
+			'heading'     => esc_html__( 'Image Border Radius', 'cph-elements' ),
+			'param_name'  => 'border_radius',
+			'value'       => '25px',
+			'description' => esc_html__( 'Border radius for card images. Any CSS value: 25px, 10px, 0, 50%.', 'cph-elements' ),
+		),
+
+		array(
+			'type'        => 'dropdown',
+			'heading'     => esc_html__( 'Arrow Mode', 'cph-elements' ),
+			'param_name'  => 'arrow_mode',
+			'value'       => array(
+				esc_html__( 'Single Arrow', 'cph-elements' ) => 'single',
+				esc_html__( 'Both Arrows', 'cph-elements' )  => 'both',
+			),
+			'std'         => 'single',
+			'description' => esc_html__( 'Single arrow on direction side, or both arrows on left and right.', 'cph-elements' ),
 		),
 
 		/*

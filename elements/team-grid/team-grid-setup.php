@@ -153,6 +153,7 @@ if ( ! function_exists( 'cph_team_meta_box_callback' ) ) {
 		wp_nonce_field( 'bti_team_meta_box', 'bti_team_meta_box_nonce' );
 
 		$job_title = get_post_meta( $post->ID, '_bti_team_job_title', true );
+		$short_bio = get_post_meta( $post->ID, '_bti_team_short_bio', true );
 		$bio       = get_post_meta( $post->ID, '_bti_team_bio', true );
 		?>
 		<p>
@@ -168,6 +169,8 @@ if ( ! function_exists( 'cph_team_meta_box_callback' ) ) {
 				class="widefat"
 				placeholder="<?php esc_attr_e( 'e.g., Chief Executive Officer', 'cph-elements' ); ?>" />
 		</p>
+		<p><label for="bti_team_short_bio"><strong>Short Bio (Card Excerpt)</strong></label></p>
+		<p><textarea id="bti_team_short_bio" name="bti_team_short_bio" class="widefat" rows="3" placeholder="Brief description shown on team cards"><?php echo esc_textarea( $short_bio ); ?></textarea></p>
 		<p>
 			<label for="bti_team_bio">
 				<strong><?php esc_html_e( 'Biography', 'cph-elements' ); ?></strong>
@@ -222,6 +225,15 @@ if ( ! function_exists( 'cph_team_save_meta_box' ) ) {
 				$post_id,
 				'_bti_team_job_title',
 				sanitize_text_field( $_POST['bti_team_job_title'] )
+			);
+		}
+
+		// Save short bio.
+		if ( isset( $_POST['bti_team_short_bio'] ) ) {
+			update_post_meta(
+				$post_id,
+				'_bti_team_short_bio',
+				sanitize_textarea_field( $_POST['bti_team_short_bio'] )
 			);
 		}
 

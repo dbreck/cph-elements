@@ -24,6 +24,40 @@
 }
 
 /* ==========================================================================
+   Filter Bar
+   ========================================================================== */
+
+.cph-scroller__filter {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px 10vw;
+	justify-content: center;
+	margin-bottom: 48px;
+}
+
+.cph-scroller__filter-btn {
+	background: transparent;
+	border: none;
+	color: #000;
+	cursor: pointer;
+	font-family: 'Poppins', sans-serif;
+	font-size: max(16px, 1.7vw);
+	font-weight: 500;
+	letter-spacing: 0.01em;
+	padding: 8px 4px;
+	text-transform: capitalize;
+	transition: color 0.3s ease !important;
+}
+
+.cph-scroller__filter-btn:hover {
+	color: #bbcb81 !important;
+}
+
+.cph-scroller__filter-btn.is-active {
+	color: var(--ag-olive, #87A80E);
+}
+
+/* ==========================================================================
    Arrow Button
    ========================================================================== */
 
@@ -127,7 +161,8 @@
 	position: relative;
 	width: 100%;
 	aspect-ratio: var(--card-aspect-ratio);
-	border-radius: 25px;
+	max-height: var(--card-max-height, none);
+	border-radius: var(--card-border-radius, 25px);
 	overflow: hidden;
 	display: block;
 	flex: none;
@@ -161,7 +196,7 @@
 
 .cph-scroller__card-name {
 	margin: 0 0 2px !important;
-	font-weight: 700 !important;
+	font-weight: 500 !important;
 	line-height: 1.2 !important;
 	color: #000;
 	letter-spacing: 0.01em;
@@ -174,6 +209,15 @@
 	font-size: 22px;
 	font-weight: 400;
 	line-height: 2.08;
+	color: #000;
+}
+
+.cph-scroller__card-bio {
+	font-size: 22px;
+	font-weight: 400;
+	line-height: 1.5;
+	margin: 12px 0 0;
+	max-width: 579px;
 	color: #000;
 }
 
@@ -244,6 +288,93 @@
 .cph-scroller__card-button:hover::after {
 	transform-origin: bottom center;
 	transform: skewY(9.3deg) scaleY(2);
+}
+
+.cph-scroller__card-button--text {
+	background: none;
+	border: none;
+	padding: 0;
+	width: auto;
+	justify-content: flex-start;
+	cursor: pointer;
+	font-weight: 500;
+	font-size: 23px;
+	line-height: 1.5;
+	text-decoration: none;
+	color: #000;
+	transition: color 0.3s ease;
+	margin-top: 16px;
+}
+
+.cph-scroller__card-button--text:hover {
+	text-decoration: underline;
+}
+
+.cph-scroller__card-button--text::before,
+.cph-scroller__card-button--text::after {
+	display: none;
+}
+
+.cph-scroller__card.is-filter-hidden {
+	display: none;
+}
+
+/* ==========================================================================
+   Dual Arrow Mode
+   ========================================================================== */
+
+.cph-scroller--arrows-both {
+	--arrow-zone: 140px;
+	--arrow-btn-width: 106px;
+}
+
+.cph-scroller--arrows-both .cph-scroller__viewport {
+	position: relative;
+	margin-left: var(--arrow-zone);
+	margin-right: var(--arrow-zone);
+	width: auto;
+}
+
+.cph-scroller--arrows-both .cph-scroller__arrow--prev,
+.cph-scroller--arrows-both .cph-scroller__arrow--next {
+	position: absolute;
+	top: 50%;
+	transform: translateY(-50%);
+	z-index: 10;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: var(--arrow-btn-width);
+	height: 66px;
+	padding: 0;
+	border: 2px solid var(--cph-scroller-arrow-color, #87A80E);
+	border-radius: 33px;
+	background: transparent;
+	color: #000;
+	cursor: pointer;
+	transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+.cph-scroller--arrows-both .cph-scroller__arrow--prev {
+	left: calc((var(--arrow-zone) - var(--arrow-btn-width)) / 2);
+	right: auto;
+}
+
+.cph-scroller--arrows-both .cph-scroller__arrow--next {
+	right: calc((var(--arrow-zone) - var(--arrow-btn-width)) / 2);
+	left: auto;
+}
+
+.cph-scroller--arrows-both .cph-scroller__arrow--prev:hover,
+.cph-scroller--arrows-both .cph-scroller__arrow--next:hover {
+	background-color: var(--cph-scroller-arrow-color, #87A80E);
+	color: #fff;
+}
+
+.cph-scroller--arrows-both .cph-scroller__arrow svg {
+	width: 60px;
+	height: auto;
+	transform: none;
 }
 
 /* ==========================================================================
@@ -383,6 +514,33 @@
 	.cph-scroller__card-date {
 		font-size: 16px;
 	}
+
+	.cph-scroller__filter {
+		gap: 6px 16px;
+		margin-bottom: 32px;
+	}
+
+	.cph-scroller__filter-btn {
+		font-size: 11px;
+	}
+
+	.cph-scroller__card-bio {
+		font-size: 18px;
+	}
+
+	.cph-scroller__card-button--text {
+		font-size: 18px;
+	}
+
+	.cph-scroller--arrows-both {
+		--arrow-zone: 100px;
+		--arrow-btn-width: 80px;
+	}
+
+	.cph-scroller--arrows-both .cph-scroller__arrow--prev,
+	.cph-scroller--arrows-both .cph-scroller__arrow--next {
+		height: 50px;
+	}
 }
 
 @media (max-width: 690px) {
@@ -439,6 +597,28 @@
 		font-size: 14px;
 		bottom: 20px;
 		left: 20px;
+	}
+
+	.cph-scroller__card-bio {
+		font-size: 16px;
+	}
+
+	.cph-scroller__card-button--text {
+		font-size: 16px;
+	}
+
+	.cph-scroller--arrows-both {
+		--arrow-zone: 80px;
+		--arrow-btn-width: 60px;
+	}
+
+	.cph-scroller--arrows-both .cph-scroller__arrow--prev,
+	.cph-scroller--arrows-both .cph-scroller__arrow--next {
+		height: 40px;
+	}
+
+	.cph-scroller--arrows-both .cph-scroller__arrow svg {
+		width: 28px;
 	}
 }
 

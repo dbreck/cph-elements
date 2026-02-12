@@ -277,9 +277,6 @@ if ( ! function_exists( 'cph_register_portfolio_autocomplete_filters' ) ) {
 	 * @return void
 	 */
 	function cph_register_portfolio_autocomplete_filters() {
-		// Homepage Bento slots (1-3).
-		$bento_slots = array( 'slot_1', 'slot_2', 'slot_3' );
-
 		// Grid 2x4 slots (1-8).
 		$grid_slots = array();
 		for ( $i = 1; $i <= 8; $i++ ) {
@@ -292,8 +289,8 @@ if ( ! function_exists( 'cph_register_portfolio_autocomplete_filters' ) ) {
 			$featured_slots[] = 'featured_slot_' . $i;
 		}
 
-		// Combine all slots.
-		$all_slots = array_merge( $bento_slots, $grid_slots, $featured_slots );
+		// Combine all slots (bento slots now use dropdowns).
+		$all_slots = array_merge( $grid_slots, $featured_slots );
 
 		// Register callback and render filters for each slot.
 		foreach ( $all_slots as $slot ) {
@@ -312,6 +309,39 @@ if ( ! function_exists( 'cph_register_portfolio_autocomplete_filters' ) ) {
 		}
 	}
 	add_action( 'init', 'cph_register_portfolio_autocomplete_filters' );
+}
+
+/*
+ * ==========================================================================
+ * WPBAKERY ADMIN SCRIPTS
+ * ==========================================================================
+ */
+
+if ( ! function_exists( 'cph_portfolio_grid_admin_scripts' ) ) {
+	/**
+	 * Enqueue admin JS for the Portfolio Grid WPBakery element.
+	 *
+	 * Loads the device-group toggle script in the WPBakery editor context.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param string $hook The current admin page.
+	 * @return void
+	 */
+	function cph_portfolio_grid_admin_scripts( $hook ) {
+		if ( 'post.php' !== $hook && 'post-new.php' !== $hook ) {
+			return;
+		}
+
+		wp_enqueue_script(
+			'cph-portfolio-grid-admin',
+			cph_element_url( 'portfolio-grid' ) . 'assets/js/portfolio-grid-admin.js',
+			array( 'jquery' ),
+			CPH_ELEMENTS_VERSION,
+			true
+		);
+	}
+	add_action( 'admin_enqueue_scripts', 'cph_portfolio_grid_admin_scripts' );
 }
 
 /*

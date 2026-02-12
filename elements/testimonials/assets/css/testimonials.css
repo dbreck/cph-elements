@@ -1,0 +1,284 @@
+/**
+ * CPH Testimonials - Styles
+ *
+ * Scoped under .cph-testimonials for specificity against Salient theme.
+ *
+ * @package CPH_Elements
+ * @since   1.0.0
+ */
+
+/* ==========================================================================
+   Container
+   ========================================================================== */
+
+.cph-testimonials {
+	background: var(--testimonials-bg) !important;
+	color: var(--testimonials-text);
+	padding: 80px 40px;
+	text-align: center;
+}
+
+.cph-testimonials .cph-testimonials__inner {
+	max-width: var(--testimonials-max-width);
+	margin: 0 auto;
+}
+
+/* Fixed section height — vertically center content, clip overflow */
+.cph-testimonials.cph-testimonials--fixed-height {
+	height: var(--testimonials-slider-height);
+	box-sizing: border-box;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	overflow: hidden;
+}
+
+/* ==========================================================================
+   Decorative Icon
+   ========================================================================== */
+
+.cph-testimonials .cph-testimonials__icon {
+	color: var(--testimonials-accent);
+	margin-bottom: var(--testimonials-icon-mb);
+}
+
+/* Reset Salient h1-h6 styles on icon character */
+.cph-testimonials .cph-testimonials__icon-char {
+	font-size: var(--testimonials-icon-size) !important;
+	line-height: 1 !important;
+	font-weight: inherit !important;
+	letter-spacing: normal !important;
+	margin: 0 !important;
+	color: inherit !important;
+}
+
+.cph-testimonials .cph-testimonials__icon i {
+	font-size: var(--testimonials-icon-size);
+}
+
+/* ==========================================================================
+   Slider
+   ========================================================================== */
+
+.cph-testimonials .cph-testimonials__slider {
+	position: relative;
+	overflow: hidden;
+}
+
+.cph-testimonials .cph-testimonials__slide {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	opacity: 0;
+	visibility: hidden;
+	transition: opacity var(--testimonials-transition) ease,
+	            visibility var(--testimonials-transition) ease,
+	            transform var(--testimonials-transition) ease;
+}
+
+/* Active slide — !important on transform to beat transition modifier specificity */
+.cph-testimonials .cph-testimonials__slide.is-active {
+	position: relative;
+	opacity: 1;
+	visibility: visible;
+	transform: none !important;
+}
+
+.cph-testimonials .cph-testimonials__slide.is-exiting {
+	opacity: 0;
+	visibility: hidden;
+}
+
+/* ==========================================================================
+   Transition: Slide Left (exit left, enter from right)
+   ========================================================================== */
+
+.cph-testimonials.cph-testimonials--slide-left .cph-testimonials__slide {
+	transform: translateX(50px);
+}
+
+.cph-testimonials.cph-testimonials--slide-left .cph-testimonials__slide.is-exiting {
+	transform: translateX(-50px);
+}
+
+/* ==========================================================================
+   Transition: Slide Right (exit right, enter from left)
+   ========================================================================== */
+
+.cph-testimonials.cph-testimonials--slide-right .cph-testimonials__slide {
+	transform: translateX(-50px);
+}
+
+.cph-testimonials.cph-testimonials--slide-right .cph-testimonials__slide.is-exiting {
+	transform: translateX(50px);
+}
+
+/* ==========================================================================
+   Transition: Fade Up (exit upward, enter from below)
+   ========================================================================== */
+
+.cph-testimonials.cph-testimonials--fade-up .cph-testimonials__slide {
+	transform: translateY(30px);
+}
+
+.cph-testimonials.cph-testimonials--fade-up .cph-testimonials__slide.is-exiting {
+	transform: translateY(-30px);
+}
+
+/* ==========================================================================
+   Transition: Fade Down (exit downward, enter from above)
+   ========================================================================== */
+
+.cph-testimonials.cph-testimonials--fade-down .cph-testimonials__slide {
+	transform: translateY(-30px);
+}
+
+.cph-testimonials.cph-testimonials--fade-down .cph-testimonials__slide.is-exiting {
+	transform: translateY(30px);
+}
+
+/* ==========================================================================
+   Transition: Zoom Fade (exit zooming in, enter from slightly zoomed)
+   ========================================================================== */
+
+.cph-testimonials.cph-testimonials--zoom-fade .cph-testimonials__slide {
+	transform: scale(1.05);
+}
+
+.cph-testimonials.cph-testimonials--zoom-fade .cph-testimonials__slide.is-exiting {
+	transform: scale(1.1);
+}
+
+/* ==========================================================================
+   Transition: Pinch Fade (exit shrinking, enter from slightly shrunk)
+   ========================================================================== */
+
+.cph-testimonials.cph-testimonials--pinch-fade .cph-testimonials__slide {
+	transform: scale(0.95);
+}
+
+.cph-testimonials.cph-testimonials--pinch-fade .cph-testimonials__slide.is-exiting {
+	transform: scale(0.9);
+}
+
+/* ==========================================================================
+   Quote & Attribution
+   ========================================================================== */
+
+.cph-testimonials .cph-testimonials__quote {
+	font-size: var(--testimonials-quote-size) !important;
+	line-height: 1.4 !important;
+	margin: 0 0 var(--testimonials-quote-mb) !important;
+	padding: 0 !important;
+}
+
+.cph-testimonials .cph-testimonials__quote p {
+	font-size: inherit !important;
+	line-height: inherit !important;
+	color: inherit !important;
+}
+
+.cph-testimonials .cph-testimonials__quote p:last-child {
+	margin-bottom: 0;
+}
+
+.cph-testimonials .cph-testimonials__attribution {
+	font-size: var(--testimonials-attribution-size) !important;
+	margin: 0 !important;
+	display: block;
+	color: inherit !important;
+}
+
+.cph-testimonials .cph-testimonials__attribution::before {
+	content: "\2014\00a0";
+}
+
+/* ==========================================================================
+   Button — Reset Salient anchor styles
+   ========================================================================== */
+
+.cph-testimonials a.cph-testimonials__button {
+	display: inline-block;
+	margin-top: var(--testimonials-button-mt);
+	padding: 24px 52px;
+	border-radius: 50px !important;
+	border: 2px solid var(--testimonials-button-border) !important;
+	border-bottom: 2px solid var(--testimonials-button-border) !important;
+	color: var(--testimonials-text) !important;
+	background: transparent !important;
+	text-decoration: none !important;
+	font-size: inherit;
+	text-box-edge: cap alphabetic;
+	text-box-trim: trim-both;
+	transition: background 0.3s, color 0.3s, border-color 0.3s;
+}
+
+.cph-testimonials a.cph-testimonials__button:hover {
+	background: var(--testimonials-button-border) !important;
+	color: var(--testimonials-bg) !important;
+}
+
+/* ==========================================================================
+   Dots — Reset Salient button styles
+   ========================================================================== */
+
+.cph-testimonials .cph-testimonials__dots {
+	display: flex;
+	justify-content: center;
+	gap: var(--testimonials-dot-gap);
+	margin-top: 40px;
+}
+
+.cph-testimonials button.cph-testimonials__dot {
+	width: var(--testimonials-dot-size);
+	height: var(--testimonials-dot-size);
+	border-radius: 50% !important;
+	border: none !important;
+	padding: 0 !important;
+	margin: 0;
+	min-height: 0;
+	min-width: 0;
+	cursor: pointer;
+	background: var(--testimonials-dot-inactive) !important;
+	-webkit-appearance: none;
+	appearance: none;
+	transition: background 0.3s;
+}
+
+.cph-testimonials button.cph-testimonials__dot.is-active {
+	background: var(--testimonials-accent) !important;
+}
+
+/* ==========================================================================
+   Responsive - Tablet (max-width: 999px)
+   ========================================================================== */
+
+@media only screen and (max-width: 999px) {
+	.cph-testimonials {
+		padding: 60px 30px;
+	}
+
+	.cph-testimonials .cph-testimonials__quote {
+		font-size: calc(var(--testimonials-quote-size) * 0.8) !important;
+	}
+}
+
+/* ==========================================================================
+   Responsive - Phone (max-width: 599px)
+   ========================================================================== */
+
+@media only screen and (max-width: 599px) {
+	.cph-testimonials {
+		padding: 40px 20px;
+	}
+
+	.cph-testimonials .cph-testimonials__quote {
+		font-size: calc(var(--testimonials-quote-size) * 0.65) !important;
+	}
+
+	.cph-testimonials .cph-testimonials__icon-char,
+	.cph-testimonials .cph-testimonials__icon i {
+		font-size: calc(var(--testimonials-icon-size) * 0.7) !important;
+	}
+}

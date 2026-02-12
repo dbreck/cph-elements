@@ -51,6 +51,7 @@ function cph_element_path( $slug ) {
 /**
  * Load shared classes.
  */
+require_once CPH_ELEMENTS_PATH . 'shared/class-cph-github-updater.php';
 require_once CPH_ELEMENTS_PATH . 'shared/class-cph-element-loader.php';
 require_once CPH_ELEMENTS_PATH . 'shared/class-cph-gsap.php';
 require_once CPH_ELEMENTS_PATH . 'shared/class-cph-admin.php';
@@ -79,5 +80,9 @@ function cph_elements_init() {
 	// Boot the admin handler.
 	$admin = new CPH_Admin( $loader );
 	$admin->init();
+
+	// Boot the GitHub updater.
+	$updater = new CPH_GitHub_Updater( CPH_ELEMENTS_FILE, 'dbreck/cph-elements', CPH_ELEMENTS_VERSION );
+	$updater->init();
 }
 add_action( 'plugins_loaded', 'cph_elements_init' );

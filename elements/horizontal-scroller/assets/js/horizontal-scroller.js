@@ -44,8 +44,10 @@
 
 		var track = container.querySelector(CONFIG.trackSelector);
 		var viewport = container.querySelector(CONFIG.viewportSelector);
-		var arrow = container.querySelector(CONFIG.arrowSelector);
-		var cards = container.querySelectorAll(CONFIG.cardSelector);
+		var arrow = container.querySelector(CONFIG.arrowSelector + ':not(.cph-scroller__arrow--prev):not(.cph-scroller__arrow--next)');
+		var prevArrow = container.querySelector('.cph-scroller__arrow--prev');
+		var nextArrow = container.querySelector('.cph-scroller__arrow--next');
+		var cards = container.querySelectorAll(CONFIG.cardSelector + ':not(.is-filter-hidden):not(.cph-scroller__card--clone)');
 
 		if (!track || !viewport || cards.length === 0) {
 			return;
@@ -56,12 +58,23 @@
 
 		// Get actual card dimensions from the first card element
 		var firstCard = cards[0];
-		var cardRect = firstCard.getBoundingClientRect();
-		var cardWidth = cardRect.width;
 
 		// Get gap from computed styles
 		var trackStyle = getComputedStyle(track);
 		var gap = parseFloat(trackStyle.gap) || 178;
+
+		// Auto-size cards when visible_cards is specified
+		var visibleCards = parseInt(container.dataset.visibleCards) || 0;
+		var cardWidth;
+		if (visibleCards > 0) {
+			var viewportWidth = viewport.getBoundingClientRect().width;
+			cardWidth = (viewportWidth - (visibleCards - 1) * gap) / visibleCards;
+			cards.forEach(function(card) {
+				card.style.width = cardWidth + 'px';
+			});
+		} else {
+			cardWidth = firstCard.getBoundingClientRect().width;
+		}
 
 		// Calculate total width of one set of cards
 		var cardTotalWidth = cardWidth + gap;
@@ -213,12 +226,14 @@
 		 * Position arrow at center of card image (not whole card)
 		 */
 		function positionArrow() {
-			if (!arrow) return;
 			var cardImage = firstCard.querySelector('.cph-scroller__card-image');
-			if (cardImage) {
-				var imageHeight = cardImage.getBoundingClientRect().height;
-				arrow.style.top = (imageHeight / 2) + 'px';
-			}
+			if (!cardImage) return;
+			var imageRect = cardImage.getBoundingClientRect();
+			var containerRect = container.getBoundingClientRect();
+			var centerY = (imageRect.top - containerRect.top + imageRect.height / 2) + 'px';
+			if (arrow) arrow.style.top = centerY;
+			if (prevArrow) prevArrow.style.top = centerY;
+			if (nextArrow) nextArrow.style.top = centerY;
 		}
 		positionArrow();
 
@@ -263,6 +278,65 @@
 			});
 		}
 
+		// Dual arrow support (both mode).
+		if (prevArrow) {
+			prevArrow.addEventListener('click', function(e) {
+				e.preventDefault();
+				if (state.isDragging) return;
+				var targetX = state.x + cardTotalWidth;
+				gsap.to(track, {
+					x: targetX,
+					duration: CONFIG.animationDuration,
+					ease: CONFIG.animationEase,
+					onUpdate: function() {
+						state.x = gsap.getProperty(track, 'x');
+						var wrapped = wrapPosition(state.x);
+						if (wrapped !== state.x) {
+							gsap.set(track, { x: wrapped });
+							state.x = wrapped;
+						}
+					},
+					onComplete: function() {
+						state.x = gsap.getProperty(track, 'x');
+						var wrapped = wrapPosition(state.x);
+						if (wrapped !== state.x) {
+							gsap.set(track, { x: wrapped });
+							state.x = wrapped;
+						}
+					}
+				});
+			});
+		}
+
+		if (nextArrow) {
+			nextArrow.addEventListener('click', function(e) {
+				e.preventDefault();
+				if (state.isDragging) return;
+				var targetX = state.x - cardTotalWidth;
+				gsap.to(track, {
+					x: targetX,
+					duration: CONFIG.animationDuration,
+					ease: CONFIG.animationEase,
+					onUpdate: function() {
+						state.x = gsap.getProperty(track, 'x');
+						var wrapped = wrapPosition(state.x);
+						if (wrapped !== state.x) {
+							gsap.set(track, { x: wrapped });
+							state.x = wrapped;
+						}
+					},
+					onComplete: function() {
+						state.x = gsap.getProperty(track, 'x');
+						var wrapped = wrapPosition(state.x);
+						if (wrapped !== state.x) {
+							gsap.set(track, { x: wrapped });
+							state.x = wrapped;
+						}
+					}
+				});
+			});
+		}
+
 		// Mark as initialized
 		container.dataset.scrollerInit = 'true';
 
@@ -273,10 +347,20 @@
 			state: state,
 			recalculate: function() {
 				// Recalculate dimensions on resize
-				var newCardRect = firstCard.getBoundingClientRect();
-				var newCardWidth = newCardRect.width;
 				var newTrackStyle = getComputedStyle(track);
 				var newGap = parseFloat(newTrackStyle.gap) || 178;
+				var newCardWidth;
+
+				if (visibleCards > 0) {
+					var newVpWidth = viewport.getBoundingClientRect().width;
+					newCardWidth = (newVpWidth - (visibleCards - 1) * newGap) / visibleCards;
+					container.querySelectorAll(CONFIG.cardSelector).forEach(function(card) {
+						card.style.width = newCardWidth + 'px';
+					});
+				} else {
+					newCardWidth = firstCard.getBoundingClientRect().width;
+				}
+
 				var newCardTotalWidth = newCardWidth + newGap;
 				var newTotalWidth = newCardTotalWidth * cardCount;
 
@@ -305,11 +389,92 @@
 	}
 
 	/**
+	 * Destroy a scroller instance for re-initialization.
+	 *
+	 * @param {HTMLElement} container The scroller container element
+	 */
+	function destroyScroller(container) {
+		var idx = -1;
+		for (var i = 0; i < instances.length; i++) {
+			if (instances[i].container === container) {
+				idx = i;
+				break;
+			}
+		}
+		if (idx === -1) return;
+
+		var instance = instances[idx];
+
+		// Kill GSAP Draggable.
+		if (instance.draggable) {
+			instance.draggable.kill();
+		}
+
+		// Remove cloned cards.
+		var track = container.querySelector(CONFIG.trackSelector);
+		if (track) {
+			track.querySelectorAll('.cph-scroller__card--clone').forEach(function(c) {
+				c.remove();
+			});
+			gsap.set(track, { x: 0 });
+		}
+
+		// Remove from instances.
+		instances.splice(idx, 1);
+
+		// Allow re-initialization.
+		delete container.dataset.scrollerInit;
+	}
+
+	/**
 	 * Initialize all scrollers on the page
 	 */
 	function initAll() {
 		var scrollers = document.querySelectorAll(CONFIG.selector);
 		scrollers.forEach(initScroller);
+	}
+
+	/**
+	 * Initialize filter bar functionality.
+	 */
+	function initFilters() {
+		document.querySelectorAll('.cph-scroller__filter').forEach(function(filterNav) {
+			if (filterNav.dataset.filterInit === 'true') return;
+			filterNav.dataset.filterInit = 'true';
+
+			var wrapper = filterNav.closest('.cph-scroller');
+			if (!wrapper) return;
+			var btns = filterNav.querySelectorAll('.cph-scroller__filter-btn');
+
+			btns.forEach(function(btn) {
+				btn.addEventListener('click', function() {
+					var slug = btn.getAttribute('data-filter');
+
+					// Update active button.
+					btns.forEach(function(b) { b.classList.remove('is-active'); });
+					btn.classList.add('is-active');
+
+					// Destroy current scroller instance.
+					destroyScroller(wrapper);
+
+					// Toggle visibility on original cards.
+					var track = wrapper.querySelector(CONFIG.trackSelector);
+					if (track) {
+						track.querySelectorAll(CONFIG.cardSelector + ':not(.cph-scroller__card--clone)').forEach(function(card) {
+							var cats = (card.getAttribute('data-categories') || '').split(' ');
+							if (!slug || cats.indexOf(slug) !== -1) {
+								card.classList.remove('is-filter-hidden');
+							} else {
+								card.classList.add('is-filter-hidden');
+							}
+						});
+					}
+
+					// Re-initialize scroller with visible cards.
+					initScroller(wrapper);
+				});
+			});
+		});
 	}
 
 	/**
@@ -342,6 +507,7 @@
 		}
 
 		initAll();
+		initFilters();
 	}
 
 	/**
@@ -403,6 +569,7 @@
 		init: init,
 		initAll: initAll,
 		initScroller: initScroller,
+		destroy: destroyScroller,
 		instances: instances,
 		config: CONFIG
 	};
