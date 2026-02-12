@@ -57,6 +57,28 @@ function cph_testimonials_shortcode( $atts ) {
 			'button_margin_top'   => '30px',
 			'dot_inactive_color'  => '#D9D9D9',
 			'button_border_color' => '#ffffff',
+			// Responsive — tablet.
+			'icon_size_tablet'             => '',
+			'quote_font_size_tablet'       => '',
+			'quote_max_width_tablet'       => '',
+			'attribution_font_size_tablet' => '',
+			'slider_height_tablet'         => '',
+			'icon_margin_bottom_tablet'    => '',
+			'quote_margin_bottom_tablet'   => '',
+			'button_margin_top_tablet'     => '',
+			'dot_size_tablet'              => '',
+			'dot_gap_tablet'               => '',
+			// Responsive — phone.
+			'icon_size_phone'              => '',
+			'quote_font_size_phone'        => '',
+			'quote_max_width_phone'        => '',
+			'attribution_font_size_phone'  => '',
+			'slider_height_phone'          => '',
+			'icon_margin_bottom_phone'     => '',
+			'quote_margin_bottom_phone'    => '',
+			'button_margin_top_phone'      => '',
+			'dot_size_phone'               => '',
+			'dot_gap_phone'                => '',
 			// Extra.
 			'el_class'            => '',
 		),
@@ -144,6 +166,35 @@ function cph_testimonials_shortcode( $atts ) {
 	}
 
 	$element_css = '#' . esc_attr( $id ) . ' { ' . implode( '; ', $css_vars ) . '; }';
+
+	// Responsive overrides — tablet (≤999px) and phone (≤599px).
+	$responsive_map = array(
+		'icon_size'            => '--testimonials-icon-size',
+		'quote_font_size'      => '--testimonials-quote-size',
+		'quote_max_width'      => '--testimonials-max-width',
+		'attribution_font_size' => '--testimonials-attribution-size',
+		'slider_height'        => '--testimonials-slider-height',
+		'icon_margin_bottom'   => '--testimonials-icon-mb',
+		'quote_margin_bottom'  => '--testimonials-quote-mb',
+		'button_margin_top'    => '--testimonials-button-mt',
+		'dot_size'             => '--testimonials-dot-size',
+		'dot_gap'              => '--testimonials-dot-gap',
+	);
+
+	$selector = '#' . esc_attr( $id );
+
+	foreach ( array( 'tablet' => '999px', 'phone' => '599px' ) as $device => $breakpoint ) {
+		$vars = array();
+		foreach ( $responsive_map as $param => $css_var ) {
+			$val = sanitize_text_field( $atts[ $param . '_' . $device ] );
+			if ( '' !== $val ) {
+				$vars[] = $css_var . ': ' . esc_attr( $val );
+			}
+		}
+		if ( ! empty( $vars ) ) {
+			$element_css .= ' @media only screen and (max-width: ' . $breakpoint . ') { ' . $selector . ' { ' . implode( '; ', $vars ) . '; } }';
+		}
+	}
 
 	// Icon font family override.
 	if ( 'character' === $atts['icon_mode'] && ! empty( $atts['icon_font'] ) ) {

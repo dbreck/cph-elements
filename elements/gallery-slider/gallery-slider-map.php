@@ -182,79 +182,91 @@ return array(
 			'group'      => esc_html__( 'Layout', 'cph-elements' ),
 		),
 
-		// Desktop Height.
+		// Carousel Height — responsive.
 		array(
 			'type'             => 'textfield',
-			'heading'          => '<span class="group-title">' . esc_html__( 'Carousel Height', 'cph-elements' ) . '</span>',
+			'heading'          => esc_html__( 'Carousel Height', 'cph-elements' ),
 			'param_name'       => 'height',
 			'value'            => '600px',
+			'edit_field_class' => 'vc_col-sm-4',
 			'group'            => esc_html__( 'Layout', 'cph-elements' ),
-			'edit_field_class' => 'vc_col-sm-12 desktop gallery-slider-height-device-group',
-			'description'      => esc_html__( 'Height of the carousel (e.g., 600px, 70vh).', 'cph-elements' ),
+			'description'      => esc_html__( 'Desktop.', 'cph-elements' ),
 		),
-
-		// Tablet Height.
 		array(
 			'type'             => 'textfield',
-			'heading'          => '<span class="attr-title">' . esc_html__( 'Height', 'cph-elements' ) . '</span>',
+			'heading'          => esc_html__( 'Tablet', 'cph-elements' ),
 			'param_name'       => 'height_tablet',
 			'value'            => '',
+			'edit_field_class' => 'vc_col-sm-4',
 			'group'            => esc_html__( 'Layout', 'cph-elements' ),
-			'edit_field_class' => 'vc_col-sm-12 tablet gallery-slider-height-device-group',
-			'description'      => '',
+			'description'      => esc_html__( 'Inherits desktop.', 'cph-elements' ),
 		),
-
-		// Phone Height.
 		array(
 			'type'             => 'textfield',
-			'heading'          => '<span class="attr-title">' . esc_html__( 'Height', 'cph-elements' ) . '</span>',
+			'heading'          => esc_html__( 'Phone', 'cph-elements' ),
 			'param_name'       => 'height_phone',
 			'value'            => '',
+			'edit_field_class' => 'vc_col-sm-4',
 			'group'            => esc_html__( 'Layout', 'cph-elements' ),
-			'edit_field_class' => 'vc_col-sm-12 phone gallery-slider-height-device-group',
-			'description'      => '',
+			'description'      => esc_html__( 'Inherits tablet.', 'cph-elements' ),
 		),
 
-		// Desktop Slide Width.
+		// Slide Width — responsive.
 		array(
 			'type'             => 'textfield',
-			'heading'          => '<span class="group-title">' . esc_html__( 'Slide Width', 'cph-elements' ) . '</span>',
+			'heading'          => esc_html__( 'Slide Width', 'cph-elements' ),
 			'param_name'       => 'slide_width',
 			'value'            => '60%',
+			'edit_field_class' => 'vc_col-sm-4',
 			'group'            => esc_html__( 'Layout', 'cph-elements' ),
-			'edit_field_class' => 'vc_col-sm-12 desktop gallery-slider-width-device-group',
-			'description'      => esc_html__( 'Width of the center slide (e.g., 60%, 800px).', 'cph-elements' ),
+			'description'      => esc_html__( 'Desktop.', 'cph-elements' ),
 		),
-
-		// Tablet Slide Width.
 		array(
 			'type'             => 'textfield',
-			'heading'          => '<span class="attr-title">' . esc_html__( 'Width', 'cph-elements' ) . '</span>',
+			'heading'          => esc_html__( 'Tablet', 'cph-elements' ),
 			'param_name'       => 'slide_width_tablet',
 			'value'            => '',
+			'edit_field_class' => 'vc_col-sm-4',
 			'group'            => esc_html__( 'Layout', 'cph-elements' ),
-			'edit_field_class' => 'vc_col-sm-12 tablet gallery-slider-width-device-group',
-			'description'      => '',
+			'description'      => esc_html__( 'Inherits desktop.', 'cph-elements' ),
 		),
-
-		// Phone Slide Width.
 		array(
 			'type'             => 'textfield',
-			'heading'          => '<span class="attr-title">' . esc_html__( 'Width', 'cph-elements' ) . '</span>',
+			'heading'          => esc_html__( 'Phone', 'cph-elements' ),
 			'param_name'       => 'slide_width_phone',
 			'value'            => '',
+			'edit_field_class' => 'vc_col-sm-4',
 			'group'            => esc_html__( 'Layout', 'cph-elements' ),
-			'edit_field_class' => 'vc_col-sm-12 phone gallery-slider-width-device-group',
-			'description'      => '',
+			'description'      => esc_html__( 'Inherits tablet.', 'cph-elements' ),
 		),
 
+		// Slide Border Radius — responsive.
 		array(
-			'type'        => 'textfield',
-			'heading'     => esc_html__( 'Slide Border Radius', 'cph-elements' ),
-			'param_name'  => 'slide_radius',
-			'value'       => '25px',
-			'group'       => esc_html__( 'Layout', 'cph-elements' ),
-			'description' => esc_html__( 'Border radius for slides (e.g., 25px).', 'cph-elements' ),
+			'type'             => 'textfield',
+			'heading'          => esc_html__( 'Slide Border Radius', 'cph-elements' ),
+			'param_name'       => 'slide_radius',
+			'value'            => '25px',
+			'edit_field_class' => 'vc_col-sm-4',
+			'group'            => esc_html__( 'Layout', 'cph-elements' ),
+			'description'      => esc_html__( 'Desktop.', 'cph-elements' ),
+		),
+		array(
+			'type'             => 'textfield',
+			'heading'          => esc_html__( 'Tablet', 'cph-elements' ),
+			'param_name'       => 'slide_radius_tablet',
+			'value'            => '',
+			'edit_field_class' => 'vc_col-sm-4',
+			'group'            => esc_html__( 'Layout', 'cph-elements' ),
+			'description'      => esc_html__( 'Inherits desktop.', 'cph-elements' ),
+		),
+		array(
+			'type'             => 'textfield',
+			'heading'          => esc_html__( 'Phone', 'cph-elements' ),
+			'param_name'       => 'slide_radius_phone',
+			'value'            => '',
+			'edit_field_class' => 'vc_col-sm-4',
+			'group'            => esc_html__( 'Layout', 'cph-elements' ),
+			'description'      => esc_html__( 'Inherits tablet.', 'cph-elements' ),
 		),
 
 		array(
@@ -267,37 +279,33 @@ return array(
 			'description' => esc_html__( 'Controls which part of the image is visible when cropped.', 'cph-elements' ),
 		),
 
-		// Desktop Slide Gap.
+		// Slide Gap — responsive.
 		array(
 			'type'             => 'textfield',
-			'heading'          => '<span class="group-title">' . esc_html__( 'Slide Gap', 'cph-elements' ) . '</span>',
+			'heading'          => esc_html__( 'Slide Gap', 'cph-elements' ),
 			'param_name'       => 'slide_gap',
 			'value'            => '40px',
+			'edit_field_class' => 'vc_col-sm-4',
 			'group'            => esc_html__( 'Layout', 'cph-elements' ),
-			'edit_field_class' => 'vc_col-sm-12 desktop gallery-slider-gap-device-group',
-			'description'      => esc_html__( 'Space between slides. Use negative values (e.g., -20px) to bring side slides closer to center.', 'cph-elements' ),
+			'description'      => esc_html__( 'Desktop.', 'cph-elements' ),
 		),
-
-		// Tablet Slide Gap.
 		array(
 			'type'             => 'textfield',
-			'heading'          => '<span class="attr-title">' . esc_html__( 'Gap', 'cph-elements' ) . '</span>',
+			'heading'          => esc_html__( 'Tablet', 'cph-elements' ),
 			'param_name'       => 'slide_gap_tablet',
 			'value'            => '',
+			'edit_field_class' => 'vc_col-sm-4',
 			'group'            => esc_html__( 'Layout', 'cph-elements' ),
-			'edit_field_class' => 'vc_col-sm-12 tablet gallery-slider-gap-device-group',
-			'description'      => '',
+			'description'      => esc_html__( 'Inherits desktop.', 'cph-elements' ),
 		),
-
-		// Phone Slide Gap.
 		array(
 			'type'             => 'textfield',
-			'heading'          => '<span class="attr-title">' . esc_html__( 'Gap', 'cph-elements' ) . '</span>',
+			'heading'          => esc_html__( 'Phone', 'cph-elements' ),
 			'param_name'       => 'slide_gap_phone',
 			'value'            => '',
+			'edit_field_class' => 'vc_col-sm-4',
 			'group'            => esc_html__( 'Layout', 'cph-elements' ),
-			'edit_field_class' => 'vc_col-sm-12 phone gallery-slider-gap-device-group',
-			'description'      => '',
+			'description'      => esc_html__( 'Inherits tablet.', 'cph-elements' ),
 		),
 
 		/*
@@ -603,17 +611,45 @@ return array(
 			'description' => esc_html__( 'Shape of the arrow buttons.', 'cph-elements' ),
 		),
 
+		// Arrow Position — responsive.
 		array(
-			'type'        => 'textfield',
-			'heading'     => esc_html__( 'Arrow Position (from edge)', 'cph-elements' ),
-			'param_name'  => 'arrow_offset',
-			'value'       => '30px',
-			'group'       => esc_html__( 'Navigation', 'cph-elements' ),
-			'dependency'  => array(
+			'type'             => 'textfield',
+			'heading'          => esc_html__( 'Arrow Position (from edge)', 'cph-elements' ),
+			'param_name'       => 'arrow_offset',
+			'value'            => '30px',
+			'edit_field_class' => 'vc_col-sm-4',
+			'group'            => esc_html__( 'Navigation', 'cph-elements' ),
+			'dependency'       => array(
 				'element' => 'nav_type',
 				'value'   => array( 'arrows', 'both' ),
 			),
-			'description' => esc_html__( 'Distance from slide edge (e.g., 30px).', 'cph-elements' ),
+			'description'      => esc_html__( 'Desktop.', 'cph-elements' ),
+		),
+		array(
+			'type'             => 'textfield',
+			'heading'          => esc_html__( 'Tablet', 'cph-elements' ),
+			'param_name'       => 'arrow_offset_tablet',
+			'value'            => '',
+			'edit_field_class' => 'vc_col-sm-4',
+			'group'            => esc_html__( 'Navigation', 'cph-elements' ),
+			'dependency'       => array(
+				'element' => 'nav_type',
+				'value'   => array( 'arrows', 'both' ),
+			),
+			'description'      => esc_html__( 'Inherits desktop.', 'cph-elements' ),
+		),
+		array(
+			'type'             => 'textfield',
+			'heading'          => esc_html__( 'Phone', 'cph-elements' ),
+			'param_name'       => 'arrow_offset_phone',
+			'value'            => '',
+			'edit_field_class' => 'vc_col-sm-4',
+			'group'            => esc_html__( 'Navigation', 'cph-elements' ),
+			'dependency'       => array(
+				'element' => 'nav_type',
+				'value'   => array( 'arrows', 'both' ),
+			),
+			'description'      => esc_html__( 'Inherits tablet.', 'cph-elements' ),
 		),
 
 		/*
@@ -788,30 +824,86 @@ return array(
 			),
 		),
 
+		// Dot Size — responsive.
 		array(
-			'type'        => 'textfield',
-			'heading'     => esc_html__( 'Dot Size', 'cph-elements' ),
-			'param_name'  => 'dot_size',
-			'value'       => '12px',
-			'group'       => esc_html__( 'Navigation', 'cph-elements' ),
-			'dependency'  => array(
+			'type'             => 'textfield',
+			'heading'          => esc_html__( 'Dot Size', 'cph-elements' ),
+			'param_name'       => 'dot_size',
+			'value'            => '12px',
+			'edit_field_class' => 'vc_col-sm-4',
+			'group'            => esc_html__( 'Navigation', 'cph-elements' ),
+			'dependency'       => array(
 				'element' => 'nav_type',
 				'value'   => array( 'pagination', 'both' ),
 			),
-			'description' => esc_html__( 'Size of the pagination dots (e.g., 12px).', 'cph-elements' ),
+			'description'      => esc_html__( 'Desktop.', 'cph-elements' ),
+		),
+		array(
+			'type'             => 'textfield',
+			'heading'          => esc_html__( 'Tablet', 'cph-elements' ),
+			'param_name'       => 'dot_size_tablet',
+			'value'            => '',
+			'edit_field_class' => 'vc_col-sm-4',
+			'group'            => esc_html__( 'Navigation', 'cph-elements' ),
+			'dependency'       => array(
+				'element' => 'nav_type',
+				'value'   => array( 'pagination', 'both' ),
+			),
+			'description'      => esc_html__( 'Inherits desktop.', 'cph-elements' ),
+		),
+		array(
+			'type'             => 'textfield',
+			'heading'          => esc_html__( 'Phone', 'cph-elements' ),
+			'param_name'       => 'dot_size_phone',
+			'value'            => '',
+			'edit_field_class' => 'vc_col-sm-4',
+			'group'            => esc_html__( 'Navigation', 'cph-elements' ),
+			'dependency'       => array(
+				'element' => 'nav_type',
+				'value'   => array( 'pagination', 'both' ),
+			),
+			'description'      => esc_html__( 'Inherits tablet.', 'cph-elements' ),
 		),
 
+		// Dot Gap — responsive.
 		array(
-			'type'        => 'textfield',
-			'heading'     => esc_html__( 'Dot Gap', 'cph-elements' ),
-			'param_name'  => 'dot_gap',
-			'value'       => '10px',
-			'group'       => esc_html__( 'Navigation', 'cph-elements' ),
-			'dependency'  => array(
+			'type'             => 'textfield',
+			'heading'          => esc_html__( 'Dot Gap', 'cph-elements' ),
+			'param_name'       => 'dot_gap',
+			'value'            => '10px',
+			'edit_field_class' => 'vc_col-sm-4',
+			'group'            => esc_html__( 'Navigation', 'cph-elements' ),
+			'dependency'       => array(
 				'element' => 'nav_type',
 				'value'   => array( 'pagination', 'both' ),
 			),
-			'description' => esc_html__( 'Space between dots (e.g., 10px).', 'cph-elements' ),
+			'description'      => esc_html__( 'Desktop.', 'cph-elements' ),
+		),
+		array(
+			'type'             => 'textfield',
+			'heading'          => esc_html__( 'Tablet', 'cph-elements' ),
+			'param_name'       => 'dot_gap_tablet',
+			'value'            => '',
+			'edit_field_class' => 'vc_col-sm-4',
+			'group'            => esc_html__( 'Navigation', 'cph-elements' ),
+			'dependency'       => array(
+				'element' => 'nav_type',
+				'value'   => array( 'pagination', 'both' ),
+			),
+			'description'      => esc_html__( 'Inherits desktop.', 'cph-elements' ),
+		),
+		array(
+			'type'             => 'textfield',
+			'heading'          => esc_html__( 'Phone', 'cph-elements' ),
+			'param_name'       => 'dot_gap_phone',
+			'value'            => '',
+			'edit_field_class' => 'vc_col-sm-4',
+			'group'            => esc_html__( 'Navigation', 'cph-elements' ),
+			'dependency'       => array(
+				'element' => 'nav_type',
+				'value'   => array( 'pagination', 'both' ),
+			),
+			'description'      => esc_html__( 'Inherits tablet.', 'cph-elements' ),
 		),
 
 		array(
@@ -840,17 +932,45 @@ return array(
 			'description' => esc_html__( 'Fill color of the active dot.', 'cph-elements' ),
 		),
 
+		// Pagination Position — responsive.
 		array(
-			'type'        => 'textfield',
-			'heading'     => esc_html__( 'Pagination Position (from bottom)', 'cph-elements' ),
-			'param_name'  => 'pagination_offset',
-			'value'       => '20px',
-			'group'       => esc_html__( 'Navigation', 'cph-elements' ),
-			'dependency'  => array(
+			'type'             => 'textfield',
+			'heading'          => esc_html__( 'Pagination Position (from bottom)', 'cph-elements' ),
+			'param_name'       => 'pagination_offset',
+			'value'            => '20px',
+			'edit_field_class' => 'vc_col-sm-4',
+			'group'            => esc_html__( 'Navigation', 'cph-elements' ),
+			'dependency'       => array(
 				'element' => 'nav_type',
 				'value'   => array( 'pagination', 'both' ),
 			),
-			'description' => esc_html__( 'Distance from bottom edge (e.g., 20px).', 'cph-elements' ),
+			'description'      => esc_html__( 'Desktop.', 'cph-elements' ),
+		),
+		array(
+			'type'             => 'textfield',
+			'heading'          => esc_html__( 'Tablet', 'cph-elements' ),
+			'param_name'       => 'pagination_offset_tablet',
+			'value'            => '',
+			'edit_field_class' => 'vc_col-sm-4',
+			'group'            => esc_html__( 'Navigation', 'cph-elements' ),
+			'dependency'       => array(
+				'element' => 'nav_type',
+				'value'   => array( 'pagination', 'both' ),
+			),
+			'description'      => esc_html__( 'Inherits desktop.', 'cph-elements' ),
+		),
+		array(
+			'type'             => 'textfield',
+			'heading'          => esc_html__( 'Phone', 'cph-elements' ),
+			'param_name'       => 'pagination_offset_phone',
+			'value'            => '',
+			'edit_field_class' => 'vc_col-sm-4',
+			'group'            => esc_html__( 'Navigation', 'cph-elements' ),
+			'dependency'       => array(
+				'element' => 'nav_type',
+				'value'   => array( 'pagination', 'both' ),
+			),
+			'description'      => esc_html__( 'Inherits tablet.', 'cph-elements' ),
 		),
 
 		/*

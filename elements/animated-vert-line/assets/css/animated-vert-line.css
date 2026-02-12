@@ -1,0 +1,63 @@
+/**
+ * CPH Animated Vert Line
+ *
+ * Decorative vertical line with optional grow animation.
+ * All sizing and positioning driven by CSS custom properties
+ * set via scoped inline styles from PHP.
+ *
+ * @package CPH_Elements
+ * @since   1.0.0
+ */
+
+/* ==========================================================================
+   Zero-Height Wrapper
+   ========================================================================== */
+
+.cph-animated-vert-line-wrap {
+	position: relative;
+	height: 0;
+	overflow: visible;
+	z-index: 10;
+}
+
+/* ==========================================================================
+   The Line
+   ========================================================================== */
+
+.cph-animated-vert-line {
+	position: absolute;
+	width: var(--line-width, 2px);
+	height: var(--line-height, 185px);
+	top: var(--line-top, calc(var(--line-height, 185px) / -2));
+	left: var(--line-left, 50%);
+	background-color: var(--line-color, #87A80E);
+	transform: translateX(var(--line-translate-x, -50%));
+}
+
+/* ==========================================================================
+   Animation: Grow Top to Bottom
+   ========================================================================== */
+
+.cph-animated-vert-line[data-animate="top-to-bottom"] {
+	transform-origin: top center;
+	transform: translateX(var(--line-translate-x, -50%)) scaleY(0);
+	transition: transform var(--line-animation-duration, 0.8s) ease;
+}
+
+.cph-animated-vert-line[data-animate="top-to-bottom"].is-visible {
+	transform: translateX(var(--line-translate-x, -50%)) scaleY(1);
+}
+
+/* ==========================================================================
+   Animation: Grow Bottom to Top
+   ========================================================================== */
+
+.cph-animated-vert-line[data-animate="bottom-to-top"] {
+	transform-origin: bottom center;
+	transform: translateX(var(--line-translate-x, -50%)) scaleY(0);
+	transition: transform var(--line-animation-duration, 0.8s) ease;
+}
+
+.cph-animated-vert-line[data-animate="bottom-to-top"].is-visible {
+	transform: translateX(var(--line-translate-x, -50%)) scaleY(1);
+}

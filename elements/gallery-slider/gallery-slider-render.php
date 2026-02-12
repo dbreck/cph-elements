@@ -201,6 +201,8 @@ function cph_gallery_slider_shortcode( $atts ) {
 			'slide_width_tablet'           => '',
 			'slide_width_phone'            => '',
 			'slide_radius'                 => '25px',
+			'slide_radius_tablet'          => '',
+			'slide_radius_phone'           => '',
 			'image_position'               => 'center center',
 			'slide_gap'                    => '40px',
 			'slide_gap_tablet'             => '',
@@ -229,6 +231,8 @@ function cph_gallery_slider_shortcode( $atts ) {
 			'show_arrows'                  => 'yes', // Legacy support.
 			'arrow_style'                  => 'pill',
 			'arrow_offset'                 => '30px',
+			'arrow_offset_tablet'          => '',
+			'arrow_offset_phone'           => '',
 			// Arrow default state.
 			'arrow_outline_color'          => '#ffffff',
 			'arrow_outline_thickness'      => '1px',
@@ -243,10 +247,16 @@ function cph_gallery_slider_shortcode( $atts ) {
 			'arrow_hover_thickness'        => '',
 			// Pagination.
 			'dot_size'                     => '12px',
+			'dot_size_tablet'              => '',
+			'dot_size_phone'               => '',
 			'dot_gap'                      => '10px',
+			'dot_gap_tablet'               => '',
+			'dot_gap_phone'                => '',
 			'dot_outline_color'            => '#ffffff',
 			'dot_fill_color'               => '#ffffff',
 			'pagination_offset'            => '20px',
+			'pagination_offset_tablet'     => '',
+			'pagination_offset_phone'      => '',
 			// Extra.
 			'el_class'                     => '',
 		),
@@ -325,6 +335,9 @@ function cph_gallery_slider_shortcode( $atts ) {
 	$side_scale          = ! empty( $atts['side_scale'] ) ? floatval( $atts['side_scale'] ) : 0.75;
 	$side_opacity        = ! empty( $atts['side_opacity'] ) ? floatval( $atts['side_opacity'] ) : 0.6;
 	$arrow_offset        = ! empty( $atts['arrow_offset'] ) ? sanitize_text_field( $atts['arrow_offset'] ) : '30px';
+	$dot_size            = ! empty( $atts['dot_size'] ) ? sanitize_text_field( $atts['dot_size'] ) : '12px';
+	$dot_gap             = ! empty( $atts['dot_gap'] ) ? sanitize_text_field( $atts['dot_gap'] ) : '10px';
+	$pagination_offset   = ! empty( $atts['pagination_offset'] ) ? sanitize_text_field( $atts['pagination_offset'] ) : '20px';
 
 	// Arrow styling.
 	$arrow_outline_color     = ! empty( $atts['arrow_outline_color'] ) ? sanitize_text_field( $atts['arrow_outline_color'] ) : '#ffffff';
@@ -353,6 +366,9 @@ function cph_gallery_slider_shortcode( $atts ) {
 		'--side-opacity: ' . esc_attr( $side_opacity ),
 		'--arrow-offset: ' . esc_attr( $arrow_offset ),
 		'--perspective: ' . esc_attr( $perspective ),
+		'--dot-size: ' . esc_attr( $dot_size ),
+		'--dot-gap: ' . esc_attr( $dot_gap ),
+		'--pagination-offset: ' . esc_attr( $pagination_offset ),
 	);
 	$element_css = '#' . esc_attr( $slider_id ) . ' { ' . implode( '; ', $desktop_vars ) . '; }';
 
@@ -407,34 +423,31 @@ function cph_gallery_slider_shortcode( $atts ) {
 
 	$element_css .= ' ' . $arrow_css;
 
-	// Tablet styles (max-width: 999px).
-	$tablet_vars = array();
-	if ( ! empty( $height_tablet ) ) {
-		$tablet_vars[] = '--slider-height: ' . esc_attr( $height_tablet );
-	}
-	if ( ! empty( $slide_width_tablet ) ) {
-		$tablet_vars[] = '--slide-width: ' . esc_attr( $slide_width_tablet );
-	}
-	if ( ! empty( $slide_gap_tablet ) ) {
-		$tablet_vars[] = '--slide-gap: ' . esc_attr( $slide_gap_tablet );
-	}
-	if ( ! empty( $tablet_vars ) ) {
-		$element_css .= ' @media only screen and (max-width: 999px) { #' . esc_attr( $slider_id ) . ' { ' . implode( '; ', $tablet_vars ) . '; } }';
-	}
+	// Responsive overrides — tablet (≤999px) and phone (≤690px).
+	$responsive_map = array(
+		'height'            => '--slider-height',
+		'slide_width'       => '--slide-width',
+		'slide_gap'         => '--slide-gap',
+		'slide_radius'      => '--slide-radius',
+		'arrow_offset'      => '--arrow-offset',
+		'dot_size'          => '--dot-size',
+		'dot_gap'           => '--dot-gap',
+		'pagination_offset' => '--pagination-offset',
+	);
 
-	// Phone styles (max-width: 690px).
-	$phone_vars = array();
-	if ( ! empty( $height_phone ) ) {
-		$phone_vars[] = '--slider-height: ' . esc_attr( $height_phone );
-	}
-	if ( ! empty( $slide_width_phone ) ) {
-		$phone_vars[] = '--slide-width: ' . esc_attr( $slide_width_phone );
-	}
-	if ( ! empty( $slide_gap_phone ) ) {
-		$phone_vars[] = '--slide-gap: ' . esc_attr( $slide_gap_phone );
-	}
-	if ( ! empty( $phone_vars ) ) {
-		$element_css .= ' @media only screen and (max-width: 690px) { #' . esc_attr( $slider_id ) . ' { ' . implode( '; ', $phone_vars ) . '; } }';
+	$selector = '#' . esc_attr( $slider_id );
+
+	foreach ( array( 'tablet' => '999px', 'phone' => '690px' ) as $device => $breakpoint ) {
+		$vars = array();
+		foreach ( $responsive_map as $param => $css_var ) {
+			$val = sanitize_text_field( $atts[ $param . '_' . $device ] );
+			if ( '' !== $val ) {
+				$vars[] = $css_var . ': ' . esc_attr( $val );
+			}
+		}
+		if ( ! empty( $vars ) ) {
+			$element_css .= ' @media only screen and (max-width: ' . $breakpoint . ') { ' . $selector . ' { ' . implode( '; ', $vars ) . '; } }';
+		}
 	}
 
 	// Determine what navigation to show.
@@ -462,22 +475,12 @@ function cph_gallery_slider_shortcode( $atts ) {
 		}
 	}
 
-	// Pagination CSS.
+	// Pagination CSS — colors only (sizes handled via CSS custom properties).
 	if ( $show_pagination ) {
-		$dot_size          = ! empty( $atts['dot_size'] ) ? sanitize_text_field( $atts['dot_size'] ) : '12px';
-		$dot_gap           = ! empty( $atts['dot_gap'] ) ? sanitize_text_field( $atts['dot_gap'] ) : '10px';
 		$dot_outline_color = ! empty( $atts['dot_outline_color'] ) ? sanitize_text_field( $atts['dot_outline_color'] ) : '#ffffff';
 		$dot_fill_color    = ! empty( $atts['dot_fill_color'] ) ? sanitize_text_field( $atts['dot_fill_color'] ) : '#ffffff';
-		$pagination_offset = ! empty( $atts['pagination_offset'] ) ? sanitize_text_field( $atts['pagination_offset'] ) : '20px';
-
-		$element_css .= ' #' . esc_attr( $slider_id ) . ' .cph-gallery-slider__pagination { ';
-		$element_css .= 'bottom: ' . esc_attr( $pagination_offset ) . '; ';
-		$element_css .= 'gap: ' . esc_attr( $dot_gap ) . '; ';
-		$element_css .= '}';
 
 		$element_css .= ' #' . esc_attr( $slider_id ) . ' .cph-gallery-slider__dot { ';
-		$element_css .= 'width: ' . esc_attr( $dot_size ) . '; ';
-		$element_css .= 'height: ' . esc_attr( $dot_size ) . '; ';
 		$element_css .= 'border-color: ' . esc_attr( $dot_outline_color ) . '; ';
 		$element_css .= '}';
 

@@ -258,10 +258,6 @@
 	.cph-testimonials {
 		padding: 60px 30px;
 	}
-
-	.cph-testimonials .cph-testimonials__quote {
-		font-size: calc(var(--testimonials-quote-size) * 0.8) !important;
-	}
 }
 
 /* ==========================================================================
@@ -271,14 +267,5 @@
 @media only screen and (max-width: 599px) {
 	.cph-testimonials {
 		padding: 40px 20px;
-	}
-
-	.cph-testimonials .cph-testimonials__quote {
-		font-size: calc(var(--testimonials-quote-size) * 0.65) !important;
-	}
-
-	.cph-testimonials .cph-testimonials__icon-char,
-	.cph-testimonials .cph-testimonials__icon i {
-		font-size: calc(var(--testimonials-icon-size) * 0.7) !important;
 	}
 }
