@@ -1,0 +1,229 @@
+/**
+ * CPH Expandable Grid
+ *
+ * @package CPH_Elements
+ * @since   1.0.0
+ */
+
+/* ==========================================================================
+   GRID CONTAINER
+   ========================================================================== */
+
+.cph-grid {
+	display: grid;
+	grid-template-columns: repeat(var(--cph-grid-columns, 3), 1fr);
+	width: 100%;
+}
+
+/* ==========================================================================
+   GRID ITEM
+   ========================================================================== */
+
+.cph-grid__item {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	padding: 40px 30px;
+	min-height: 200px;
+	text-align: center;
+	box-sizing: border-box;
+	margin-bottom: -1px;
+	border-top: var(--cph-grid-b-top, none);
+	border-right: var(--cph-grid-b-right, none);
+	border-bottom: var(--cph-grid-b-bottom, none);
+	border-left: var(--cph-grid-b-left, none);
+}
+
+.cph-grid__title {
+	margin: 0 0 20px;
+	font-size: 24px;
+	font-weight: 500;
+	line-height: 1.3;
+	text-transform: uppercase;
+	letter-spacing: 0.01em;
+}
+
+/* ==========================================================================
+   TOGGLE BUTTON
+   ========================================================================== */
+
+.cph-grid__toggle {
+	display: inline-block;
+	background: none;
+	border: none;
+	padding: 0;
+	margin-top: auto;
+	font-family: inherit;
+	font-size: 14px;
+	font-weight: 500;
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+	cursor: pointer;
+	transition: opacity 0.2s ease;
+	align-self: flex-end;
+}
+
+.cph-grid__toggle:hover {
+	opacity: 0.7;
+}
+
+.cph-grid__item.is-expanded {
+	border-bottom: none;
+}
+
+.cph-grid__item.is-expanded .cph-grid__toggle {
+	opacity: 0.7;
+}
+
+/* ==========================================================================
+   HIDDEN CONTENT SOURCE
+   ========================================================================== */
+
+.cph-grid__item-content[hidden] {
+	display: none !important;
+}
+
+/* ==========================================================================
+   DETAIL PANEL
+   ========================================================================== */
+
+.cph-grid__detail {
+	grid-column: 1 / -1;
+	overflow: hidden;
+	max-height: 0;
+	opacity: 0;
+	transition: max-height 0.4s ease, opacity 0.3s ease;
+}
+
+.cph-grid__detail[hidden] {
+	display: none !important;
+}
+
+.cph-grid__detail.is-open {
+	opacity: 1;
+}
+
+.cph-grid__detail-inner {
+	padding: 40px;
+}
+
+.cph-grid__detail-body {
+	margin-bottom: 24px;
+}
+
+.cph-grid__detail-body p {
+	margin: 0 0 16px;
+	font-size: 18px;
+	line-height: 1.6;
+}
+
+.cph-grid__detail-body p:last-child {
+	margin-bottom: 0;
+}
+
+/* ==========================================================================
+   DETAIL FOOTER
+   ========================================================================== */
+
+.cph-grid__detail-footer {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	margin-top: 24px;
+}
+
+/* Only close button — push it right */
+.cph-grid__detail-footer .cph-grid__detail-btn[hidden] + .cph-grid__detail-close {
+	margin-left: auto;
+}
+
+/* ==========================================================================
+   DETAIL BUTTON (PILL)
+   ========================================================================== */
+
+.cph-grid__detail-btn {
+	display: inline-block;
+	padding: 14px 36px;
+	border: 1px solid currentColor;
+	border-radius: 50px;
+	font-family: inherit;
+	font-size: 14px;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+	text-decoration: none;
+	transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.cph-grid__detail-btn[hidden] {
+	display: none !important;
+}
+
+/* ==========================================================================
+   DETAIL CLOSE BUTTON
+   ========================================================================== */
+
+.cph-grid__detail-close {
+	background: none;
+	border: none;
+	padding: 0;
+	font-family: inherit;
+	font-size: 14px;
+	font-weight: 500;
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+	cursor: pointer;
+	transition: opacity 0.2s ease;
+}
+
+.cph-grid__detail-close:hover {
+	opacity: 0.7;
+}
+
+/* ==========================================================================
+   RESPONSIVE — MOBILE (≤ 690px)
+   ========================================================================== */
+
+@media (max-width: 690px) {
+	.cph-grid {
+		--cph-grid-columns: 1 !important;
+	}
+
+	.cph-grid__item {
+		padding: 30px 20px;
+		min-height: 150px;
+		margin-bottom: 32px;
+		border-top: var(--cph-grid-b-top-m, var(--cph-grid-b-top, none));
+		border-right: var(--cph-grid-b-right-m, var(--cph-grid-b-right, none));
+		border-bottom: var(--cph-grid-b-bottom-m, var(--cph-grid-b-bottom, none));
+		border-left: var(--cph-grid-b-left-m, var(--cph-grid-b-left, none));
+	}
+
+	.cph-grid__item.is-expanded {
+		margin-bottom: 0;
+	}
+
+	.cph-grid__detail-inner {
+		padding: 30px 20px;
+		border-bottom: var(--cph-grid-b-bottom-inherit, none);
+	}
+
+	/* Continuous right border — detail panel + gap bridge */
+	.cph-grid__detail.is-open {
+		position: relative;
+		margin-bottom: 32px;
+		border-right: var(--cph-grid-b-right-inherit, none);
+		box-sizing: border-box;
+	}
+
+	.cph-grid__detail.is-open::before {
+		content: '';
+		position: absolute;
+		top: -32px;
+		right: -1px;
+		width: 0;
+		height: 32px;
+		border-right: inherit;
+	}
+}
