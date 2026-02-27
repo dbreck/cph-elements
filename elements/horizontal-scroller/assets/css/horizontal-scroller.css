@@ -212,7 +212,7 @@
 	color: #000;
 }
 
-.cph-scroller__card-bio {
+.cph-scroller__card--team .cph-scroller__card-content > p:not([class]) {
 	font-size: 22px;
 	font-weight: 400;
 	line-height: 1.5;
@@ -524,7 +524,7 @@
 		font-size: 11px;
 	}
 
-	.cph-scroller__card-bio {
+	.cph-scroller__card--team .cph-scroller__card-content > p:not([class]) {
 		font-size: 18px;
 	}
 
@@ -561,7 +561,7 @@
 	}
 
 	.cph-scroller__card-image {
-		border-radius: 15px;
+		border-radius: var(--card-border-radius, 15px);
 	}
 
 	.cph-scroller__card-name {
@@ -571,7 +571,8 @@
 	.cph-scroller__card-title {
 		font-size: 16px;
 		line-height: 1.5;
-		margin-bottom: 20px;
+		margin-bottom: 0;
+		padding-bottom: 0;
 	}
 
 	.cph-scroller__card-button {
@@ -599,7 +600,7 @@
 		left: 20px;
 	}
 
-	.cph-scroller__card-bio {
+	.cph-scroller__card--team .cph-scroller__card-content > p:not([class]) {
 		font-size: 16px;
 	}
 

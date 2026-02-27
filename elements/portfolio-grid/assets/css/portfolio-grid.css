@@ -242,7 +242,6 @@
 	font-weight: 400;
 	letter-spacing: var(--location-letter-spacing, 1.5px);
 	line-height: 1.2;
-	text-transform: uppercase;
 }
 
 /* =============================================================================
@@ -305,6 +304,27 @@
 }
 
 /* =============================================================================
+   HOVER REVEAL (Title + Button fade-up on hover)
+   ============================================================================= */
+
+.cph-card__location,
+.cph-card__text-btn {
+	opacity: 0;
+	transform: translateY(16px);
+	transition: opacity 0.4s ease, transform 0.4s ease, background 0.3s ease, color 0.3s ease;
+}
+
+.cph-card__text-btn {
+	transition-delay: 0.08s;
+}
+
+.cph-card:hover .cph-card__location,
+.cph-card:hover .cph-card__text-btn {
+	opacity: 1;
+	transform: translateY(0);
+}
+
+/* =============================================================================
    RESPONSIVE: TABLET
    ============================================================================= */
 
@@ -360,6 +380,13 @@
    ============================================================================= */
 
 @media (max-width: 999px) {
+
+	/* Show title + button by default on touch devices (no hover) */
+	.cph-card__location,
+	.cph-card__text-btn {
+		opacity: 1;
+		transform: translateY(0);
+	}
 
 	/* All grids stack on mobile */
 	.cph-portfolio-grid--homepage-bento,
@@ -685,7 +712,7 @@
 .cph-zigzag__title {
 	color: #333;
 	font-family: 'Poppins', sans-serif;
-	font-size: clamp(28px, 3vw, 42px);
+	font-size: max(34px, 3vw) !important;
 	font-weight: 300;
 	line-height: 1.2;
 	margin: 0 0 40px;
@@ -734,11 +761,6 @@ a.cph-zigzag__btn:hover {
 		padding: 40px 48px;
 	}
 
-	.cph-zigzag__title {
-		font-size: clamp(24px, 2.8vw, 36px);
-		margin-bottom: 24px;
-	}
-
 	.cph-zigzag__btn {
 		font-size: 11px;
 		padding: 12px 28px;
@@ -767,9 +789,8 @@ a.cph-zigzag__btn:hover {
 		padding: 32px 24px;
 	}
 
-	.cph-zigzag__title {
-		font-size: clamp(22px, 5vw, 32px);
-		margin-bottom: 20px;
+	.cph-zigzag__btn {
+		margin-top: 10px;
 	}
 
 	.cph-zigzag__filter {
@@ -791,10 +812,6 @@ a.cph-zigzag__btn:hover {
 
 	.cph-zigzag__text {
 		padding: 24px 20px;
-	}
-
-	.cph-zigzag__title {
-		font-size: 22px;
 	}
 
 	.cph-zigzag__btn {

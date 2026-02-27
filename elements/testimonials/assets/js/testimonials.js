@@ -15,8 +15,10 @@
 			return;
 		}
 
-		var slides = container.querySelectorAll('.cph-testimonials__slide');
-		var dots   = container.querySelectorAll('.cph-testimonials__dot');
+		var slides   = container.querySelectorAll('.cph-testimonials__slide');
+		var dots     = container.querySelectorAll('.cph-testimonials__dot');
+		var prevBtn  = container.querySelector('.cph-testimonials__arrow--prev');
+		var nextBtn  = container.querySelector('.cph-testimonials__arrow--next');
 
 		if (slides.length < 2) {
 			return;
@@ -125,6 +127,10 @@
 			goTo((currentIndex + 1) % slides.length);
 		}
 
+		function prev() {
+			goTo((currentIndex - 1 + slides.length) % slides.length);
+		}
+
 		function startAutoplay() {
 			if (autoplay && !timer) {
 				timer = setInterval(next, autoplaySpeed);
@@ -150,6 +156,20 @@
 				resetAutoplay();
 			});
 		});
+
+		// Arrow clicks.
+		if (prevBtn) {
+			prevBtn.addEventListener('click', function() {
+				prev();
+				resetAutoplay();
+			});
+		}
+		if (nextBtn) {
+			nextBtn.addEventListener('click', function() {
+				next();
+				resetAutoplay();
+			});
+		}
 
 		// Pause on hover.
 		container.addEventListener('mouseenter', stopAutoplay);

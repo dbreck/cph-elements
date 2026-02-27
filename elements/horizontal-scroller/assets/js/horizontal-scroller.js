@@ -63,8 +63,20 @@
 		var trackStyle = getComputedStyle(track);
 		var gap = parseFloat(trackStyle.gap) || 178;
 
+		// Responsive visible_cards: resolve based on viewport width
+		var visibleCardsDesktop = parseInt(container.dataset.visibleCards) || 0;
+		var visibleCardsTablet  = parseInt(container.dataset.visibleCardsTablet) || 0;
+		var visibleCardsPhone   = parseInt(container.dataset.visibleCardsPhone) || 0;
+
+		function resolveVisibleCards() {
+			var w = window.innerWidth;
+			if (w <= 690 && visibleCardsPhone > 0) return visibleCardsPhone;
+			if (w <= 999 && visibleCardsTablet > 0) return visibleCardsTablet;
+			return visibleCardsDesktop;
+		}
+
 		// Auto-size cards when visible_cards is specified
-		var visibleCards = parseInt(container.dataset.visibleCards) || 0;
+		var visibleCards = resolveVisibleCards();
 		var cardWidth;
 		if (visibleCards > 0) {
 			var viewportWidth = viewport.getBoundingClientRect().width;
@@ -185,6 +197,11 @@
 			bounds: { minX: -totalWidth * 3, maxX: totalWidth },
 			edgeResistance: 0.65,
 			throwResistance: 2000,
+			snap: {
+				x: function(value) {
+					return Math.round(value / cardTotalWidth) * cardTotalWidth;
+				}
+			},
 			onDragStart: function() {
 				state.isDragging = true;
 			},
@@ -350,6 +367,9 @@
 				var newTrackStyle = getComputedStyle(track);
 				var newGap = parseFloat(newTrackStyle.gap) || 178;
 				var newCardWidth;
+
+				// Re-resolve visible cards for current viewport
+				visibleCards = resolveVisibleCards();
 
 				if (visibleCards > 0) {
 					var newVpWidth = viewport.getBoundingClientRect().width;

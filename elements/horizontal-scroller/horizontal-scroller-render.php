@@ -57,6 +57,8 @@ function cph_horizontal_scroller_shortcode( $atts ) {
 			'border_radius'        => '25px',
 			'max_height'           => '',
 			'visible_cards'        => '',
+			'visible_cards_tablet' => '',
+			'visible_cards_phone'  => '',
 		),
 		$atts,
 		'cph_horizontal_scroller'
@@ -219,7 +221,9 @@ function cph_horizontal_scroller_shortcode( $atts ) {
 		 data-direction="<?php echo esc_attr( $direction ); ?>"
 		 data-post-type="<?php echo esc_attr( $post_type ); ?>"
 		 data-arrow-mode="<?php echo esc_attr( $arrow_mode ); ?>"
-		 data-visible-cards="<?php echo esc_attr( sanitize_text_field( $atts['visible_cards'] ) ); ?>">
+		 data-visible-cards="<?php echo esc_attr( sanitize_text_field( $atts['visible_cards'] ) ); ?>"
+		 data-visible-cards-tablet="<?php echo esc_attr( sanitize_text_field( $atts['visible_cards_tablet'] ) ); ?>"
+		 data-visible-cards-phone="<?php echo esc_attr( sanitize_text_field( $atts['visible_cards_phone'] ) ); ?>">
 
 		<?php
 		$show_filter = sanitize_text_field( $atts['show_filter'] );
@@ -328,7 +332,7 @@ function cph_render_team_card( $post_id, $atts = array() ) {
 				<p class="cph-scroller__card-title"><?php echo esc_html( $job_title ); ?></p>
 			<?php endif; ?>
 			<?php if ( 'yes' === $show_short_bio && $short_bio ) : ?>
-				<p class="cph-scroller__card-bio"><?php echo esc_html( $short_bio ); ?></p>
+				<p><?php echo esc_html( $short_bio ); ?></p>
 			<?php endif; ?>
 			<?php if ( 'text-link' === $btn_style ) : ?>
 				<button class="cph-scroller__card-button cph-scroller__card-button--text" type="button" data-team-id="<?php echo esc_attr( $post_id ); ?>"><?php echo esc_html( $btn_text ); ?></button>

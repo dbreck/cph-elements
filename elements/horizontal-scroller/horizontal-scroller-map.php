@@ -237,19 +237,58 @@ return array(
 			'description'      => '',
 		),
 
+		// Desktop Visible Cards.
 		array(
-			'type'        => 'dropdown',
-			'heading'     => esc_html__( 'Visible Cards', 'cph-elements' ),
-			'param_name'  => 'visible_cards',
-			'value'       => array(
+			'type'             => 'dropdown',
+			'heading'          => '<span class="group-title">' . esc_html__( 'Visible Cards', 'cph-elements' ) . '</span>',
+			'param_name'       => 'visible_cards',
+			'value'            => array(
 				esc_html__( 'Auto (use Card Width)', 'cph-elements' ) => '',
+				'1' => '1',
 				'2' => '2',
 				'3' => '3',
 				'4' => '4',
 				'5' => '5',
 			),
-			'std'         => '',
-			'description' => esc_html__( 'Show exactly this many cards. Overrides Card Width.', 'cph-elements' ),
+			'std'              => '',
+			'edit_field_class'  => 'vc_col-sm-4 desktop visible-cards-device-group',
+			'description'      => esc_html__( 'Show exactly this many cards. Overrides Card Width.', 'cph-elements' ),
+		),
+
+		// Tablet Visible Cards.
+		array(
+			'type'             => 'dropdown',
+			'heading'          => '<span class="attr-title">' . esc_html__( 'Visible Cards', 'cph-elements' ) . '</span>',
+			'param_name'       => 'visible_cards_tablet',
+			'value'            => array(
+				esc_html__( 'Auto (use Card Width)', 'cph-elements' ) => '',
+				'1' => '1',
+				'2' => '2',
+				'3' => '3',
+				'4' => '4',
+				'5' => '5',
+			),
+			'std'              => '',
+			'edit_field_class'  => 'vc_col-sm-4 tablet visible-cards-device-group',
+			'description'      => '',
+		),
+
+		// Phone Visible Cards.
+		array(
+			'type'             => 'dropdown',
+			'heading'          => '<span class="attr-title">' . esc_html__( 'Visible Cards', 'cph-elements' ) . '</span>',
+			'param_name'       => 'visible_cards_phone',
+			'value'            => array(
+				esc_html__( 'Auto (use Card Width)', 'cph-elements' ) => '',
+				'1' => '1',
+				'2' => '2',
+				'3' => '3',
+				'4' => '4',
+				'5' => '5',
+			),
+			'std'              => '',
+			'edit_field_class'  => 'vc_col-sm-4 phone visible-cards-device-group',
+			'description'      => '',
 		),
 
 		array(

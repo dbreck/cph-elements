@@ -587,12 +587,56 @@ return array(
 			'description'      => esc_html__( 'Inherits tablet.', 'cph-elements' ),
 		),
 
+		// Navigation header.
+		array(
+			'type'       => 'nectar_group_header',
+			'heading'    => esc_html__( 'Navigation', 'cph-elements' ),
+			'param_name' => 'group_header_navigation',
+			'group'      => esc_html__( 'Style', 'cph-elements' ),
+		),
+
+		array(
+			'type'        => 'dropdown',
+			'heading'     => esc_html__( 'Navigation Style', 'cph-elements' ),
+			'param_name'  => 'nav_style',
+			'value'       => array(
+				esc_html__( 'Dots', 'cph-elements' )   => 'dots',
+				esc_html__( 'Arrows', 'cph-elements' ) => 'arrows',
+				esc_html__( 'Both', 'cph-elements' )   => 'both',
+				esc_html__( 'None', 'cph-elements' )   => 'none',
+			),
+			'std'         => 'dots',
+			'group'       => esc_html__( 'Style', 'cph-elements' ),
+			'description' => esc_html__( 'Dots, left/right arrows, both, or no navigation.', 'cph-elements' ),
+		),
+
+		array(
+			'type'        => 'dropdown',
+			'heading'     => esc_html__( 'Arrow Color', 'cph-elements' ),
+			'param_name'  => 'arrow_color',
+			'value'       => array(
+				esc_html__( 'Light', 'cph-elements' ) => 'light',
+				esc_html__( 'Dark', 'cph-elements' )  => 'dark',
+			),
+			'std'         => 'light',
+			'group'       => esc_html__( 'Style', 'cph-elements' ),
+			'dependency'  => array(
+				'element' => 'nav_style',
+				'value'   => array( 'arrows', 'both' ),
+			),
+			'description' => esc_html__( 'Light (white) or dark (black) arrow buttons.', 'cph-elements' ),
+		),
+
 		// Dots header.
 		array(
 			'type'       => 'nectar_group_header',
 			'heading'    => esc_html__( 'Dots', 'cph-elements' ),
 			'param_name' => 'group_header_dots',
 			'group'      => esc_html__( 'Style', 'cph-elements' ),
+			'dependency' => array(
+				'element' => 'nav_style',
+				'value'   => array( 'dots', 'both' ),
+			),
 		),
 
 		// Dot Size — responsive.
@@ -603,6 +647,10 @@ return array(
 			'value'            => '18px',
 			'edit_field_class' => 'vc_col-sm-4',
 			'group'            => esc_html__( 'Style', 'cph-elements' ),
+			'dependency'       => array(
+				'element' => 'nav_style',
+				'value'   => array( 'dots', 'both' ),
+			),
 			'description'      => esc_html__( 'Desktop.', 'cph-elements' ),
 		),
 		array(
@@ -612,6 +660,10 @@ return array(
 			'value'            => '',
 			'edit_field_class' => 'vc_col-sm-4',
 			'group'            => esc_html__( 'Style', 'cph-elements' ),
+			'dependency'       => array(
+				'element' => 'nav_style',
+				'value'   => array( 'dots', 'both' ),
+			),
 			'description'      => esc_html__( 'Inherits desktop.', 'cph-elements' ),
 		),
 		array(
@@ -621,6 +673,10 @@ return array(
 			'value'            => '',
 			'edit_field_class' => 'vc_col-sm-4',
 			'group'            => esc_html__( 'Style', 'cph-elements' ),
+			'dependency'       => array(
+				'element' => 'nav_style',
+				'value'   => array( 'dots', 'both' ),
+			),
 			'description'      => esc_html__( 'Inherits tablet.', 'cph-elements' ),
 		),
 
@@ -632,6 +688,10 @@ return array(
 			'value'            => '12px',
 			'edit_field_class' => 'vc_col-sm-4',
 			'group'            => esc_html__( 'Style', 'cph-elements' ),
+			'dependency'       => array(
+				'element' => 'nav_style',
+				'value'   => array( 'dots', 'both' ),
+			),
 			'description'      => esc_html__( 'Desktop.', 'cph-elements' ),
 		),
 		array(
@@ -641,6 +701,10 @@ return array(
 			'value'            => '',
 			'edit_field_class' => 'vc_col-sm-4',
 			'group'            => esc_html__( 'Style', 'cph-elements' ),
+			'dependency'       => array(
+				'element' => 'nav_style',
+				'value'   => array( 'dots', 'both' ),
+			),
 			'description'      => esc_html__( 'Inherits desktop.', 'cph-elements' ),
 		),
 		array(
@@ -650,6 +714,10 @@ return array(
 			'value'            => '',
 			'edit_field_class' => 'vc_col-sm-4',
 			'group'            => esc_html__( 'Style', 'cph-elements' ),
+			'dependency'       => array(
+				'element' => 'nav_style',
+				'value'   => array( 'dots', 'both' ),
+			),
 			'description'      => esc_html__( 'Inherits tablet.', 'cph-elements' ),
 		),
 
@@ -659,6 +727,10 @@ return array(
 			'param_name'  => 'dot_inactive_color',
 			'value'       => '#D9D9D9',
 			'group'       => esc_html__( 'Style', 'cph-elements' ),
+			'dependency'  => array(
+				'element' => 'nav_style',
+				'value'   => array( 'dots', 'both' ),
+			),
 			'description' => esc_html__( 'Color for inactive dots.', 'cph-elements' ),
 		),
 

@@ -79,6 +79,9 @@ function cph_testimonials_shortcode( $atts ) {
 			'button_margin_top_phone'      => '',
 			'dot_size_phone'               => '',
 			'dot_gap_phone'                => '',
+			// Navigation.
+			'nav_style'           => 'dots',
+			'arrow_color'         => 'light',
 			// Extra.
 			'el_class'            => '',
 		),
@@ -205,6 +208,13 @@ function cph_testimonials_shortcode( $atts ) {
 	$autoplay       = 'yes' === $atts['autoplay'] ? 'true' : 'false';
 	$autoplay_speed = intval( $atts['autoplay_speed'] ) * 1000;
 
+	// Navigation flags.
+	$show_button  = 'yes' === $atts['show_button'];
+	$nav_style    = sanitize_text_field( $atts['nav_style'] );
+	$has_multiple = count( $testimonials ) > 1;
+	$show_dots    = $has_multiple && in_array( $nav_style, array( 'dots', 'both' ), true );
+	$show_arrows  = $has_multiple && in_array( $nav_style, array( 'arrows', 'both' ), true );
+
 	// Wrapper classes.
 	$allowed_transitions = array( 'fade', 'slide-left', 'slide-right', 'fade-up', 'fade-down', 'zoom-fade', 'pinch-fade' );
 	$transition_style    = in_array( $atts['transition_style'], $allowed_transitions, true ) ? $atts['transition_style'] : 'fade';
@@ -213,6 +223,11 @@ function cph_testimonials_shortcode( $atts ) {
 	if ( ! empty( $slider_height ) ) {
 		$wrapper_classes[] = 'cph-testimonials--fixed-height';
 	}
+	if ( $show_arrows ) {
+		$wrapper_classes[] = 'cph-testimonials--has-arrows';
+		$arrow_color = in_array( $atts['arrow_color'], array( 'light', 'dark' ), true ) ? $atts['arrow_color'] : 'light';
+		$wrapper_classes[] = 'cph-testimonials--arrows-' . $arrow_color;
+	}
 	if ( ! empty( $atts['el_class'] ) ) {
 		$wrapper_classes[] = esc_attr( $atts['el_class'] );
 	}
@@ -220,9 +235,6 @@ function cph_testimonials_shortcode( $atts ) {
 	// Allowed icon tags.
 	$allowed_tags = array( 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'span' );
 	$icon_tag     = in_array( $atts['icon_tag'], $allowed_tags, true ) ? $atts['icon_tag'] : 'h2';
-
-	$show_button = 'yes' === $atts['show_button'];
-	$show_dots   = count( $testimonials ) > 1;
 
 	ob_start();
 	?>
@@ -254,6 +266,21 @@ function cph_testimonials_shortcode( $atts ) {
 					</div>
 				<?php endforeach; ?>
 			</div>
+
+			<?php if ( $show_arrows ) : ?>
+				<button class="cph-testimonials__arrow cph-testimonials__arrow--prev" aria-label="<?php esc_attr_e( 'Previous testimonial', 'cph-elements' ); ?>">
+					<svg width="140" height="50" viewBox="0 0 140 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+						<rect x="0.5" y="0.5" width="139" height="49" rx="24.5" stroke="currentColor"/>
+						<path d="M85 25H55M55 25L65 15M55 25L65 35" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+					</svg>
+				</button>
+				<button class="cph-testimonials__arrow cph-testimonials__arrow--next" aria-label="<?php esc_attr_e( 'Next testimonial', 'cph-elements' ); ?>">
+					<svg width="140" height="50" viewBox="0 0 140 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+						<rect x="0.5" y="0.5" width="139" height="49" rx="24.5" stroke="currentColor"/>
+						<path d="M55 25H85M85 25L75 15M85 25L75 35" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+					</svg>
+				</button>
+			<?php endif; ?>
 
 			<?php if ( $show_button ) : ?>
 				<a href="<?php echo esc_url( $atts['button_url'] ); ?>"
