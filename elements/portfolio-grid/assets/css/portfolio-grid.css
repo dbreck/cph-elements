@@ -118,11 +118,13 @@
 	color: var(--text-color, #fff);
 	display: block;
 	min-height: var(--card-height, 525px);
-	outline: 1px solid transparent; /* Prevents subpixel gaps during animations */
+	outline: 1px solid transparent;
+	/* Prevents subpixel gaps during animations */
 	overflow: hidden;
 	position: relative;
 	text-decoration: none;
-	transform: translateZ(0); /* Force GPU layer */
+	transform: translateZ(0);
+	/* Force GPU layer */
 }
 
 /* Large cards in bento/featured layouts */
@@ -141,7 +143,8 @@
    ============================================================================= */
 
 .cph-card__image {
-	inset: -5px; /* Overflow to cover subpixel gaps in grid layouts */
+	inset: -5px;
+	/* Overflow to cover subpixel gaps in grid layouts */
 	position: absolute;
 	z-index: 1;
 }
@@ -553,14 +556,18 @@
 .cph-portfolio-grid--lower-third .cph-card__location::before {
 	background: var(--lower-third-bar-color, #fff);
 	content: '';
-	height: calc(100% + 40px); /* 20px padding top + bottom */
-	left: -40px; /* Pin to card edge (content is 40px from edge) */
+	height: calc(100% + 40px);
+	/* 20px padding top + bottom */
+	left: -40px;
+	/* Pin to card edge (content is 40px from edge) */
 	position: absolute;
 	top: 50%;
-	transform: translateY(-45%) scaleX(0); /* -45% to visually center with uppercase text */
+	transform: translateY(-45%) scaleX(0);
+	/* -45% to visually center with uppercase text */
 	transform-origin: left center;
 	transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-	width: calc(100% + 80px + 40px); /* full text + left offset + 40px right extension */
+	width: calc(100% + 80px + 40px);
+	/* full text + left offset + 40px right extension */
 	z-index: -1;
 }
 
@@ -572,7 +579,8 @@
 /* Change text color on hover */
 .cph-portfolio-grid--lower-third .cph-card:hover .cph-card__location {
 	color: var(--lower-third-text-color, var(--text-color, #fff));
-	transition: color 0.3s ease 0.1s; /* Slight delay so bar appears first */
+	transition: color 0.3s ease 0.1s;
+	/* Slight delay so bar appears first */
 }
 
 /* Responsive: adjust left offset for tablet */
@@ -595,7 +603,8 @@
 @media (max-width: 599px) {
 	.cph-portfolio-grid--lower-third .cph-card__location::before {
 		left: -20px;
-		width: calc(100% + 40px + 30px); /* Slightly less extension on small screens */
+		width: calc(100% + 40px + 30px);
+		/* Slightly less extension on small screens */
 	}
 }
 
@@ -626,7 +635,7 @@
 	font-weight: 500;
 	letter-spacing: 0.01em;
 	padding: 8px 4px;
-	text-transform: capitalize;
+	text-transform: uppercase;
 	transition: color 0.3s ease !important;
 }
 

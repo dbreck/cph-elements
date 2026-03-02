@@ -45,7 +45,7 @@
 	font-weight: 500;
 	letter-spacing: 0.01em;
 	padding: 8px 4px;
-	text-transform: capitalize;
+	text-transform: uppercase;
 	transition: color 0.3s ease !important;
 }
 
@@ -212,7 +212,7 @@
 	color: #000;
 }
 
-.cph-scroller__card--team .cph-scroller__card-content > p:not([class]) {
+.cph-scroller__card--team .cph-scroller__card-content>p:not([class]) {
 	font-size: 22px;
 	font-weight: 400;
 	line-height: 1.5;
@@ -524,7 +524,7 @@
 		font-size: 11px;
 	}
 
-	.cph-scroller__card--team .cph-scroller__card-content > p:not([class]) {
+	.cph-scroller__card--team .cph-scroller__card-content>p:not([class]) {
 		font-size: 18px;
 	}
 
@@ -600,7 +600,7 @@
 		left: 20px;
 	}
 
-	.cph-scroller__card--team .cph-scroller__card-content > p:not([class]) {
+	.cph-scroller__card--team .cph-scroller__card-content>p:not([class]) {
 		font-size: 16px;
 	}
 

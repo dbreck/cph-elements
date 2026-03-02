@@ -175,6 +175,167 @@
 		container.addEventListener('mouseenter', stopAutoplay);
 		container.addEventListener('mouseleave', startAutoplay);
 
+		// Swipe / drag support (touch + desktop pointer drag).
+		var swipeStartX = 0;
+		var swipeStartY = 0;
+		var isSwipeActive = false;
+		var activePointerId = null;
+		var suppressClick = false;
+		var swipeThreshold = 44;
+
+		function startSwipe(point, pointerId) {
+			if (isAnimating) {
+				return;
+			}
+			swipeStartX = point.clientX;
+			swipeStartY = point.clientY;
+			isSwipeActive = true;
+			activePointerId = pointerId;
+			suppressClick = false;
+			slider.classList.add('is-dragging');
+			stopAutoplay();
+		}
+
+		function moveSwipe(point, pointerId) {
+			var deltaX;
+			var deltaY;
+
+			if (!isSwipeActive) {
+				return;
+			}
+			if (activePointerId !== null && pointerId !== null && activePointerId !== pointerId) {
+				return;
+			}
+
+			deltaX = point.clientX - swipeStartX;
+			deltaY = point.clientY - swipeStartY;
+
+			if (Math.abs(deltaX) > 8 || Math.abs(deltaY) > 8) {
+				suppressClick = true;
+			}
+		}
+
+		function endSwipe(point, pointerId) {
+			var deltaX;
+			var deltaY;
+			var isHorizontalSwipe;
+
+			if (!isSwipeActive) {
+				return;
+			}
+			if (activePointerId !== null && pointerId !== null && activePointerId !== pointerId) {
+				return;
+			}
+
+			deltaX = point.clientX - swipeStartX;
+			deltaY = point.clientY - swipeStartY;
+			isHorizontalSwipe = Math.abs(deltaX) > swipeThreshold && Math.abs(deltaX) > Math.abs(deltaY);
+
+			isSwipeActive = false;
+			activePointerId = null;
+			slider.classList.remove('is-dragging');
+
+			if (Math.abs(deltaX) > 8 || Math.abs(deltaY) > 8) {
+				suppressClick = true;
+			}
+
+			if (isHorizontalSwipe) {
+				if (deltaX < 0) {
+					next();
+				} else {
+					prev();
+				}
+				resetAutoplay();
+				return;
+			}
+
+			startAutoplay();
+		}
+
+		function cancelSwipe() {
+			if (!isSwipeActive) {
+				return;
+			}
+			isSwipeActive = false;
+			activePointerId = null;
+			slider.classList.remove('is-dragging');
+			startAutoplay();
+		}
+
+		if (window.PointerEvent) {
+			slider.addEventListener('pointerdown', function(e) {
+				if (e.pointerType === 'mouse' && e.button !== 0) {
+					return;
+				}
+				startSwipe(e, e.pointerId);
+			});
+
+			window.addEventListener('pointermove', function(e) {
+				moveSwipe(e, e.pointerId);
+			});
+
+			window.addEventListener('pointerup', function(e) {
+				endSwipe(e, e.pointerId);
+			});
+
+			window.addEventListener('pointercancel', cancelSwipe);
+		} else {
+			slider.addEventListener('touchstart', function(e) {
+				if (!e.changedTouches.length) {
+					return;
+				}
+				startSwipe(e.changedTouches[0], null);
+			}, { passive: true });
+
+			window.addEventListener('touchmove', function(e) {
+				if (!e.changedTouches.length) {
+					return;
+				}
+				moveSwipe(e.changedTouches[0], null);
+			}, { passive: true });
+
+			window.addEventListener('touchend', function(e) {
+				if (!e.changedTouches.length) {
+					return;
+				}
+				endSwipe(e.changedTouches[0], null);
+			}, { passive: true });
+
+			window.addEventListener('touchcancel', cancelSwipe, { passive: true });
+
+			slider.addEventListener('mousedown', function(e) {
+				if (e.button !== 0) {
+					return;
+				}
+				startSwipe(e, null);
+			});
+
+			window.addEventListener('mousemove', function(e) {
+				moveSwipe(e, null);
+			});
+
+			window.addEventListener('mouseup', function(e) {
+				if (e.button !== 0) {
+					return;
+				}
+				endSwipe(e, null);
+			});
+		}
+
+		slider.addEventListener('dragstart', function(e) {
+			e.preventDefault();
+		});
+
+		// Suppress accidental click activation after a drag gesture.
+		slider.addEventListener('click', function(e) {
+			if (!suppressClick) {
+				return;
+			}
+			e.preventDefault();
+			e.stopPropagation();
+			suppressClick = false;
+		}, true);
+
 		updateHeight();
 		startAutoplay();
 		container.dataset.init = 'true';
