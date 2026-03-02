@@ -175,13 +175,178 @@
 		container.addEventListener('mouseenter', stopAutoplay);
 		container.addEventListener('mouseleave', startAutoplay);
 
-		// Swipe / drag support (touch + desktop pointer drag).
+		// Swipe / drag support (touch + desktop pointer drag with live follow).
 		var swipeStartX = 0;
 		var swipeStartY = 0;
 		var isSwipeActive = false;
 		var activePointerId = null;
 		var suppressClick = false;
 		var swipeThreshold = 44;
+		var dragDirection = 0;
+		var dragTargetIndex = -1;
+		var dragOutgoingSlide = null;
+		var dragIncomingSlide = null;
+		var dragWidth = 1;
+		var dragSettleDuration = 280;
+
+		function resetDragState() {
+			dragDirection = 0;
+			dragTargetIndex = -1;
+			dragOutgoingSlide = null;
+			dragIncomingSlide = null;
+			dragWidth = Math.max(slider.clientWidth || 1, 1);
+		}
+
+		function getDragTargetIndex(direction) {
+			return direction > 0 ? (currentIndex + 1) % slides.length : (currentIndex - 1 + slides.length) % slides.length;
+		}
+
+		function setDragSlideStyles(slide, xPercent, alpha) {
+			slide.style.position = 'absolute';
+			slide.style.top = '0';
+			slide.style.left = '0';
+			slide.style.width = '100%';
+			slide.style.visibility = 'visible';
+			slide.style.opacity = String(alpha);
+			slide.style.setProperty('transform', 'translateX(' + xPercent + '%)', 'important');
+		}
+
+		function clearDragSlideStyles(slide) {
+			if (!slide) {
+				return;
+			}
+			slide.style.transition = '';
+			slide.style.position = '';
+			slide.style.top = '';
+			slide.style.left = '';
+			slide.style.width = '';
+			slide.style.visibility = '';
+			slide.style.opacity = '';
+			slide.style.zIndex = '';
+			slide.style.removeProperty('transform');
+		}
+
+		function setActiveDot(index) {
+			for (var i = 0; i < dots.length; i++) {
+				if (i === index) {
+					dots[i].classList.add('is-active');
+					dots[i].setAttribute('aria-selected', 'true');
+				} else {
+					dots[i].classList.remove('is-active');
+					dots[i].setAttribute('aria-selected', 'false');
+				}
+			}
+		}
+
+		function prepareDragSlides(direction) {
+			var targetIndex = getDragTargetIndex(direction);
+			var outgoingSlide = slides[currentIndex];
+			var incomingSlide = slides[targetIndex];
+
+			if (dragTargetIndex === targetIndex && dragIncomingSlide === incomingSlide) {
+				return;
+			}
+
+			if (dragIncomingSlide && dragIncomingSlide !== incomingSlide) {
+				dragIncomingSlide.classList.remove('is-active');
+				dragIncomingSlide.classList.remove('is-exiting');
+				clearDragSlideStyles(dragIncomingSlide);
+			}
+
+			dragDirection = direction;
+			dragTargetIndex = targetIndex;
+			dragOutgoingSlide = outgoingSlide;
+			dragIncomingSlide = incomingSlide;
+
+			outgoingSlide.classList.remove('is-exiting');
+			incomingSlide.classList.remove('is-exiting');
+
+			incomingSlide.classList.add('is-active');
+			outgoingSlide.style.zIndex = '2';
+			incomingSlide.style.zIndex = '1';
+
+			setDragSlideStyles(outgoingSlide, 0, 1);
+			setDragSlideStyles(incomingSlide, direction > 0 ? 100 : -100, 1);
+		}
+
+		function applyDrag(deltaX, deltaY) {
+			var direction;
+			var progress;
+			var incomingStart;
+
+			if (Math.abs(deltaX) <= Math.abs(deltaY) && !dragIncomingSlide) {
+				return;
+			}
+
+			if (Math.abs(deltaX) < 2) {
+				if (dragOutgoingSlide && dragIncomingSlide) {
+					setDragSlideStyles(dragOutgoingSlide, 0, 1);
+					setDragSlideStyles(dragIncomingSlide, dragDirection > 0 ? 100 : -100, 1);
+				}
+				return;
+			}
+
+			direction = deltaX < 0 ? 1 : -1;
+			prepareDragSlides(direction);
+
+			progress = deltaX / dragWidth;
+			progress = Math.max(-1, Math.min(1, progress));
+			incomingStart = direction > 0 ? 100 : -100;
+
+			setDragSlideStyles(dragOutgoingSlide, progress * 100, 1);
+			setDragSlideStyles(dragIncomingSlide, incomingStart + progress * 100, 1);
+		}
+
+		function settleDrag(shouldCommit) {
+			var outgoingSlide = dragOutgoingSlide;
+			var incomingSlide = dragIncomingSlide;
+			var direction = dragDirection;
+			var targetIndex = dragTargetIndex;
+			var outgoingEnd = direction > 0 ? -100 : 100;
+			var incomingReset = direction > 0 ? 100 : -100;
+
+			if (!outgoingSlide || !incomingSlide) {
+				resetDragState();
+				startAutoplay();
+				return;
+			}
+
+			isAnimating = true;
+
+			outgoingSlide.style.transition = 'transform ' + dragSettleDuration + 'ms ease, opacity ' + dragSettleDuration + 'ms ease';
+			incomingSlide.style.transition = 'transform ' + dragSettleDuration + 'ms ease, opacity ' + dragSettleDuration + 'ms ease';
+
+			requestAnimationFrame(function() {
+				if (shouldCommit) {
+					setDragSlideStyles(outgoingSlide, outgoingEnd, 0);
+					setDragSlideStyles(incomingSlide, 0, 1);
+				} else {
+					setDragSlideStyles(outgoingSlide, 0, 1);
+					setDragSlideStyles(incomingSlide, incomingReset, 1);
+				}
+			});
+
+			setTimeout(function() {
+				if (shouldCommit) {
+					outgoingSlide.classList.remove('is-active');
+					currentIndex = targetIndex;
+					incomingSlide.classList.add('is-active');
+					setActiveDot(currentIndex);
+				} else {
+					incomingSlide.classList.remove('is-active');
+				}
+
+				outgoingSlide.classList.remove('is-exiting');
+				incomingSlide.classList.remove('is-exiting');
+
+				clearDragSlideStyles(outgoingSlide);
+				clearDragSlideStyles(incomingSlide);
+
+				resetDragState();
+				isAnimating = false;
+				startAutoplay();
+			}, dragSettleDuration);
+		}
 
 		function startSwipe(point, pointerId) {
 			if (isAnimating) {
@@ -192,8 +357,9 @@
 			isSwipeActive = true;
 			activePointerId = pointerId;
 			suppressClick = false;
-			slider.classList.add('is-dragging');
+			resetDragState();
 			stopAutoplay();
+			slider.classList.add('is-dragging');
 		}
 
 		function moveSwipe(point, pointerId) {
@@ -213,12 +379,14 @@
 			if (Math.abs(deltaX) > 8 || Math.abs(deltaY) > 8) {
 				suppressClick = true;
 			}
+
+			applyDrag(deltaX, deltaY);
 		}
 
 		function endSwipe(point, pointerId) {
 			var deltaX;
 			var deltaY;
-			var isHorizontalSwipe;
+			var shouldCommit;
 
 			if (!isSwipeActive) {
 				return;
@@ -229,7 +397,7 @@
 
 			deltaX = point.clientX - swipeStartX;
 			deltaY = point.clientY - swipeStartY;
-			isHorizontalSwipe = Math.abs(deltaX) > swipeThreshold && Math.abs(deltaX) > Math.abs(deltaY);
+			shouldCommit = Math.abs(deltaX) > swipeThreshold && Math.abs(deltaX) > Math.abs(deltaY);
 
 			isSwipeActive = false;
 			activePointerId = null;
@@ -239,7 +407,12 @@
 				suppressClick = true;
 			}
 
-			if (isHorizontalSwipe) {
+			if (dragIncomingSlide) {
+				settleDrag(shouldCommit);
+				return;
+			}
+
+			if (shouldCommit) {
 				if (deltaX < 0) {
 					next();
 				} else {
@@ -259,6 +432,12 @@
 			isSwipeActive = false;
 			activePointerId = null;
 			slider.classList.remove('is-dragging');
+
+			if (dragIncomingSlide) {
+				settleDrag(false);
+				return;
+			}
+
 			startAutoplay();
 		}
 
