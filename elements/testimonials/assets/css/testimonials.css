@@ -237,6 +237,11 @@
 	margin-top: 40px;
 }
 
+/* Render dots for arrow-only mode, but keep them desktop-hidden. */
+.cph-testimonials.cph-testimonials--mobile-dots-only .cph-testimonials__dots {
+	display: none;
+}
+
 .cph-testimonials button.cph-testimonials__dot {
 	width: var(--testimonials-dot-size);
 	height: var(--testimonials-dot-size);
@@ -345,6 +350,14 @@
 @media only screen and (max-width: 599px) {
 	.cph-testimonials {
 		padding: 40px 20px;
+	}
+
+	.cph-testimonials .cph-testimonials__arrow {
+		display: none;
+	}
+
+	.cph-testimonials.cph-testimonials--mobile-dots-only .cph-testimonials__dots {
+		display: flex;
 	}
 
 	.cph-testimonials__arrow svg {

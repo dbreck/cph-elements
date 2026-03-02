@@ -212,7 +212,8 @@ function cph_testimonials_shortcode( $atts ) {
 	$show_button  = 'yes' === $atts['show_button'];
 	$nav_style    = sanitize_text_field( $atts['nav_style'] );
 	$has_multiple = count( $testimonials ) > 1;
-	$show_dots    = $has_multiple && in_array( $nav_style, array( 'dots', 'both' ), true );
+	$mobile_dots_only = $has_multiple && 'arrows' === $nav_style;
+	$show_dots    = $has_multiple && in_array( $nav_style, array( 'dots', 'arrows', 'both' ), true );
 	$show_arrows  = $has_multiple && in_array( $nav_style, array( 'arrows', 'both' ), true );
 
 	// Wrapper classes.
@@ -227,6 +228,9 @@ function cph_testimonials_shortcode( $atts ) {
 		$wrapper_classes[] = 'cph-testimonials--has-arrows';
 		$arrow_color = in_array( $atts['arrow_color'], array( 'light', 'dark' ), true ) ? $atts['arrow_color'] : 'light';
 		$wrapper_classes[] = 'cph-testimonials--arrows-' . $arrow_color;
+	}
+	if ( $mobile_dots_only ) {
+		$wrapper_classes[] = 'cph-testimonials--mobile-dots-only';
 	}
 	if ( ! empty( $atts['el_class'] ) ) {
 		$wrapper_classes[] = esc_attr( $atts['el_class'] );
