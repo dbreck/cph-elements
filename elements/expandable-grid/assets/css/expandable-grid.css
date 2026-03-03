@@ -52,6 +52,7 @@
 	display: inline-block;
 	background: none;
 	border: none;
+	color: #000 !important;
 	padding: 0;
 	margin-top: auto;
 	font-family: inherit;
@@ -167,6 +168,7 @@
 .cph-grid__detail-close {
 	background: none;
 	border: none;
+	color: #000 !important;
 	padding: 0;
 	font-family: inherit;
 	font-size: 14px;

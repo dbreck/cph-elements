@@ -680,12 +680,12 @@
 	transform: translateY(12px);
 }
 
-/* Even rows: flip image to right, text to left */
-.cph-zigzag__row:nth-child(even) .cph-zigzag__image {
+/* Flipped rows: image right, text left (toggled by JS for filter-safe zigzag) */
+.cph-zigzag__row--flipped .cph-zigzag__image {
 	order: 2;
 }
 
-.cph-zigzag__row:nth-child(even) .cph-zigzag__text {
+.cph-zigzag__row--flipped .cph-zigzag__text {
 	order: 1;
 }
 
@@ -802,8 +802,8 @@ a.cph-zigzag__btn:hover {
 	}
 
 	/* Reset order: image always on top */
-	.cph-zigzag__row:nth-child(even) .cph-zigzag__image,
-	.cph-zigzag__row:nth-child(even) .cph-zigzag__text {
+	.cph-zigzag__row--flipped .cph-zigzag__image,
+	.cph-zigzag__row--flipped .cph-zigzag__text {
 		order: unset;
 	}
 

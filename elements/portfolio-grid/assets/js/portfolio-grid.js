@@ -8,11 +8,26 @@
 (function() {
 	var FADE_DURATION = 350;
 
-	document.addEventListener('DOMContentLoaded', function() {
-		document.querySelectorAll('.cph-zigzag__filter').forEach(function(filter) {
-			var grid = filter.closest('.cph-portfolio-grid--zigzag');
+	/**
+	 * Re-apply the --flipped class to every other visible row so the
+	 * zigzag pattern stays correct after filtering hides rows.
+	 */
+	function applyZigzag( grid ) {
+		var visible = grid.querySelectorAll('.cph-zigzag__row:not(.is-hidden)');
+		visible.forEach(function(row, i) {
+			row.classList.toggle('cph-zigzag__row--flipped', i % 2 === 1);
+		});
+	}
 
-			if ( ! grid ) {
+	document.addEventListener('DOMContentLoaded', function() {
+		document.querySelectorAll('.cph-portfolio-grid--zigzag').forEach(function(grid) {
+
+			// Set initial zigzag on page load.
+			applyZigzag( grid );
+
+			var filter = grid.querySelector('.cph-zigzag__filter');
+
+			if ( ! filter ) {
 				return;
 			}
 
@@ -64,6 +79,9 @@
 								row.classList.remove('is-filtering-in');
 							}
 						});
+
+						// Re-zigzag visible rows after filter change.
+						applyZigzag( grid );
 
 						// Force reflow so the browser registers the is-filtering-in state.
 						void grid.offsetHeight;
