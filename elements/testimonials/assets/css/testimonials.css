@@ -63,13 +63,6 @@
 .cph-testimonials .cph-testimonials__slider {
 	position: relative;
 	overflow: hidden;
-	touch-action: pan-y;
-	cursor: grab;
-}
-
-.cph-testimonials .cph-testimonials__slider.is-dragging {
-	cursor: grabbing;
-	user-select: none;
 }
 
 .cph-testimonials .cph-testimonials__slide {
