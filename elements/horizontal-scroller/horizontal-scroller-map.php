@@ -430,6 +430,18 @@ return array(
 			'description' => esc_html__( 'Single arrow on direction side, or both arrows on left and right.', 'cph-elements' ),
 		),
 
+		array(
+			'type'        => 'dropdown',
+			'heading'     => esc_html__( 'Infinite Scroll', 'cph-elements' ),
+			'param_name'  => 'infinite_scroll',
+			'value'       => array(
+				esc_html__( 'Yes', 'cph-elements' ) => 'yes',
+				esc_html__( 'No', 'cph-elements' )  => 'no',
+			),
+			'std'         => 'yes',
+			'description' => esc_html__( 'Enable infinite looping scroll. When disabled, the scroller stops at first and last cards.', 'cph-elements' ),
+		),
+
 		/*
 		 * ─────────────────────────────────────────────────────────────────
 		 * EXTRA

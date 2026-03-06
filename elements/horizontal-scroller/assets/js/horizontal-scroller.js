@@ -92,57 +92,69 @@
 		var cardTotalWidth = cardWidth + gap;
 		var totalWidth = cardTotalWidth * cardCount;
 
-		// Clone cards for seamless infinite loop (clone entire set)
+		// Infinite scroll mode
+		var isInfinite = container.dataset.infinite !== 'no';
+
+		// Clone cards for seamless infinite loop (only when infinite)
 		var clonesBefore = [];
 		var clonesAfter = [];
 
-		cards.forEach(function(card) {
-			var cloneBefore = card.cloneNode(true);
-			var cloneAfter = card.cloneNode(true);
-			cloneBefore.classList.add('cph-scroller__card--clone');
-			cloneAfter.classList.add('cph-scroller__card--clone');
-			cloneBefore.setAttribute('aria-hidden', 'true');
-			cloneAfter.setAttribute('aria-hidden', 'true');
-			clonesBefore.push(cloneBefore);
-			clonesAfter.push(cloneAfter);
-		});
+		if (isInfinite) {
+			cards.forEach(function(card) {
+				var cloneBefore = card.cloneNode(true);
+				var cloneAfter = card.cloneNode(true);
+				cloneBefore.classList.add('cph-scroller__card--clone');
+				cloneAfter.classList.add('cph-scroller__card--clone');
+				cloneBefore.setAttribute('aria-hidden', 'true');
+				cloneAfter.setAttribute('aria-hidden', 'true');
+				clonesBefore.push(cloneBefore);
+				clonesAfter.push(cloneAfter);
+			});
 
-		// Insert clones (before = prepend, after = append)
-		clonesBefore.reverse().forEach(function(clone) {
-			track.insertBefore(clone, track.firstChild);
-		});
-		clonesAfter.forEach(function(clone) {
-			track.appendChild(clone);
-		});
+			// Insert clones (before = prepend, after = append)
+			clonesBefore.reverse().forEach(function(clone) {
+				track.insertBefore(clone, track.firstChild);
+			});
+			clonesAfter.forEach(function(clone) {
+				track.appendChild(clone);
+			});
+		}
 
-		// Set initial position to show original cards
-		// Left direction: show left side of originals (position = -totalWidth to skip prepended clones)
-		// Right direction: show right side of originals (position so rightmost card is at right edge of viewport)
+		// Set initial position
 		var viewportWidth = viewport.getBoundingClientRect().width;
 		var initialX;
-		if (direction === 'right') {
-			// Position track so the rightmost original card aligns with right edge of viewport
-			// Originals end at 2*totalWidth from track start, we want that at viewport's right edge
-			initialX = viewportWidth - (2 * totalWidth);
+		if (isInfinite) {
+			// Left direction: show left side of originals (position = -totalWidth to skip prepended clones)
+			// Right direction: show right side of originals (position so rightmost card is at right edge of viewport)
+			if (direction === 'right') {
+				initialX = viewportWidth - (2 * totalWidth);
+			} else {
+				initialX = -totalWidth;
+			}
 		} else {
-			initialX = -totalWidth;
+			// Non-infinite: start at 0
+			initialX = 0;
 		}
 		gsap.set(track, { x: initialX });
 
 		// Track state
+		var finiteMinX = -(totalWidth - viewportWidth);
 		var state = {
 			x: initialX,
 			isDragging: false,
-			bounds: {
-				minX: -totalWidth * 2, // Two sets before
-				maxX: 0               // Start of first clone set
-			}
+			bounds: isInfinite
+				? { minX: -totalWidth * 2, maxX: 0 }
+				: { minX: Math.min(finiteMinX, 0), maxX: 0 }
 		};
 
 		/**
 		 * Wrap position to create infinite loop effect
 		 */
 		function wrapPosition(x) {
+			if (!isInfinite) {
+				// Clamp to bounds
+				return Math.max(state.bounds.minX, Math.min(state.bounds.maxX, x));
+			}
 			// If we've scrolled past the clones on either end, wrap to the original set
 			if (x > state.bounds.maxX) {
 				// Wrapped past the start, jump to equivalent position in originals
@@ -191,11 +203,15 @@
 		/**
 		 * Initialize GSAP Draggable
 		 */
+		var draggableBounds = isInfinite
+			? { minX: -totalWidth * 3, maxX: totalWidth }
+			: { minX: state.bounds.minX, maxX: 0 };
+
 		var draggable = Draggable.create(track, {
 			type: 'x',
 			inertia: true,
-			bounds: { minX: -totalWidth * 3, maxX: totalWidth },
-			edgeResistance: 0.65,
+			bounds: draggableBounds,
+			edgeResistance: isInfinite ? 0.65 : 0.85,
 			throwResistance: 2000,
 			snap: {
 				x: function(value) {
@@ -389,18 +405,31 @@
 				totalWidth = newTotalWidth;
 
 				// Update bounds
-				state.bounds.minX = -totalWidth * 2;
-				state.bounds.maxX = 0;
+				if (isInfinite) {
+					state.bounds.minX = -totalWidth * 2;
+					state.bounds.maxX = 0;
+				} else {
+					var newVpW = viewport.getBoundingClientRect().width;
+					state.bounds.minX = Math.min(-(totalWidth - newVpW), 0);
+					state.bounds.maxX = 0;
+				}
 
 				// Reposition arrow
 				positionArrow();
 
-				// For right direction, recalculate position to keep rightmost cards visible
-				if (direction === 'right') {
+				// Recalculate position on resize
+				if (isInfinite && direction === 'right') {
 					var newViewportWidth = viewport.getBoundingClientRect().width;
 					var newX = newViewportWidth - (2 * totalWidth);
 					gsap.set(track, { x: newX });
 					state.x = newX;
+				} else if (!isInfinite) {
+					// Clamp current position to new bounds
+					var clamped = Math.max(state.bounds.minX, Math.min(state.bounds.maxX, state.x));
+					if (clamped !== state.x) {
+						gsap.set(track, { x: clamped });
+						state.x = clamped;
+					}
 				}
 			}
 		};

@@ -59,6 +59,7 @@ function cph_horizontal_scroller_shortcode( $atts ) {
 			'visible_cards'        => '',
 			'visible_cards_tablet' => '',
 			'visible_cards_phone'  => '',
+			'infinite_scroll'      => 'yes',
 		),
 		$atts,
 		'cph_horizontal_scroller'
@@ -223,7 +224,8 @@ function cph_horizontal_scroller_shortcode( $atts ) {
 		 data-arrow-mode="<?php echo esc_attr( $arrow_mode ); ?>"
 		 data-visible-cards="<?php echo esc_attr( sanitize_text_field( $atts['visible_cards'] ) ); ?>"
 		 data-visible-cards-tablet="<?php echo esc_attr( sanitize_text_field( $atts['visible_cards_tablet'] ) ); ?>"
-		 data-visible-cards-phone="<?php echo esc_attr( sanitize_text_field( $atts['visible_cards_phone'] ) ); ?>">
+		 data-visible-cards-phone="<?php echo esc_attr( sanitize_text_field( $atts['visible_cards_phone'] ) ); ?>"
+		 data-infinite="<?php echo esc_attr( sanitize_text_field( $atts['infinite_scroll'] ) ); ?>">
 
 		<?php
 		$show_filter = sanitize_text_field( $atts['show_filter'] );
