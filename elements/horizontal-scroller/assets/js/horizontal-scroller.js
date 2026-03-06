@@ -474,24 +474,39 @@
 					btns.forEach(function(b) { b.classList.remove('is-active'); });
 					btn.classList.add('is-active');
 
-					// Destroy current scroller instance.
-					destroyScroller(wrapper);
-
-					// Toggle visibility on original cards.
 					var track = wrapper.querySelector(CONFIG.trackSelector);
-					if (track) {
-						track.querySelectorAll(CONFIG.cardSelector + ':not(.cph-scroller__card--clone)').forEach(function(card) {
-							var cats = (card.getAttribute('data-categories') || '').split(' ');
-							if (!slug || cats.indexOf(slug) !== -1) {
-								card.classList.remove('is-filter-hidden');
-							} else {
-								card.classList.add('is-filter-hidden');
-							}
-						});
-					}
+					if (!track) return;
 
-					// Re-initialize scroller with visible cards.
-					initScroller(wrapper);
+					// Animate out, swap cards, animate in.
+					gsap.to(track, {
+						opacity: 0,
+						y: 12,
+						duration: 0.25,
+						ease: 'power2.in',
+						onComplete: function() {
+							// Destroy current scroller instance.
+							destroyScroller(wrapper);
+
+							// Toggle visibility on original cards.
+							track.querySelectorAll(CONFIG.cardSelector + ':not(.cph-scroller__card--clone)').forEach(function(card) {
+								var cats = (card.getAttribute('data-categories') || '').split(' ');
+								if (!slug || cats.indexOf(slug) !== -1) {
+									card.classList.remove('is-filter-hidden');
+								} else {
+									card.classList.add('is-filter-hidden');
+								}
+							});
+
+							// Re-initialize scroller with visible cards.
+							initScroller(wrapper);
+
+							// Animate in.
+							gsap.fromTo(track,
+								{ opacity: 0, y: 12 },
+								{ opacity: 1, y: 0, duration: 0.35, ease: 'power2.out' }
+							);
+						}
+					});
 				});
 			});
 		});
