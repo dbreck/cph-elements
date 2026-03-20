@@ -722,15 +722,19 @@
 /* ── Eyebrow ─────────────────────────────────────────────────────────────── */
 
 .cph-zigzag__eyebrow {
+	margin-bottom: 20px;
+	text-align: left;
+}
+
+.cph-zigzag__eyebrow-tag {
 	color: var(--ag-olive, #87A80E);
-	display: inline-block;
 	font-family: 'Poppins', sans-serif;
 	font-size: max(16px, 1.5vw);
 	font-weight: 600;
 	letter-spacing: 0.05em;
-	margin-bottom: 20px;
 	text-transform: uppercase;
 }
+
 
 /* ── Title ───────────────────────────────────────────────────────────────── */
 
