@@ -37,13 +37,22 @@ function cph_get_card_data( $post_id ) {
 
 	// Handle custom_thumb - could be URL or attachment ID.
 	$logo_url = null;
+	$logo_alt = '';
 	if ( ! empty( $custom_thumb ) ) {
 		if ( is_numeric( $custom_thumb ) ) {
 			$logo_url = wp_get_attachment_image_url( $custom_thumb, 'medium' );
+			$logo_alt = get_post_meta( $custom_thumb, '_wp_attachment_image_alt', true );
 		} else {
 			// Already a URL.
 			$logo_url = $custom_thumb;
 		}
+	}
+
+	// Get featured image alt text from the attachment.
+	$image_alt = '';
+	$thumb_id  = get_post_thumbnail_id( $post_id );
+	if ( $thumb_id ) {
+		$image_alt = get_post_meta( $thumb_id, '_wp_attachment_image_alt', true );
 	}
 
 	// Determine if post has content.
@@ -57,7 +66,9 @@ function cph_get_card_data( $post_id ) {
 		'title'       => $post->post_title,
 		'permalink'   => ! empty( $external_url ) ? esc_url( $external_url ) : get_permalink( $post_id ),
 		'image'       => get_the_post_thumbnail_url( $post_id, 'full' ),
+		'image_alt'   => ! empty( $image_alt ) ? $image_alt : $post->post_title,
 		'logo'        => $logo_url,
+		'logo_alt'    => ! empty( $logo_alt ) ? $logo_alt : $post->post_title . ' logo',
 		'excerpt'     => ! empty( $excerpt ) ? $excerpt : null,
 		'video'       => ! empty( $video_mp4 ) ? $video_mp4 : null,
 		'has_content' => $has_content,
@@ -149,7 +160,7 @@ function cph_render_card( $card, $slot, $settings, $show_logo = false, $show_exc
 				</video>
 			<?php elseif ( ! empty( $card['image'] ) ) : ?>
 				<img src="<?php echo esc_url( $card['image'] ); ?>"
-				     alt="<?php echo esc_attr( $card['title'] ); ?>"
+				     alt="<?php echo esc_attr( $card['image_alt'] ); ?>"
 				     loading="lazy" />
 			<?php endif; ?>
 		</div>
@@ -161,7 +172,7 @@ function cph_render_card( $card, $slot, $settings, $show_logo = false, $show_exc
 				<?php if ( $display_logo ) : ?>
 					<img class="cph-card__logo"
 					     src="<?php echo esc_url( $card['logo'] ); ?>"
-					     alt="<?php echo esc_attr( $card['title'] ); ?> logo" />
+					     alt="<?php echo esc_attr( $card['logo_alt'] ); ?>" />
 				<?php endif; ?>
 				<?php if ( $display_excerpt ) : ?>
 					<p class="cph-card__excerpt"><?php echo wp_kses_post( $card['excerpt'] ); ?></p>
@@ -825,20 +836,30 @@ function cph_render_zigzag_grid( $atts, $settings ) {
 		<?php foreach ( $posts_data as $post_item ) :
 			$card       = $post_item['card'];
 			$cat_attr   = implode( ' ', $post_item['term_slugs'] );
-			$eyebrow    = $show_eyebrow && ! empty( $post_item['term_names'] ) ? $post_item['term_names'][0] : '';
-			$has_link   = ! empty( $card['has_content'] );
+			$eyebrow_terms = $show_eyebrow && ! empty( $post_item['term_names'] ) ? $post_item['term_names'] : array();
+			$has_link      = ! empty( $card['has_content'] );
 		?>
 		<div class="cph-zigzag__row" data-categories="<?php echo esc_attr( $cat_attr ); ?>">
 			<div class="cph-zigzag__image">
 				<?php if ( ! empty( $card['image'] ) ) : ?>
 					<img src="<?php echo esc_url( $card['image'] ); ?>"
-					     alt="<?php echo esc_attr( $card['title'] ); ?>"
+					     alt="<?php echo esc_attr( $card['image_alt'] ); ?>"
 					     loading="lazy" />
 				<?php endif; ?>
 			</div>
 			<div class="cph-zigzag__text">
-				<?php if ( ! empty( $eyebrow ) ) : ?>
-					<span class="cph-zigzag__eyebrow"><?php echo esc_html( $eyebrow ); ?></span>
+				<?php if ( ! empty( $eyebrow_terms ) ) : ?>
+					<span class="cph-zigzag__eyebrow">
+						<?php
+						$last = count( $eyebrow_terms ) - 1;
+						foreach ( $eyebrow_terms as $i => $term_name ) :
+							echo '<span class="cph-zigzag__eyebrow-tag">' . esc_html( $term_name ) . '</span>';
+							if ( $i < $last ) {
+								echo ', ';
+							}
+						endforeach;
+						?>
+					</span>
 				<?php endif; ?>
 				<<?php echo esc_attr( $heading_tag ); ?> class="cph-zigzag__title"><?php echo esc_html( $card['title'] ); ?></<?php echo esc_attr( $heading_tag ); ?>>
 				<?php if ( $has_link ) : ?>
