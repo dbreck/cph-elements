@@ -831,6 +831,29 @@ a.cph-zigzag__btn:hover {
 	.cph-zigzag__filter-btn {
 		font-size: 11px;
 	}
+
+	/* ── Keep Zigzag on Tablet: restore 2-col layout ─────────────────────── */
+
+	.cph-portfolio-grid--zigzag-keep-tablet .cph-zigzag__row {
+		grid-template-columns: 1fr 1fr;
+		min-height: var(--zigzag-row-height, 400px);
+	}
+
+	.cph-portfolio-grid--zigzag-keep-tablet .cph-zigzag__row--flipped .cph-zigzag__image {
+		order: 2;
+	}
+
+	.cph-portfolio-grid--zigzag-keep-tablet .cph-zigzag__row--flipped .cph-zigzag__text {
+		order: 1;
+	}
+
+	.cph-portfolio-grid--zigzag-keep-tablet .cph-zigzag__image {
+		min-height: unset;
+	}
+
+	.cph-portfolio-grid--zigzag-keep-tablet .cph-zigzag__text {
+		padding: 32px 40px;
+	}
 }
 
 /* ── Zigzag Responsive: Small Mobile ─────────────────────────────────────── */
@@ -847,6 +870,25 @@ a.cph-zigzag__btn:hover {
 	.cph-zigzag__btn {
 		font-size: 10px;
 		padding: 10px 24px;
+	}
+
+	/* Revert keep-tablet back to stacked on small screens */
+	.cph-portfolio-grid--zigzag-keep-tablet .cph-zigzag__row {
+		grid-template-columns: 1fr;
+		min-height: auto;
+	}
+
+	.cph-portfolio-grid--zigzag-keep-tablet .cph-zigzag__row--flipped .cph-zigzag__image,
+	.cph-portfolio-grid--zigzag-keep-tablet .cph-zigzag__row--flipped .cph-zigzag__text {
+		order: unset;
+	}
+
+	.cph-portfolio-grid--zigzag-keep-tablet .cph-zigzag__image {
+		min-height: 240px;
+	}
+
+	.cph-portfolio-grid--zigzag-keep-tablet .cph-zigzag__text {
+		padding: 24px 20px;
 	}
 }
 

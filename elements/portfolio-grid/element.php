@@ -42,6 +42,7 @@ return array(
 	'gsap' => array(),
 
 	'admin_device_groups' => array(
+		'grid-height-device-group',
 		'card-height-device-group',
 		'location-font-size-device-group',
 	),

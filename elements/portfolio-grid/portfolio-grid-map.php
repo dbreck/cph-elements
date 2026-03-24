@@ -774,6 +774,19 @@ return array(
 			'description'      => esc_html__( 'Vertical space between rows. Any CSS value.', 'cph-elements' ),
 		),
 
+		array(
+			'type'             => 'checkbox',
+			'heading'          => esc_html__( 'Maintain Zigzag on Tablet', 'cph-elements' ),
+			'param_name'       => 'zigzag_keep_tablet',
+			'value'            => array( esc_html__( 'Yes', 'cph-elements' ) => 'yes' ),
+			'edit_field_class' => 'vc_col-sm-6',
+			'dependency'       => array(
+				'element' => 'layout',
+				'value'   => array( 'zigzag' ),
+			),
+			'description'      => esc_html__( 'Keep the alternating 2-column zigzag layout on tablet instead of stacking.', 'cph-elements' ),
+		),
+
 		/*
 		 * =====================================================================
 		 * TAB: STYLE

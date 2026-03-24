@@ -407,6 +407,7 @@ function cph_portfolio_grid_shortcode( $atts ) {
 			'zigzag_button_text'        => 'VIEW PROJECT',
 			'zigzag_row_height'         => '500px',
 			'zigzag_row_gap'            => '40px',
+			'zigzag_keep_tablet'        => '',
 		),
 		$atts,
 		'cph_portfolio_grid'
@@ -492,6 +493,9 @@ function cph_portfolio_grid_shortcode( $atts ) {
 	}
 	if ( ! empty( $atts['card_height_tablet'] ) ) {
 		$tablet_vars[] = '--card-height: ' . esc_attr( $atts['card_height_tablet'] );
+		if ( 'zigzag' === $layout ) {
+			$tablet_vars[] = '--zigzag-row-height: ' . esc_attr( $atts['card_height_tablet'] );
+		}
 	}
 	if ( ! empty( $atts['location_font_size_tablet'] ) ) {
 		$tablet_vars[] = '--location-font-size: ' . esc_attr( $atts['location_font_size_tablet'] );
@@ -507,6 +511,9 @@ function cph_portfolio_grid_shortcode( $atts ) {
 	}
 	if ( ! empty( $atts['card_height_phone'] ) ) {
 		$phone_vars[] = '--card-height: ' . esc_attr( $atts['card_height_phone'] );
+		if ( 'zigzag' === $layout ) {
+			$phone_vars[] = '--zigzag-row-height: ' . esc_attr( $atts['card_height_phone'] );
+		}
 	}
 	if ( ! empty( $atts['location_font_size_phone'] ) ) {
 		$phone_vars[] = '--location-font-size: ' . esc_attr( $atts['location_font_size_phone'] );
@@ -527,6 +534,10 @@ function cph_portfolio_grid_shortcode( $atts ) {
 
 	if ( 'yes' === $atts['lower_third_enabled'] ) {
 		$grid_classes[] = 'cph-portfolio-grid--lower-third';
+	}
+
+	if ( 'zigzag' === $layout && 'yes' === $atts['zigzag_keep_tablet'] ) {
+		$grid_classes[] = 'cph-portfolio-grid--zigzag-keep-tablet';
 	}
 
 	ob_start();
