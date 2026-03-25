@@ -73,6 +73,7 @@ $layout_presets = array(
 	esc_html__( 'Homepage Bento (3 cards)', 'cph-elements' ) => 'homepage-bento',
 	esc_html__( 'Homepage Bento (4 cards)', 'cph-elements' ) => 'homepage-bento-4',
 	esc_html__( 'Projects Grid', 'cph-elements' )            => 'featured-2col',
+	esc_html__( 'Masonry', 'cph-elements' )                  => 'masonry',
 	esc_html__( 'Zigzag', 'cph-elements' )                   => 'zigzag',
 );
 
@@ -87,7 +88,10 @@ $gap_options = array(
 // Animation options.
 $animation_options = array(
 	esc_html__( 'None', 'cph-elements' )         => 'none',
+	esc_html__( 'Fade', 'cph-elements' )         => 'fade',
 	esc_html__( 'Fade Up', 'cph-elements' )      => 'fade-up',
+	esc_html__( 'Scale Up', 'cph-elements' )     => 'scale-up',
+	esc_html__( 'Blur Reveal', 'cph-elements' )  => 'blur-reveal',
 	esc_html__( 'Curtain Wipe', 'cph-elements' ) => 'curtain-wipe',
 );
 
@@ -187,7 +191,7 @@ return array(
 			'value'       => $layout_presets,
 			'std'         => 'homepage-bento',
 			'admin_label' => true,
-			'description' => esc_html__( 'Homepage Bento: manually select projects for a bento grid. Projects Grid: auto-populate from post order with featured support.', 'cph-elements' ),
+			'description' => esc_html__( 'Homepage Bento: manually select projects for a bento grid. Projects Grid: auto-populate with featured support. Masonry: CSS Grid masonry using Salient\'s per-item sizing.', 'cph-elements' ),
 		),
 
 		array(
@@ -562,7 +566,7 @@ return array(
 
 		/*
 		 * ─────────────────────────────────────────────────────────────────
-		 * PROJECTS GRID SETTINGS (featured-2col)
+		 * PROJECTS GRID SETTINGS (featured-2col, masonry, zigzag)
 		 * ─────────────────────────────────────────────────────────────────
 		 */
 		array(
@@ -571,7 +575,7 @@ return array(
 			'param_name' => 'group_header_projects_grid',
 			'dependency' => array(
 				'element' => 'layout',
-				'value'   => array( 'featured-2col', 'zigzag' ),
+				'value'   => array( 'featured-2col', 'masonry', 'zigzag' ),
 			),
 		),
 
@@ -582,7 +586,7 @@ return array(
 			'value'       => cph_get_portfolio_categories_dropdown(),
 			'dependency'  => array(
 				'element' => 'layout',
-				'value'   => array( 'featured-2col', 'zigzag' ),
+				'value'   => array( 'featured-2col', 'masonry', 'zigzag' ),
 			),
 			'description' => esc_html__( 'Filter by category or show all projects.', 'cph-elements' ),
 		),
@@ -594,7 +598,7 @@ return array(
 			'value'       => cph_get_project_status_dropdown(),
 			'dependency'  => array(
 				'element' => 'layout',
-				'value'   => array( 'featured-2col', 'zigzag' ),
+				'value'   => array( 'featured-2col', 'masonry', 'zigzag' ),
 			),
 			'description' => esc_html__( 'Filter by Active or Completed status.', 'cph-elements' ),
 		),
@@ -606,7 +610,7 @@ return array(
 			'value'       => '',
 			'dependency'  => array(
 				'element' => 'layout',
-				'value'   => array( 'featured-2col', 'zigzag' ),
+				'value'   => array( 'featured-2col', 'masonry', 'zigzag' ),
 			),
 			'description' => esc_html__( 'Leave blank for unlimited. Projects display in menu order.', 'cph-elements' ),
 		),
@@ -618,7 +622,7 @@ return array(
 			'value'       => array( esc_html__( 'Yes', 'cph-elements' ) => 'yes' ),
 			'dependency'  => array(
 				'element' => 'layout',
-				'value'   => array( 'featured-2col' ),
+				'value'   => array( 'featured-2col', 'masonry' ),
 			),
 			'description' => esc_html__( 'Display project logos (Custom Thumbnail) on all cards.', 'cph-elements' ),
 		),
@@ -630,7 +634,7 @@ return array(
 			'value'       => array( esc_html__( 'Yes', 'cph-elements' ) => 'yes' ),
 			'dependency'  => array(
 				'element' => 'layout',
-				'value'   => array( 'featured-2col' ),
+				'value'   => array( 'featured-2col', 'masonry' ),
 			),
 			'description' => esc_html__( 'Display project excerpts on all cards.', 'cph-elements' ),
 		),
@@ -642,7 +646,7 @@ return array(
 			'value'       => array( esc_html__( 'Yes', 'cph-elements' ) => 'yes' ),
 			'dependency'  => array(
 				'element' => 'layout',
-				'value'   => array( 'featured-2col' ),
+				'value'   => array( 'featured-2col', 'masonry' ),
 			),
 			'description' => esc_html__( 'Display video background on cards that have a video set.', 'cph-elements' ),
 		),
@@ -655,7 +659,7 @@ return array(
 			'std'         => 'bottom-stretch',
 			'dependency'  => array(
 				'element' => 'layout',
-				'value'   => array( 'featured-2col' ),
+				'value'   => array( 'featured-2col', 'masonry' ),
 			),
 			'description' => esc_html__( 'Position of the title and button within each card.', 'cph-elements' ),
 		),
@@ -668,9 +672,69 @@ return array(
 			'std'         => 'arrow',
 			'dependency'  => array(
 				'element' => 'layout',
-				'value'   => array( 'featured-2col' ),
+				'value'   => array( 'featured-2col', 'masonry' ),
 			),
 			'description' => esc_html__( 'Arrow shows the pill-shaped arrow. Text shows a pill button with custom text.', 'cph-elements' ),
+		),
+
+		/*
+		 * ─────────────────────────────────────────────────────────────────
+		 * MASONRY SETTINGS
+		 * ─────────────────────────────────────────────────────────────────
+		 */
+		array(
+			'type'       => 'nectar_group_header',
+			'heading'    => esc_html__( 'Masonry Settings', 'cph-elements' ),
+			'param_name' => 'group_header_masonry',
+			'dependency' => array(
+				'element' => 'layout',
+				'value'   => array( 'masonry' ),
+			),
+		),
+
+		array(
+			'type'             => 'dropdown',
+			'heading'          => esc_html__( 'Columns', 'cph-elements' ),
+			'param_name'       => 'masonry_columns',
+			'value'            => array(
+				esc_html__( '2 Columns', 'cph-elements' ) => '2',
+				esc_html__( '3 Columns', 'cph-elements' ) => '3',
+				esc_html__( '4 Columns', 'cph-elements' ) => '4',
+			),
+			'std'              => '2',
+			'edit_field_class' => 'vc_col-sm-6',
+			'dependency'       => array(
+				'element' => 'layout',
+				'value'   => array( 'masonry' ),
+			),
+			'description'      => esc_html__( 'Number of base columns. Wide items span 2 columns.', 'cph-elements' ),
+		),
+
+		array(
+			'type'             => 'textfield',
+			'heading'          => esc_html__( 'Row Height', 'cph-elements' ),
+			'param_name'       => 'masonry_row_height',
+			'value'            => '400px',
+			'edit_field_class' => 'vc_col-sm-6',
+			'dependency'       => array(
+				'element' => 'layout',
+				'value'   => array( 'masonry' ),
+			),
+			'description'      => esc_html__( 'Height of each grid row. Tall items span 2 rows. Any CSS value.', 'cph-elements' ),
+		),
+
+		array(
+			'type'             => 'checkbox',
+			'heading'          => esc_html__( 'Show Filter Bar', 'cph-elements' ),
+			'param_name'       => 'masonry_show_filter',
+			'value'            => array( esc_html__( 'Yes', 'cph-elements' ) => 'yes' ),
+			'std'              => 'yes',
+			'edit_field_class' => 'vc_col-sm-6',
+			'dependency'       => array(
+				'element' => 'layout',
+				'value'   => array( 'masonry' ),
+			),
+			'description'      => esc_html__( 'Show category filter bar above the grid.', 'cph-elements' ),
 		),
 
 		/*
@@ -1143,16 +1207,31 @@ return array(
 		),
 
 		array(
-			'type'        => 'textfield',
-			'heading'     => esc_html__( 'Animation Stagger', 'cph-elements' ),
-			'param_name'  => 'animation_stagger',
-			'value'       => '0.15',
-			'group'       => esc_html__( 'Animation', 'cph-elements' ),
-			'dependency'  => array(
+			'type'             => 'textfield',
+			'heading'          => esc_html__( 'Animation Stagger', 'cph-elements' ),
+			'param_name'       => 'animation_stagger',
+			'value'            => '0.1',
+			'edit_field_class' => 'vc_col-sm-6',
+			'group'            => esc_html__( 'Animation', 'cph-elements' ),
+			'dependency'       => array(
 				'element'            => 'animation',
 				'value_not_equal_to' => array( 'none' ),
 			),
-			'description' => esc_html__( 'Delay in seconds between each card animation.', 'cph-elements' ),
+			'description'      => esc_html__( 'Delay in seconds between each card. Default: 0.1', 'cph-elements' ),
+		),
+
+		array(
+			'type'             => 'textfield',
+			'heading'          => esc_html__( 'Max Stagger Delay', 'cph-elements' ),
+			'param_name'       => 'animation_max_delay',
+			'value'            => '0.4',
+			'edit_field_class' => 'vc_col-sm-6',
+			'group'            => esc_html__( 'Animation', 'cph-elements' ),
+			'dependency'       => array(
+				'element'            => 'animation',
+				'value_not_equal_to' => array( 'none' ),
+			),
+			'description'      => esc_html__( 'Cap the maximum delay so later cards don\'t wait too long. Default: 0.4s', 'cph-elements' ),
 		),
 
 	), // End params.

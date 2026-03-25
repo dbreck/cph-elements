@@ -1,5 +1,5 @@
 /**
- * CPH Portfolio Grid - Client-side category filter for Zigzag layout.
+ * CPH Portfolio Grid - Client-side category filters for Zigzag and Masonry layouts.
  *
  * @package CPH_Elements
  * @since   1.2.0
@@ -7,6 +7,82 @@
 
 (function() {
 	var FADE_DURATION = 350;
+
+	/**
+	 * Generic filter handler for masonry layout.
+	 */
+	function initMasonryFilter( grid ) {
+		var filter = grid.querySelector('.cph-masonry__filter');
+
+		if ( ! filter ) {
+			return;
+		}
+
+		var items       = grid.querySelectorAll('.cph-masonry__item');
+		var btns        = filter.querySelectorAll('.cph-masonry__filter-btn');
+		var isAnimating = false;
+
+		btns.forEach(function(btn) {
+			btn.addEventListener('click', function() {
+				var slug = btn.getAttribute('data-filter');
+
+				if ( isAnimating ) {
+					return;
+				}
+
+				if ( btn.classList.contains('is-active') ) {
+					return;
+				}
+
+				isAnimating = true;
+
+				// Update active button.
+				btns.forEach(function(b) {
+					b.classList.remove('is-active');
+				});
+				btn.classList.add('is-active');
+
+				// Phase 1: Fade out visible items.
+				items.forEach(function(item) {
+					if ( ! item.classList.contains('is-hidden') ) {
+						item.classList.add('is-filtering-out');
+					}
+				});
+
+				// Phase 2: Toggle visibility.
+				setTimeout(function() {
+					items.forEach(function(item) {
+						var cats  = (item.getAttribute('data-categories') || '').split(' ');
+						var match = ! slug || cats.indexOf(slug) !== -1;
+
+						item.classList.remove('is-filtering-out');
+
+						if ( match ) {
+							item.classList.remove('is-hidden');
+							item.classList.add('is-filtering-in');
+						} else {
+							item.classList.add('is-hidden');
+							item.classList.remove('is-filtering-in');
+						}
+					});
+
+					// Force reflow.
+					void grid.offsetHeight;
+
+					// Phase 3: Fade in.
+					requestAnimationFrame(function() {
+						items.forEach(function(item) {
+							item.classList.remove('is-filtering-in');
+						});
+					});
+
+					setTimeout(function() {
+						isAnimating = false;
+					}, FADE_DURATION);
+				}, FADE_DURATION);
+			});
+		});
+	}
 
 	/**
 	 * Re-apply the --flipped class to every other visible row so the
@@ -20,6 +96,13 @@
 	}
 
 	document.addEventListener('DOMContentLoaded', function() {
+
+		// Masonry filter.
+		document.querySelectorAll('.cph-portfolio-grid--masonry').forEach(function(grid) {
+			initMasonryFilter( grid );
+		});
+
+		// Zigzag filter.
 		document.querySelectorAll('.cph-portfolio-grid--zigzag').forEach(function(grid) {
 
 			// Set initial zigzag on page load.

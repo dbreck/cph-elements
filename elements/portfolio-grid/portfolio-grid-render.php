@@ -104,6 +104,10 @@ function cph_render_card( $card, $slot, $settings, $show_logo = false, $show_exc
 	$button_type       = isset( $settings['button_type'] ) ? $settings['button_type'] : 'arrow';
 	$animation         = 'none' !== $settings['animation'] ? $settings['animation'] : '';
 	$stagger_delay     = (float) $settings['animation_stagger'] * ( $slot - 1 );
+	$max_delay         = isset( $settings['animation_max_delay'] ) ? (float) $settings['animation_max_delay'] : 0.4;
+	if ( $max_delay > 0 && $stagger_delay > $max_delay ) {
+		$stagger_delay = $max_delay;
+	}
 
 	// Build classes.
 	$classes = array(
@@ -132,13 +136,28 @@ function cph_render_card( $card, $slot, $settings, $show_logo = false, $show_exc
 	}
 
 	// Animation classes.
+	$delay_ms = (int) ( $stagger_delay * 1000 );
 	if ( ! empty( $animation ) ) {
-		if ( 'fade-up' === $animation ) {
+		if ( 'fade' === $animation ) {
 			$classes[] = 'fx-up';
-			$classes[] = 'fx-up--delay-' . (int) ( $stagger_delay * 1000 );
+			$classes[] = 'fx-up--gentle'; // Minimal Y movement.
+			$classes[] = 'fx-up--delay-' . $delay_ms;
+		} elseif ( 'fade-up' === $animation ) {
+			$classes[] = 'fx-up';
+			$classes[] = 'fx-up--delay-' . $delay_ms;
+		} elseif ( 'scale-up' === $animation ) {
+			$classes[] = 'fx-up';
+			$classes[] = 'fx-up--gentle';
+			$classes[] = 'fx-up--scale';
+			$classes[] = 'fx-up--delay-' . $delay_ms;
+		} elseif ( 'blur-reveal' === $animation ) {
+			$classes[] = 'fx-up';
+			$classes[] = 'fx-up--gentle';
+			$classes[] = 'fx-up--blur';
+			$classes[] = 'fx-up--delay-' . $delay_ms;
 		} elseif ( 'curtain-wipe' === $animation ) {
 			$classes[] = 'curtain-wipe';
-			$classes[] = 'curtain-wipe--delay-' . (int) ( $stagger_delay * 1000 );
+			$classes[] = 'curtain-wipe--delay-' . $delay_ms;
 		}
 	}
 
@@ -367,7 +386,8 @@ function cph_portfolio_grid_shortcode( $atts ) {
 			'location_font_size_phone'  => '',
 			'location_letter_spacing'   => '1.5px',
 			'animation'                 => 'none',
-			'animation_stagger'         => '0.15',
+			'animation_stagger'         => '0.1',
+			'animation_max_delay'       => '0.4',
 			// Homepage Bento slots.
 			'slot_1'                    => '',
 			'slot_1_show_logo'          => '',
@@ -400,6 +420,10 @@ function cph_portfolio_grid_shortcode( $atts ) {
 			'show_logo'                 => '',
 			'show_excerpt'              => '',
 			'show_video'                => '',
+			// Masonry settings.
+			'masonry_columns'           => '2',
+			'masonry_row_height'        => '400px',
+			'masonry_show_filter'       => 'yes',
 			// Zigzag settings.
 			'heading_tag'               => 'h3',
 			'show_filter'               => 'yes',
@@ -451,6 +475,7 @@ function cph_portfolio_grid_shortcode( $atts ) {
 		'location_letter_spacing'  => $atts['location_letter_spacing'],
 		'animation'                => $atts['animation'],
 		'animation_stagger'        => $atts['animation_stagger'],
+		'animation_max_delay'      => $atts['animation_max_delay'],
 	);
 
 	// Determine if grid height is constrained (bento layouts only).
@@ -482,6 +507,8 @@ function cph_portfolio_grid_shortcode( $atts ) {
 		// Zigzag.
 		'zigzag' === $layout ? '--zigzag-row-height: ' . esc_attr( $atts['zigzag_row_height'] ) : '',
 		'zigzag' === $layout ? '--zigzag-row-gap: ' . esc_attr( $atts['zigzag_row_gap'] ) : '',
+		'masonry' === $layout ? '--masonry-columns: ' . (int) $atts['masonry_columns'] : '',
+		'masonry' === $layout ? '--masonry-row-height: ' . esc_attr( $atts['masonry_row_height'] ) : '',
 	);
 	$desktop_vars = array_filter( $desktop_vars );
 	$element_css  = '#' . esc_attr( $grid_id ) . ' { ' . implode( '; ', $desktop_vars ) . '; }';
@@ -571,6 +598,9 @@ function cph_portfolio_grid_shortcode( $atts ) {
 		} elseif ( 'featured-2col' === $layout ) {
 			// Projects Grid: auto-populate from post order with featured support.
 			echo cph_render_featured_2col_grid( $atts, $settings ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+		} elseif ( 'masonry' === $layout ) {
+			// Masonry: CSS Grid masonry using Salient's per-item sizing.
+			echo cph_render_masonry_grid( $atts, $settings ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		} elseif ( 'zigzag' === $layout ) {
 			// Zigzag: alternating image/text rows with category filter.
 			echo cph_render_zigzag_grid( $atts, $settings ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
@@ -721,6 +751,162 @@ function cph_flush_card_buffer( $buffer, $slot_number, $settings, $show_logo, $s
 	}
 
 	return $output;
+}
+
+/**
+ * Render the masonry grid layout.
+ *
+ * Uses CSS Grid with per-item sizing from Salient's _portfolio_item_masonry_sizing meta.
+ * Includes an optional category filter bar.
+ *
+ * @since 1.3.0
+ *
+ * @param array $atts     Shortcode attributes.
+ * @param array $settings Card rendering settings.
+ * @return string HTML output.
+ */
+function cph_render_masonry_grid( $atts, $settings ) {
+	// Build query args.
+	$posts_per_page = ! empty( $atts['posts_per_page'] ) ? (int) $atts['posts_per_page'] : -1;
+
+	$query_args = array(
+		'post_type'      => 'portfolio',
+		'posts_per_page' => $posts_per_page,
+		'post_status'    => 'publish',
+		'orderby'        => array(
+			'menu_order' => 'ASC',
+			'date'       => 'DESC',
+		),
+	);
+
+	// Build tax_query for category and status filters.
+	$category = sanitize_text_field( $atts['category'] );
+	$status   = sanitize_text_field( $atts['status'] );
+
+	$tax_query = array();
+
+	if ( ! empty( $category ) ) {
+		$tax_query[] = array(
+			'taxonomy' => 'project-type',
+			'field'    => 'slug',
+			'terms'    => $category,
+		);
+	}
+
+	if ( ! empty( $status ) ) {
+		$tax_query[] = array(
+			'taxonomy' => 'project-status',
+			'field'    => 'slug',
+			'terms'    => $status,
+		);
+	}
+
+	if ( ! empty( $tax_query ) ) {
+		if ( count( $tax_query ) > 1 ) {
+			$tax_query['relation'] = 'AND';
+		}
+		$query_args['tax_query'] = $tax_query; // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query
+	}
+
+	$query = new WP_Query( $query_args );
+
+	if ( ! $query->have_posts() ) {
+		return '<p class="cph-portfolio-grid-empty">' . esc_html__( 'No projects found.', 'cph-elements' ) . '</p>';
+	}
+
+	// Settings.
+	$show_filter = 'yes' === $atts['masonry_show_filter'];
+
+	// Collect all posts and their categories for filter bar.
+	$posts_data = array();
+	$all_terms  = array(); // slug => name.
+
+	while ( $query->have_posts() ) {
+		$query->the_post();
+		$post_id = get_the_ID();
+		$card    = cph_get_card_data( $post_id );
+
+		if ( ! $card ) {
+			continue;
+		}
+
+		// Get Salient masonry sizing meta.
+		$masonry_sizing = get_post_meta( $post_id, '_portfolio_item_masonry_sizing', true );
+		if ( empty( $masonry_sizing ) ) {
+			$masonry_sizing = 'regular';
+		}
+
+		// Get project-type terms.
+		$terms      = wp_get_post_terms( $post_id, 'project-type' );
+		$term_slugs = array();
+
+		if ( ! is_wp_error( $terms ) && ! empty( $terms ) ) {
+			foreach ( $terms as $term ) {
+				$term_slugs[] = $term->slug;
+				if ( ! isset( $all_terms[ $term->slug ] ) ) {
+					$all_terms[ $term->slug ] = $term->name;
+				}
+			}
+		}
+
+		$posts_data[] = array(
+			'card'           => $card,
+			'masonry_sizing' => $masonry_sizing,
+			'term_slugs'     => $term_slugs,
+		);
+	}
+
+	wp_reset_postdata();
+
+	// Global show settings.
+	$show_logo    = 'yes' === $atts['show_logo'];
+	$show_excerpt = 'yes' === $atts['show_excerpt'];
+	$show_video   = 'yes' === $atts['show_video'];
+
+	ob_start();
+
+	// Filter bar.
+	if ( $show_filter && ! empty( $all_terms ) ) {
+		?>
+		<nav class="cph-masonry__filter" aria-label="<?php esc_attr_e( 'Project filter', 'cph-elements' ); ?>">
+			<button class="cph-masonry__filter-btn is-active" data-filter="" type="button"><?php esc_html_e( 'All', 'cph-elements' ); ?></button>
+			<?php foreach ( $all_terms as $slug => $name ) : ?>
+				<button class="cph-masonry__filter-btn" data-filter="<?php echo esc_attr( $slug ); ?>" type="button"><?php echo esc_html( $name ); ?></button>
+			<?php endforeach; ?>
+		</nav>
+		<?php
+	}
+
+	// Grid items.
+	?>
+	<div class="cph-masonry__grid">
+		<?php
+		$slot_number = 1;
+		foreach ( $posts_data as $post_item ) :
+			$card           = $post_item['card'];
+			$masonry_sizing = $post_item['masonry_sizing'];
+			$cat_attr       = implode( ' ', $post_item['term_slugs'] );
+
+			// Determine if wide (spans 2 cols).
+			$is_wide = in_array( $masonry_sizing, array( 'wide', 'wide_tall' ), true );
+
+			// Build wrapper classes.
+			$item_classes = array(
+				'cph-masonry__item',
+				'cph-masonry__item--' . $masonry_sizing,
+			);
+			?>
+			<div class="<?php echo esc_attr( implode( ' ', $item_classes ) ); ?>" data-categories="<?php echo esc_attr( $cat_attr ); ?>">
+				<?php echo cph_render_card( $card, $slot_number, $settings, $show_logo, $show_excerpt, $is_wide, $show_video ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+			</div>
+			<?php
+			$slot_number++;
+		endforeach;
+		?>
+	</div>
+	<?php
+
+	return ob_get_clean();
 }
 
 /**
