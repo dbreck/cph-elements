@@ -327,6 +327,16 @@ class CPH_GitHub_Updater {
 	 * @return string|false Download URL or false.
 	 */
 	private function get_download_url( $release ) {
+		// Prefer an attached .zip asset (extracts to the correct directory name).
+		// Fall back to zipball_url (GitHub's auto-generated archive).
+		if ( ! empty( $release->assets ) && is_array( $release->assets ) ) {
+			foreach ( $release->assets as $asset ) {
+				if ( ! empty( $asset->browser_download_url ) && '.zip' === substr( $asset->name, -4 ) ) {
+					return $asset->browser_download_url;
+				}
+			}
+		}
+
 		return ! empty( $release->zipball_url ) ? $release->zipball_url : false;
 	}
 
