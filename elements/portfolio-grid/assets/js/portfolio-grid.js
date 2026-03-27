@@ -9,6 +9,46 @@
 	var FADE_DURATION = 350;
 
 	/**
+	 * Kill GSAP ScrollTrigger entrance animations (fx-up) inside a container
+	 * so that filter visibility toggles aren't blocked by stale opacity:0 state.
+	 *
+	 * @param {Element} container The grid wrapper element.
+	 */
+	function clearFxUpAnimations( container ) {
+		if ( typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined' ) {
+			return;
+		}
+
+		var fxEls = container.querySelectorAll('.fx-up');
+
+		if ( ! fxEls.length ) {
+			return;
+		}
+
+		fxEls.forEach(function( el ) {
+			// Kill any ScrollTriggers targeting this element.
+			ScrollTrigger.getAll().forEach(function( st ) {
+				if ( st.trigger === el ) {
+					st.kill();
+				}
+			});
+
+			// Force to visible final state.
+			gsap.set( el, { opacity: 1, y: 0, filter: 'none', scale: 1, rotation: 0, clearProps: 'filter' } );
+
+			// Also clear any animated children (text lines).
+			var children = el.querySelectorAll('p, h1, h2, h3, h4, h5, h6, li');
+			if ( children.length ) {
+				gsap.set( children, { opacity: 1, y: 0, filter: 'none', scale: 1, rotation: 0, clearProps: 'filter' } );
+			}
+
+			// Remove fx-up classes so MutationObserver doesn't re-init.
+			el.className = el.className.replace( /\bfx-up\S*/g, '' ).trim();
+			el.dataset.fxUpAnimated = 'true';
+		});
+	}
+
+	/**
 	 * Generic filter handler for masonry layout.
 	 */
 	function initMasonryFilter( grid ) {
@@ -51,6 +91,9 @@
 
 				// Phase 2: Toggle visibility.
 				setTimeout(function() {
+					// Clear GSAP entrance animations so cards aren't stuck at opacity 0.
+					clearFxUpAnimations( grid );
+
 					items.forEach(function(item) {
 						var cats  = (item.getAttribute('data-categories') || '').split(' ');
 						var match = ! slug || cats.indexOf(slug) !== -1;
@@ -148,6 +191,9 @@
 
 					// Phase 2: After fade-out, toggle visibility and fade in.
 					setTimeout(function() {
+						// Clear GSAP entrance animations so cards aren't stuck at opacity 0.
+						clearFxUpAnimations( grid );
+
 						rows.forEach(function(row) {
 							var cats = (row.getAttribute('data-categories') || '').split(' ');
 							var match = ! slug || cats.indexOf(slug) !== -1;
