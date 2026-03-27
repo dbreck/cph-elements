@@ -2,7 +2,7 @@
 
 Custom WPBakery Page Builder elements with an auto-discovery loader. Drop elements into the `elements/` directory and they register themselves — no manual hookup required.
 
-**Version:** 1.1.0
+**Version:** 1.3.1
 **Requires:** WordPress 6.0+ / PHP 7.4+ / WPBakery Page Builder
 **Optional:** Salient theme (enhanced admin UI components)
 
