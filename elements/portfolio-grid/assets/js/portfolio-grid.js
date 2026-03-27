@@ -138,7 +138,50 @@
 		});
 	}
 
+	/**
+	 * Mark image containers as loaded once their media finishes loading.
+	 * Applies to both .cph-card__image (masonry) and .cph-zigzag__image (zigzag).
+	 */
+	function initLoadingSpinners() {
+		var containers = document.querySelectorAll('.cph-card__image, .cph-zigzag__image');
+
+		containers.forEach(function( container ) {
+			var img   = container.querySelector('img');
+			var video = container.querySelector('video');
+
+			if ( img ) {
+				if ( img.complete && img.naturalWidth > 0 ) {
+					container.classList.add('is-loaded');
+				} else {
+					img.addEventListener('load', function() {
+						container.classList.add('is-loaded');
+					});
+					img.addEventListener('error', function() {
+						container.classList.add('is-loaded');
+					});
+				}
+			} else if ( video ) {
+				if ( video.readyState >= 2 ) {
+					container.classList.add('is-loaded');
+				} else {
+					video.addEventListener('loadeddata', function() {
+						container.classList.add('is-loaded');
+					});
+					video.addEventListener('error', function() {
+						container.classList.add('is-loaded');
+					});
+				}
+			} else {
+				// No media — nothing to wait for.
+				container.classList.add('is-loaded');
+			}
+		});
+	}
+
 	document.addEventListener('DOMContentLoaded', function() {
+
+		// Loading spinners.
+		initLoadingSpinners();
 
 		// Masonry filter.
 		document.querySelectorAll('.cph-portfolio-grid--masonry').forEach(function(grid) {

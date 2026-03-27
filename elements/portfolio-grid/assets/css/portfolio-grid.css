@@ -139,6 +139,40 @@
 }
 
 /* =============================================================================
+   LOADING SPINNER (shared by masonry cards and zigzag image panels)
+   ============================================================================= */
+
+.cph-card__image::before,
+.cph-zigzag__image::before {
+	animation: cph-spin 0.8s linear infinite;
+	border: 3px solid rgba(255, 255, 255, 0.15);
+	border-radius: 50%;
+	border-top-color: rgba(255, 255, 255, 0.6);
+	content: '';
+	height: 36px;
+	left: 50%;
+	opacity: 1;
+	position: absolute;
+	top: 50%;
+	transform: translate(-50%, -50%);
+	transition: opacity 0.3s ease;
+	width: 36px;
+	z-index: 0;
+}
+
+.cph-card__image.is-loaded::before,
+.cph-zigzag__image.is-loaded::before {
+	opacity: 0;
+	pointer-events: none;
+}
+
+@keyframes cph-spin {
+	to {
+		transform: translate(-50%, -50%) rotate(360deg);
+	}
+}
+
+/* =============================================================================
    CARD IMAGE
    ============================================================================= */
 
