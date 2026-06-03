@@ -148,10 +148,35 @@ return array(
 		),
 
 		array(
+			'type'        => 'checkbox',
+			'heading'     => esc_html__( 'Auto Bubble Size', 'cph-elements' ),
+			'param_name'  => 'auto_bubble_size',
+			'value'       => array( esc_html__( 'Yes', 'cph-elements' ) => 'yes' ),
+			'std'         => '',
+			'description' => esc_html__( 'Ignore min/max sizes and size each bubble to fit its text content plus padding.', 'cph-elements' ),
+		),
+
+		array(
+			'type'        => 'textfield',
+			'heading'     => esc_html__( 'Auto Size Padding', 'cph-elements' ),
+			'param_name'  => 'auto_size_padding',
+			'value'       => '30',
+			'dependency'  => array(
+				'element' => 'auto_bubble_size',
+				'value'   => array( 'yes' ),
+			),
+			'description' => esc_html__( 'Radial padding in px between the text and the circle edge (e.g., 30 = ~30px breathing room on all sides).', 'cph-elements' ),
+		),
+
+		array(
 			'type'        => 'textfield',
 			'heading'     => esc_html__( 'Min Bubble Size', 'cph-elements' ),
 			'param_name'  => 'min_bubble_size',
 			'value'       => '150px',
+			'dependency'  => array(
+				'element'            => 'auto_bubble_size',
+				'value_not_equal_to' => array( 'yes' ),
+			),
 			'description' => esc_html__( 'Minimum bubble diameter (used for "Small" size).', 'cph-elements' ),
 		),
 
@@ -160,6 +185,10 @@ return array(
 			'heading'     => esc_html__( 'Max Bubble Size', 'cph-elements' ),
 			'param_name'  => 'max_bubble_size',
 			'value'       => '350px',
+			'dependency'  => array(
+				'element'            => 'auto_bubble_size',
+				'value_not_equal_to' => array( 'yes' ),
+			),
 			'description' => esc_html__( 'Maximum bubble diameter (used for "Large" size).', 'cph-elements' ),
 		),
 

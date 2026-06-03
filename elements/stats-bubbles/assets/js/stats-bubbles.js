@@ -44,17 +44,46 @@
 			const duration = parseFloat( container.dataset.animationDuration ) || 2;
 			const easing = container.dataset.animationEasing || 'power2.out';
 			const enableScramble = container.dataset.enableScramble === 'true';
-			const bubbles = container.querySelectorAll( '.cph-stats-bubbles__bubble' );
+			const autoSize = container.dataset.autoSize === 'true';
+			const autoSizePadding = parseInt( container.dataset.autoSizePadding, 10 );
+			const bubbleEls = container.querySelectorAll( '.cph-stats-bubbles__bubble' );
+
+			// Capture each bubble's natural size. In auto mode we measure the
+			// rendered text block and compute the diameter of the circle that
+			// wraps it plus padding. Otherwise we use the CSS-driven size so
+			// responsive shrink-to-fit can restore it on up-resize.
+			const bubbleData = [];
+			bubbleEls.forEach( ( bubble, index ) => {
+				let size;
+				if ( autoSize ) {
+					size = this.measureAutoSize(
+						bubble,
+						container,
+						isNaN( autoSizePadding ) ? 30 : autoSizePadding
+					);
+					bubble.style.setProperty( '--bubble-size', size + 'px' );
+				} else {
+					size = bubble.offsetWidth || 200;
+				}
+				bubbleData.push( {
+					element: bubble,
+					index: index,
+					originalSize: size
+				} );
+			} );
 
 			// Store instance data.
 			const instance = {
 				container: container,
-				bubbles: bubbles,
+				bubbles: bubbleEls,
+				bubbleData: bubbleData,
 				pattern: pattern,
 				enableCountup: enableCountup,
 				duration: duration,
 				easing: easing,
 				enableScramble: enableScramble,
+				autoSize: autoSize,
+				autoSizePadding: isNaN( autoSizePadding ) ? 30 : autoSizePadding,
 				hasAnimated: false
 			};
 
@@ -66,6 +95,16 @@
 			// Mark as positioned.
 			container.classList.add( 'is-positioned' );
 
+			// If auto-sizing, re-measure after custom fonts have loaded so
+			// the initial size isn't based on fallback-font metrics.
+			if ( autoSize && document.fonts && document.fonts.status !== 'loaded' ) {
+				const self = this;
+				document.fonts.ready.then( function() {
+					self.remeasureAutoSizes( instance );
+					self.positionBubbles( instance );
+				} );
+			}
+
 			if ( enableCountup && typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined' ) {
 				this.setupScrollTrigger( instance );
 			} else {
@@ -73,74 +112,276 @@
 				container.classList.add( 'is-initialized' );
 			}
 
-			// Handle window resize.
-			let resizeTimeout;
-			window.addEventListener( 'resize', () => {
-				clearTimeout( resizeTimeout );
-				resizeTimeout = setTimeout( () => {
-					this.positionBubbles( instance );
-				}, 250 );
+			// Observe the container itself so we react to column / flex
+			// width changes, not just viewport resizes.
+			const debouncedReposition = this.debounce( () => {
+				this.positionBubbles( instance );
+			}, 150 );
+
+			if ( typeof ResizeObserver !== 'undefined' ) {
+				const ro = new ResizeObserver( debouncedReposition );
+				ro.observe( container );
+				instance.resizeObserver = ro;
+			} else {
+				window.addEventListener( 'resize', debouncedReposition );
+			}
+		},
+
+		/**
+		 * Debounce helper.
+		 */
+		debounce: function( fn, wait ) {
+			let t;
+			return function() {
+				clearTimeout( t );
+				t = setTimeout( fn, wait );
+			};
+		},
+
+		/**
+		 * Measure the rendered size a bubble needs to wrap its text content,
+		 * plus the requested radial padding inside the circle.
+		 *
+		 * Clones the bubble off-screen with the same class set (so it inherits
+		 * fonts / weights / sizes from the live stylesheet), lets the text flow
+		 * at a sensible label max-width, measures the bounding box, and returns
+		 * the diameter of the smallest circle that encloses that box plus 2×padding.
+		 *
+		 * @param {HTMLElement} bubble            Live bubble node to measure.
+		 * @param {HTMLElement} container         Parent container (for style inheritance).
+		 * @param {number}      radialPadding     Extra px between text and circle edge.
+		 * @return {number} Bubble diameter in px.
+		 */
+		measureAutoSize: function( bubble, container, radialPadding ) {
+			const LABEL_WRAP_WIDTH = 200;
+
+			const clone = bubble.cloneNode( true );
+			clone.style.position = 'absolute';
+			clone.style.visibility = 'hidden';
+			clone.style.pointerEvents = 'none';
+			clone.style.left = '-99999px';
+			clone.style.top = '0';
+			clone.style.width = 'auto';
+			clone.style.height = 'auto';
+			clone.style.padding = '0';
+			clone.style.borderRadius = '0';
+			clone.style.setProperty( '--bubble-size', 'auto' );
+
+			// Let the label wrap at a readable width instead of 80% of a bubble
+			// size we haven't calculated yet.
+			const labelEl = clone.querySelector( '.cph-stats-bubbles__label' );
+			if ( labelEl ) {
+				labelEl.style.maxWidth = LABEL_WRAP_WIDTH + 'px';
+			}
+
+			container.appendChild( clone );
+			const width = clone.offsetWidth;
+			const height = clone.offsetHeight;
+			container.removeChild( clone );
+
+			if ( ! width || ! height ) {
+				return 200;
+			}
+
+			// Minimum enclosing circle of the text rectangle is its diagonal.
+			const diagonal = Math.sqrt( width * width + height * height );
+			const padding = ( typeof radialPadding === 'number' && radialPadding >= 0 ) ? radialPadding : 30;
+
+			return Math.ceil( diagonal + padding * 2 );
+		},
+
+		/**
+		 * Re-measure and store fresh originalSize for every bubble in an auto-size instance.
+		 */
+		remeasureAutoSizes: function( instance ) {
+			if ( ! instance.autoSize ) {
+				return;
+			}
+			instance.bubbleData.forEach( ( data ) => {
+				const newSize = this.measureAutoSize(
+					data.element,
+					instance.container,
+					instance.autoSizePadding
+				);
+				data.element.style.setProperty( '--bubble-size', newSize + 'px' );
+				data.originalSize = newSize;
 			} );
 		},
 
 		/**
 		 * Position bubbles using the selected pattern with collision avoidance.
 		 *
+		 * Scales bubble sizes down if needed so they fit inside the container
+		 * without overlapping. Bubbles are restored to their original size
+		 * when the container grows back.
+		 *
 		 * @param {Object} instance The instance data.
 		 */
 		positionBubbles: function( instance ) {
 			const container = instance.container;
-			const bubbles = instance.bubbles;
 			const pattern = instance.pattern;
+			const buffer = 10;
 
 			// Get container dimensions.
 			const containerRect = container.getBoundingClientRect();
 			const containerWidth = containerRect.width;
 			const containerHeight = containerRect.height;
 
-			// Get bubble data (sizes).
-			const bubbleData = [];
-			bubbles.forEach( ( bubble, index ) => {
-				const size = bubble.offsetWidth || 200;
-				bubbleData.push( {
-					element: bubble,
-					index: index,
-					radius: size / 2,
-					x: 0,
-					y: 0
-				} );
-			} );
-
-			// Generate initial positions based on pattern.
-			let positions;
-			switch ( pattern ) {
-				case 'diagonal':
-					positions = this.getDiagonalPositions( bubbleData, containerWidth, containerHeight );
-					break;
-				case 'scattered':
-					positions = this.getScatteredPositions( bubbleData, containerWidth, containerHeight );
-					break;
-				case 'arc':
-					positions = this.getArcPositions( bubbleData, containerWidth, containerHeight );
-					break;
-				case 'staggered':
-					positions = this.getStaggeredPositions( bubbleData, containerWidth, containerHeight );
-					break;
-				case 'random':
-					positions = this.getRandomPositions( bubbleData, containerWidth, containerHeight );
-					break;
-				default:
-					positions = this.getDiagonalPositions( bubbleData, containerWidth, containerHeight );
+			// Nothing to do if the container has no size (hidden, or mobile
+			// layout has flex-stacked the bubbles and removed absolute sizing).
+			if ( containerWidth < 1 || containerHeight < 1 ) {
+				return;
 			}
 
-			// Apply collision avoidance.
-			positions = this.resolveCollisions( positions, containerWidth, containerHeight );
+			// Compute how much we need to scale every bubble down so the set
+			// physically fits inside the container. If the container is big
+			// enough, scale stays at 1 and originals are used as-is.
+			const scale = this.computeFitScale(
+				instance.bubbleData,
+				containerWidth,
+				containerHeight,
+				buffer
+			);
+
+			// Build the working position set, applying the scaled size to the DOM.
+			const positions = instance.bubbleData.map( ( data ) => {
+				const scaledSize = Math.max( 40, Math.floor( data.originalSize * scale ) );
+				data.element.style.setProperty( '--bubble-size', scaledSize + 'px' );
+				return {
+					element: data.element,
+					index: data.index,
+					radius: scaledSize / 2,
+					x: 0,
+					y: 0
+				};
+			} );
+
+			// Seed positions based on the selected pattern.
+			this.applyPattern( pattern, positions, containerWidth, containerHeight );
+
+			// Resolve collisions iteratively.
+			this.resolveCollisions( positions, containerWidth, containerHeight, buffer );
+
+			// Safety net: if any overlap survived the relaxation (e.g. because
+			// the container clamped bubbles against a wall), shrink 10% and retry.
+			let shrinkTries = 0;
+			while ( this.hasOverlap( positions, buffer ) && shrinkTries < 6 ) {
+				positions.forEach( ( pos ) => {
+					pos.radius *= 0.9;
+					pos.element.style.setProperty(
+						'--bubble-size',
+						Math.max( 40, Math.floor( pos.radius * 2 ) ) + 'px'
+					);
+				} );
+				this.applyPattern( pattern, positions, containerWidth, containerHeight );
+				this.resolveCollisions( positions, containerWidth, containerHeight, buffer );
+				shrinkTries++;
+			}
 
 			// Apply positions to DOM.
 			positions.forEach( ( pos ) => {
 				pos.element.style.left = pos.x + 'px';
 				pos.element.style.top = pos.y + 'px';
 			} );
+		},
+
+		/**
+		 * Dispatch to the right pattern generator and write positions in-place.
+		 */
+		applyPattern: function( pattern, positions, width, height ) {
+			let generated;
+			switch ( pattern ) {
+				case 'scattered':
+					generated = this.getScatteredPositions( positions, width, height );
+					break;
+				case 'arc':
+					generated = this.getArcPositions( positions, width, height );
+					break;
+				case 'staggered':
+					generated = this.getStaggeredPositions( positions, width, height );
+					break;
+				case 'random':
+					generated = this.getRandomPositions( positions, width, height );
+					break;
+				case 'diagonal':
+				default:
+					generated = this.getDiagonalPositions( positions, width, height );
+					break;
+			}
+
+			// The pattern fns return new objects; copy x/y back onto our live positions.
+			generated.forEach( ( g, i ) => {
+				const target = positions[ i ];
+				if ( target ) {
+					target.x = g.x;
+					target.y = g.y;
+				}
+			} );
+		},
+
+		/**
+		 * Compute the largest uniform scale where the bubbles can physically
+		 * coexist inside the container without forced overlap.
+		 *
+		 * Two constraints:
+		 *   1. The largest bubble must fit within the container's short side.
+		 *   2. Total bubble area (plus buffer) must stay under a realistic
+		 *      packing fraction of the container area.
+		 */
+		computeFitScale: function( bubbleData, width, height, buffer ) {
+			if ( ! bubbleData.length ) {
+				return 1;
+			}
+
+			let scale = 1;
+
+			// Constraint 1: largest bubble fits within container bounds.
+			let maxRadius = 0;
+			bubbleData.forEach( ( b ) => {
+				const r = b.originalSize / 2;
+				if ( r > maxRadius ) {
+					maxRadius = r;
+				}
+			} );
+			const maxAllowedRadius = Math.min( width, height ) / 2 - buffer;
+			if ( maxAllowedRadius > 0 && maxRadius > maxAllowedRadius ) {
+				scale = Math.min( scale, maxAllowedRadius / maxRadius );
+			}
+
+			// Constraint 2: summed bubble area (with buffer) vs. realistic
+			// packable container area. 0.55 is a conservative packing target
+			// for arbitrary circle positions with gaps.
+			let totalArea = 0;
+			bubbleData.forEach( ( b ) => {
+				const r = b.originalSize / 2 + buffer / 2;
+				totalArea += Math.PI * r * r;
+			} );
+			const packable = width * height * 0.55;
+			if ( totalArea > packable && packable > 0 ) {
+				// Area scales with the square of linear scale.
+				scale = Math.min( scale, Math.sqrt( packable / totalArea ) );
+			}
+
+			return scale;
+		},
+
+		/**
+		 * Check if any two positions still overlap given the buffer.
+		 */
+		hasOverlap: function( positions, buffer ) {
+			for ( let i = 0; i < positions.length; i++ ) {
+				for ( let j = i + 1; j < positions.length; j++ ) {
+					const a = positions[ i ];
+					const b = positions[ j ];
+					const dx = b.x - a.x;
+					const dy = b.y - a.y;
+					const distance = Math.sqrt( dx * dx + dy * dy );
+					if ( distance < a.radius + b.radius + buffer - 0.5 ) {
+						return true;
+					}
+				}
+			}
+			return false;
 		},
 
 		/**
@@ -348,11 +589,14 @@
 		 * @param {Array}  positions       Array of position objects.
 		 * @param {number} containerWidth  Container width.
 		 * @param {number} containerHeight Container height.
+		 * @param {number} buffer          Minimum gap between bubbles in px.
 		 * @return {Array} Adjusted positions.
 		 */
-		resolveCollisions: function( positions, containerWidth, containerHeight ) {
-			const iterations = 50;
-			const buffer = 10; // Minimum gap between bubbles.
+		resolveCollisions: function( positions, containerWidth, containerHeight, buffer ) {
+			const iterations = 150;
+			if ( typeof buffer !== 'number' ) {
+				buffer = 10;
+			}
 
 			for ( let iter = 0; iter < iterations; iter++ ) {
 				let hasCollision = false;

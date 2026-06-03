@@ -33,6 +33,8 @@ function cph_stats_bubbles_shortcode( $atts ) {
 			'container_height_phone'  => '',
 			'min_bubble_size'         => '150px',
 			'max_bubble_size'         => '350px',
+			'auto_bubble_size'        => '',
+			'auto_size_padding'       => '30',
 			// Style.
 			'bubble_color'            => '#E14A13',
 			'text_color'              => '#ffffff',
@@ -71,6 +73,9 @@ function cph_stats_bubbles_shortcode( $atts ) {
 	++$instance_id;
 	$element_id = 'cph-stats-bubbles-' . $instance_id;
 
+	$auto_bubble_size  = 'yes' === $atts['auto_bubble_size'];
+	$auto_size_padding = max( 0, intval( $atts['auto_size_padding'] ) );
+
 	// Build wrapper classes.
 	$wrapper_classes = array(
 		'cph-stats-bubbles',
@@ -78,6 +83,9 @@ function cph_stats_bubbles_shortcode( $atts ) {
 	);
 	if ( 'yes' === $atts['enable_shadow'] ) {
 		$wrapper_classes[] = 'cph-stats-bubbles--shadow';
+	}
+	if ( $auto_bubble_size ) {
+		$wrapper_classes[] = 'cph-stats-bubbles--auto';
 	}
 	if ( ! empty( $atts['el_class'] ) ) {
 		$wrapper_classes[] = esc_attr( $atts['el_class'] );
@@ -161,6 +169,10 @@ function cph_stats_bubbles_shortcode( $atts ) {
 		'data-pattern="' . esc_attr( $atts['layout_pattern'] ) . '"',
 		'data-bubble-count="' . count( $bubbles ) . '"',
 	);
+	if ( $auto_bubble_size ) {
+		$data_attrs[] = 'data-auto-size="true"';
+		$data_attrs[] = 'data-auto-size-padding="' . esc_attr( $auto_size_padding ) . '"';
+	}
 	if ( $enable_countup ) {
 		$data_attrs[] = 'data-enable-countup="true"';
 		$data_attrs[] = 'data-animation-duration="' . esc_attr( $animation_duration ) . '"';
@@ -192,16 +204,19 @@ function cph_stats_bubbles_shortcode( $atts ) {
 			// Determine bubble size.
 			$bubble_size = isset( $size_map[ $size ] ) ? $size_map[ $size ] : $size_map['medium'];
 
-			// Build bubble classes.
-			$bubble_classes = array(
-				'cph-stats-bubbles__bubble',
-				'cph-stats-bubbles__bubble--' . esc_attr( $size ),
-			);
+			// Build bubble classes. In auto mode the size class is irrelevant
+			// because JS will measure each bubble's text and write the diameter.
+			$bubble_classes = array( 'cph-stats-bubbles__bubble' );
+			if ( ! $auto_bubble_size ) {
+				$bubble_classes[] = 'cph-stats-bubbles__bubble--' . esc_attr( $size );
+			}
 
-			// Build inline styles.
-			$bubble_styles = array(
-				'--bubble-size: ' . esc_attr( $bubble_size ),
-			);
+			// Build inline styles. In auto mode the size is written by JS
+			// after measuring the rendered text content, so skip --bubble-size here.
+			$bubble_styles = array();
+			if ( ! $auto_bubble_size ) {
+				$bubble_styles[] = '--bubble-size: ' . esc_attr( $bubble_size );
+			}
 			if ( ! empty( $color_override ) ) {
 				$bubble_styles[] = '--bubble-color: ' . esc_attr( $color_override );
 			}

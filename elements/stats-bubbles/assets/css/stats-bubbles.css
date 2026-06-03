@@ -53,6 +53,12 @@
 	box-shadow: 0 10px 40px var(--shadow-color);
 }
 
+/* Auto-size mode: hide bubbles until JS has measured and positioned them,
+ * so we don't briefly show them at the CSS default size. */
+.cph-stats-bubbles--auto:not(.is-positioned) .cph-stats-bubbles__bubble {
+	visibility: hidden;
+}
+
 /* Typography */
 .cph-stats-bubbles__value {
 	font-family: "Area Normal", sans-serif;
