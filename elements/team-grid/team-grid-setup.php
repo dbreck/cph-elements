@@ -152,9 +152,10 @@ if ( ! function_exists( 'cph_team_meta_box_callback' ) ) {
 	function cph_team_meta_box_callback( $post ) {
 		wp_nonce_field( 'bti_team_meta_box', 'bti_team_meta_box_nonce' );
 
-		$job_title = get_post_meta( $post->ID, '_bti_team_job_title', true );
-		$short_bio = get_post_meta( $post->ID, '_bti_team_short_bio', true );
-		$bio       = get_post_meta( $post->ID, '_bti_team_bio', true );
+		$job_title     = get_post_meta( $post->ID, '_bti_team_job_title', true );
+		$short_bio     = get_post_meta( $post->ID, '_bti_team_short_bio', true );
+		$bio           = get_post_meta( $post->ID, '_bti_team_bio', true );
+		$disable_popup = get_post_meta( $post->ID, '_bti_team_disable_popup', true );
 		?>
 		<p>
 			<label for="bti_team_job_title">
@@ -171,6 +172,18 @@ if ( ! function_exists( 'cph_team_meta_box_callback' ) ) {
 		</p>
 		<p><label for="bti_team_short_bio"><strong>Short Bio (Card Excerpt)</strong></label></p>
 		<p><textarea id="bti_team_short_bio" name="bti_team_short_bio" class="widefat" rows="3" placeholder="Brief description shown on team cards"><?php echo esc_textarea( $short_bio ); ?></textarea></p>
+		<p>
+			<label for="bti_team_disable_popup">
+				<input type="checkbox"
+					id="bti_team_disable_popup"
+					name="bti_team_disable_popup"
+					value="1"
+					<?php checked( $disable_popup, '1' ); ?> />
+				<strong><?php esc_html_e( "Don't link this profile", 'cph-elements' ); ?></strong>
+			</label>
+			<br />
+			<span class="description"><?php esc_html_e( "When checked, this member's photo isn't clickable and no popup opens. A member with no Biography below is automatically non-clickable.", 'cph-elements' ); ?></span>
+		</p>
 		<p>
 			<label for="bti_team_bio">
 				<strong><?php esc_html_e( 'Biography', 'cph-elements' ); ?></strong>
@@ -245,6 +258,10 @@ if ( ! function_exists( 'cph_team_save_meta_box' ) ) {
 				wp_kses_post( $_POST['bti_team_bio'] )
 			);
 		}
+
+		// Save the "don't link this profile" flag (checkbox).
+		$disable_popup = ( isset( $_POST['bti_team_disable_popup'] ) && '1' === $_POST['bti_team_disable_popup'] ) ? '1' : '';
+		update_post_meta( $post_id, '_bti_team_disable_popup', $disable_popup );
 	}
 	add_action( 'save_post_bti_team', 'cph_team_save_meta_box' );
 }

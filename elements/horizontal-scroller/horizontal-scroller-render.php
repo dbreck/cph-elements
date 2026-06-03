@@ -311,6 +311,13 @@ function cph_render_team_card( $post_id, $atts = array() ) {
 	$image_url = get_the_post_thumbnail_url( $post_id, 'large' );
 	$permalink = get_permalink( $post_id );
 
+	// Match the Team Grid: only expose the popup link when there's a bio to
+	// show and linking hasn't been disabled for this member. Otherwise the
+	// "Read More" button is omitted so the member isn't linked anywhere.
+	$bio           = get_post_meta( $post_id, '_bti_team_bio', true );
+	$disable_popup = '1' === get_post_meta( $post_id, '_bti_team_disable_popup', true );
+	$is_clickable  = ! $disable_popup && '' !== trim( wp_strip_all_tags( (string) $bio ) );
+
 	$show_short_bio = isset( $atts['show_short_bio'] ) ? $atts['show_short_bio'] : 'yes';
 	$btn_text       = isset( $atts['button_text'] ) ? $atts['button_text'] : '+ LOAD MORE';
 	$btn_style      = isset( $atts['button_style'] ) ? $atts['button_style'] : 'text-link';
@@ -336,12 +343,14 @@ function cph_render_team_card( $post_id, $atts = array() ) {
 			<?php if ( 'yes' === $show_short_bio && $short_bio ) : ?>
 				<p><?php echo esc_html( $short_bio ); ?></p>
 			<?php endif; ?>
-			<?php if ( 'text-link' === $btn_style ) : ?>
-				<button class="cph-scroller__card-button cph-scroller__card-button--text" type="button" data-team-id="<?php echo esc_attr( $post_id ); ?>"><?php echo esc_html( $btn_text ); ?></button>
-			<?php else : ?>
-				<button class="cph-scroller__card-button" type="button" data-team-id="<?php echo esc_attr( $post_id ); ?>" data-text="<?php echo esc_attr( $btn_text ); ?>">
-					<span><?php echo esc_html( $btn_text ); ?></span>
-				</button>
+			<?php if ( $is_clickable ) : ?>
+				<?php if ( 'text-link' === $btn_style ) : ?>
+					<button class="cph-scroller__card-button cph-scroller__card-button--text" type="button" data-team-id="<?php echo esc_attr( $post_id ); ?>"><?php echo esc_html( $btn_text ); ?></button>
+				<?php else : ?>
+					<button class="cph-scroller__card-button" type="button" data-team-id="<?php echo esc_attr( $post_id ); ?>" data-text="<?php echo esc_attr( $btn_text ); ?>">
+						<span><?php echo esc_html( $btn_text ); ?></span>
+					</button>
+				<?php endif; ?>
 			<?php endif; ?>
 		</div>
 	</article>

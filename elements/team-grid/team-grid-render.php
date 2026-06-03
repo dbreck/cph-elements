@@ -115,10 +115,20 @@ function cph_render_team_grid_card( $post_id ) {
 	$job_title = get_post_meta( $post_id, '_bti_team_job_title', true );
 	$image_url = get_the_post_thumbnail_url( $post_id, 'large' );
 
+	// The card only opens a popup when there's a bio to show and linking
+	// hasn't been disabled for this member. Otherwise it renders as static.
+	$bio           = get_post_meta( $post_id, '_bti_team_bio', true );
+	$disable_popup = '1' === get_post_meta( $post_id, '_bti_team_disable_popup', true );
+	$is_clickable  = ! $disable_popup && '' !== trim( wp_strip_all_tags( (string) $bio ) );
+
 	ob_start();
 	?>
 	<article class="cph-team-grid__card" data-post-id="<?php echo esc_attr( $post_id ); ?>">
+		<?php if ( $is_clickable ) : ?>
 		<button class="cph-team-grid__card-button" type="button" data-team-id="<?php echo esc_attr( $post_id ); ?>" aria-label="<?php echo esc_attr( sprintf( __( 'View %s profile', 'cph-elements' ), $name ) ); ?>">
+		<?php else : ?>
+		<div class="cph-team-grid__card-button cph-team-grid__card-button--static">
+		<?php endif; ?>
 			<div class="cph-team-grid__card-image">
 				<?php if ( $image_url ) : ?>
 					<img src="<?php echo esc_url( $image_url ); ?>"
@@ -132,7 +142,11 @@ function cph_render_team_grid_card( $post_id ) {
 					<p class="cph-team-grid__card-title"><?php echo esc_html( $job_title ); ?></p>
 				<?php endif; ?>
 			</div>
+		<?php if ( $is_clickable ) : ?>
 		</button>
+		<?php else : ?>
+		</div>
+		<?php endif; ?>
 	</article>
 	<?php
 	return ob_get_clean();

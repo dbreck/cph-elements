@@ -71,6 +71,15 @@
 	transform: scale(1.05);
 }
 
+/* Non-clickable card (no bio, or linking disabled for this member) */
+.cph-team-grid__card-button--static {
+	cursor: default;
+}
+
+.cph-team-grid__card-button--static:hover .cph-team-grid__card-image img {
+	transform: none;
+}
+
 /* Content Area */
 .cph-team-grid__card-content {
 	padding: 24px 0 0;
