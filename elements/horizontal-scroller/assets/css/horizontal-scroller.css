@@ -767,10 +767,6 @@
 	color: #000;
 }
 
-.cph-team-popup__bio p {
-	margin: 0 0 20px;
-}
-
 .cph-team-popup__bio p:last-child {
 	margin-bottom: 0;
 }
