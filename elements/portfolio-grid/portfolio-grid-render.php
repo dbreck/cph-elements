@@ -34,6 +34,7 @@ function cph_get_card_data( $post_id ) {
 	$custom_thumb = get_post_meta( $post_id, '_nectar_portfolio_custom_thumbnail', true );
 	$excerpt      = get_post_meta( $post_id, '_nectar_project_excerpt', true );
 	$video_mp4    = get_post_meta( $post_id, '_nectar_video_m4v', true );
+	$card_label   = get_post_meta( $post_id, '_cph_portfolio_card_label', true );
 
 	// Handle custom_thumb - could be URL or attachment ID.
 	$logo_url = null;
@@ -64,6 +65,7 @@ function cph_get_card_data( $post_id ) {
 	return array(
 		'id'          => $post_id,
 		'title'       => $post->post_title,
+		'card_label'  => ! empty( $card_label ) ? $card_label : '',
 		'permalink'   => ! empty( $external_url ) ? esc_url( $external_url ) : get_permalink( $post_id ),
 		'image'       => get_the_post_thumbnail_url( $post_id, 'full' ),
 		'image_alt'   => ! empty( $image_alt ) ? $image_alt : $post->post_title,
@@ -104,6 +106,22 @@ function cph_render_card( $card, $slot, $settings, $show_logo = false, $show_exc
 	$button_type       = isset( $settings['button_type'] ) ? $settings['button_type'] : 'arrow';
 	$animation         = 'none' !== $settings['animation'] ? $settings['animation'] : '';
 	$stagger_delay     = (float) $settings['animation_stagger'] * ( $slot - 1 );
+
+	// Resolve the bottom-of-card label.
+	// Priority: per-instance custom_location → post Card Label meta → post title.
+	// Suppressed entirely when show_card_label is false.
+	$show_card_label = ! isset( $settings['show_card_label'] ) || $settings['show_card_label'];
+	$label_text      = '';
+	if ( $show_card_label ) {
+		if ( ! empty( $settings['custom_location'] ) ) {
+			$label_text = $settings['custom_location'];
+		} elseif ( ! empty( $card['card_label'] ) ) {
+			$label_text = $card['card_label'];
+		} else {
+			$label_text = $card['title'];
+		}
+	}
+	$display_label = '' !== $label_text;
 	$max_delay         = isset( $settings['animation_max_delay'] ) ? (float) $settings['animation_max_delay'] : 0.4;
 	if ( $max_delay > 0 && $stagger_delay > $max_delay ) {
 		$stagger_delay = $max_delay;
@@ -200,7 +218,9 @@ function cph_render_card( $card, $slot, $settings, $show_logo = false, $show_exc
 		<?php endif; ?>
 
 		<div class="cph-card__content">
-			<span class="cph-card__location"><?php echo esc_html( $card['title'] ); ?></span>
+			<?php if ( $display_label ) : ?>
+				<span class="cph-card__location"><?php echo esc_html( $label_text ); ?></span>
+			<?php endif; ?>
 			<?php if ( $show_button && 'arrow' === $button_type ) : ?>
 				<span class="cph-card__arrow">
 					<?php echo cph_get_arrow_svg(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
@@ -305,6 +325,26 @@ function cph_get_bento_show_excerpt_settings( $atts ) {
 }
 
 /**
+ * Get show_card_label settings for homepage-bento.
+ *
+ * Defaults to true when the param isn't explicitly set so existing instances
+ * (saved before this toggle existed) keep showing a label.
+ *
+ * @since 1.4.0
+ *
+ * @param array $atts Shortcode attributes.
+ * @return array Array of booleans keyed by slot number.
+ */
+function cph_get_bento_show_card_label_settings( $atts ) {
+	return array(
+		1 => 'yes' === ( isset( $atts['slot_1_show_card_label'] ) ? $atts['slot_1_show_card_label'] : 'yes' ),
+		2 => 'yes' === ( isset( $atts['slot_2_show_card_label'] ) ? $atts['slot_2_show_card_label'] : 'yes' ),
+		3 => 'yes' === ( isset( $atts['slot_3_show_card_label'] ) ? $atts['slot_3_show_card_label'] : 'yes' ),
+		4 => 'yes' === ( isset( $atts['slot_4_show_card_label'] ) ? $atts['slot_4_show_card_label'] : 'yes' ),
+	);
+}
+
+/**
  * Get content_position settings for homepage-bento.
  *
  * @since 1.1.0
@@ -393,26 +433,34 @@ function cph_portfolio_grid_shortcode( $atts ) {
 			'slot_1_show_logo'          => '',
 			'slot_1_show_video'         => '',
 			'slot_1_show_excerpt'       => '',
+			'slot_1_show_card_label'    => 'yes',
 			'slot_1_content_position'   => '',
 			'slot_1_button_type'        => '',
+			'slot_1_custom_location'    => '',
 			'slot_2'                    => '',
 			'slot_2_show_logo'          => '',
 			'slot_2_show_video'         => '',
 			'slot_2_show_excerpt'       => '',
+			'slot_2_show_card_label'    => 'yes',
 			'slot_2_content_position'   => '',
 			'slot_2_button_type'        => '',
+			'slot_2_custom_location'    => '',
 			'slot_3'                    => '',
 			'slot_3_show_logo'          => '',
 			'slot_3_show_video'         => '',
 			'slot_3_show_excerpt'       => '',
+			'slot_3_show_card_label'    => 'yes',
 			'slot_3_content_position'   => '',
 			'slot_3_button_type'        => '',
+			'slot_3_custom_location'    => '',
 			'slot_4'                    => '',
 			'slot_4_show_logo'          => '',
 			'slot_4_show_video'         => '',
 			'slot_4_show_excerpt'       => '',
+			'slot_4_show_card_label'    => 'yes',
 			'slot_4_content_position'   => '',
 			'slot_4_button_type'        => '',
+			'slot_4_custom_location'    => '',
 			// Featured-2col settings.
 			'category'                  => '',
 			'status'                    => '',
@@ -420,6 +468,7 @@ function cph_portfolio_grid_shortcode( $atts ) {
 			'show_logo'                 => '',
 			'show_excerpt'              => '',
 			'show_video'                => '',
+			'show_card_label'           => 'yes',
 			// Masonry settings.
 			'masonry_columns'           => '2',
 			'masonry_row_height'        => '400px',
@@ -476,6 +525,8 @@ function cph_portfolio_grid_shortcode( $atts ) {
 		'animation'                => $atts['animation'],
 		'animation_stagger'        => $atts['animation_stagger'],
 		'animation_max_delay'      => $atts['animation_max_delay'],
+		// Card label (global default; bento overrides per-slot).
+		'show_card_label'          => 'yes' === $atts['show_card_label'],
 	);
 
 	// Determine if grid height is constrained (bento layouts only).
@@ -578,6 +629,7 @@ function cph_portfolio_grid_shortcode( $atts ) {
 			$show_logos        = cph_get_bento_show_logo_settings( $atts );
 			$show_videos       = cph_get_bento_show_video_settings( $atts );
 			$show_excerpts     = cph_get_bento_show_excerpt_settings( $atts );
+			$show_card_labels  = cph_get_bento_show_card_label_settings( $atts );
 			$content_positions = cph_get_bento_content_position_settings( $atts );
 			$button_types      = cph_get_bento_button_type_settings( $atts, $global_button_type );
 
@@ -589,9 +641,11 @@ function cph_portfolio_grid_shortcode( $atts ) {
 				$size_class   = ( 1 === $slot_num );
 
 				// Per-slot overrides.
-				$slot_settings                     = $settings;
-				$slot_settings['content_position'] = $content_positions[ $slot_num ];
-				$slot_settings['button_type']      = $button_types[ $slot_num ];
+				$slot_settings                       = $settings;
+				$slot_settings['content_position']   = $content_positions[ $slot_num ];
+				$slot_settings['button_type']        = $button_types[ $slot_num ];
+				$slot_settings['show_card_label']    = isset( $show_card_labels[ $slot_num ] ) ? $show_card_labels[ $slot_num ] : true;
+				$slot_settings['custom_location']    = isset( $atts[ 'slot_' . $slot_num . '_custom_location' ] ) ? $atts[ 'slot_' . $slot_num . '_custom_location' ] : '';
 
 				echo cph_render_card( $card, $slot_num, $slot_settings, $show_logo, $show_excerpt, $size_class, $show_video ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 			}
@@ -638,8 +692,8 @@ function cph_render_featured_2col_grid( $atts, $settings ) {
 	);
 
 	// Build tax_query for category and status filters.
-	$category = sanitize_text_field( $atts['category'] );
-	$status   = sanitize_text_field( $atts['status'] );
+	$category = array_filter( array_map( 'sanitize_text_field', explode( ',', (string) $atts['category'] ) ) );
+	$status   = array_filter( array_map( 'sanitize_text_field', explode( ',', (string) $atts['status'] ) ) );
 
 	$tax_query = array();
 
@@ -780,8 +834,8 @@ function cph_render_masonry_grid( $atts, $settings ) {
 	);
 
 	// Build tax_query for category and status filters.
-	$category = sanitize_text_field( $atts['category'] );
-	$status   = sanitize_text_field( $atts['status'] );
+	$category = array_filter( array_map( 'sanitize_text_field', explode( ',', (string) $atts['category'] ) ) );
+	$status   = array_filter( array_map( 'sanitize_text_field', explode( ',', (string) $atts['status'] ) ) );
 
 	$tax_query = array();
 
@@ -936,8 +990,8 @@ function cph_render_zigzag_grid( $atts, $settings ) {
 	);
 
 	// Build tax_query for category and status filters.
-	$category = sanitize_text_field( $atts['category'] );
-	$status   = sanitize_text_field( $atts['status'] );
+	$category = array_filter( array_map( 'sanitize_text_field', explode( ',', (string) $atts['category'] ) ) );
+	$status   = array_filter( array_map( 'sanitize_text_field', explode( ',', (string) $atts['status'] ) ) );
 
 	$tax_query = array();
 

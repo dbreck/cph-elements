@@ -283,7 +283,7 @@
 	font-size: var(--location-font-size, 30px);
 	font-weight: 400;
 	letter-spacing: var(--location-letter-spacing, 1.5px);
-	line-height: 1.2;
+	line-height: 1;
 }
 
 /* =============================================================================
@@ -352,8 +352,7 @@
 .cph-card__location,
 .cph-card__text-btn {
 	opacity: 0;
-	transform: translateY(16px);
-	transition: opacity 0.4s ease, transform 0.4s ease, background 0.3s ease, color 0.3s ease;
+	transition: opacity 0.4s ease, background 0.3s ease, color 0.3s ease;
 }
 
 .cph-card__text-btn {
@@ -363,7 +362,6 @@
 .cph-card:hover .cph-card__location,
 .cph-card:hover .cph-card__text-btn {
 	opacity: 1;
-	transform: translateY(0);
 }
 
 /* =============================================================================
@@ -427,7 +425,6 @@
 	.cph-card__location,
 	.cph-card__text-btn {
 		opacity: 1;
-		transform: translateY(0);
 	}
 
 	/* All grids stack on mobile */

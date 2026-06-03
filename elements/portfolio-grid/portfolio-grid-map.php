@@ -27,9 +27,7 @@ function cph_get_portfolio_categories_dropdown() {
 		)
 	);
 
-	$options = array(
-		esc_html__( 'All Categories', 'cph-elements' ) => '',
-	);
+	$options = array();
 
 	if ( ! is_wp_error( $terms ) && ! empty( $terms ) ) {
 		foreach ( $terms as $term ) {
@@ -41,11 +39,11 @@ function cph_get_portfolio_categories_dropdown() {
 }
 
 /**
- * Get project statuses for dropdown.
+ * Get project statuses keyed by name for WPBakery options.
  *
  * @since 1.0.0
  *
- * @return array Statuses formatted for WPBakery dropdown.
+ * @return array Statuses as Name => slug.
  */
 function cph_get_project_status_dropdown() {
 	$terms = get_terms(
@@ -55,9 +53,7 @@ function cph_get_project_status_dropdown() {
 		)
 	);
 
-	$options = array(
-		esc_html__( 'All Statuses', 'cph-elements' ) => '',
-	);
+	$options = array();
 
 	if ( ! is_wp_error( $terms ) && ! empty( $terms ) ) {
 		foreach ( $terms as $term ) {
@@ -311,6 +307,20 @@ return array(
 		),
 
 		array(
+			'type'             => 'checkbox',
+			'heading'          => esc_html__( 'Show Card Label', 'cph-elements' ),
+			'param_name'       => 'slot_1_show_card_label',
+			'value'            => array( esc_html__( 'Yes', 'cph-elements' ) => 'yes' ),
+			'std'              => 'yes',
+			'edit_field_class' => 'vc_col-sm-12',
+			'dependency'       => array(
+				'element' => 'layout',
+				'value'   => array( 'homepage-bento', 'homepage-bento-4' ),
+			),
+			'description'      => esc_html__( 'Show the bottom-of-card label (uses the post\'s Card Label, falls back to the post title; or use Custom Location Text below to override per slot).', 'cph-elements' ),
+		),
+
+		array(
 			'type'             => 'dropdown',
 			'heading'          => esc_html__( 'Content Position', 'cph-elements' ),
 			'param_name'       => 'slot_1_content_position',
@@ -331,6 +341,17 @@ return array(
 			'std'              => 'arrow',
 			'edit_field_class' => 'vc_col-sm-6',
 			'dependency'       => array(
+				'element' => 'layout',
+				'value'   => array( 'homepage-bento', 'homepage-bento-4' ),
+			),
+		),
+
+		array(
+			'type'        => 'textfield',
+			'heading'     => esc_html__( 'Custom Location Text', 'cph-elements' ),
+			'param_name'  => 'slot_1_custom_location',
+			'description' => esc_html__( 'Override the card label (defaults to the Portfolio post title).', 'cph-elements' ),
+			'dependency'  => array(
 				'element' => 'layout',
 				'value'   => array( 'homepage-bento', 'homepage-bento-4' ),
 			),
@@ -387,6 +408,20 @@ return array(
 		),
 
 		array(
+			'type'             => 'checkbox',
+			'heading'          => esc_html__( 'Show Card Label', 'cph-elements' ),
+			'param_name'       => 'slot_2_show_card_label',
+			'value'            => array( esc_html__( 'Yes', 'cph-elements' ) => 'yes' ),
+			'std'              => 'yes',
+			'edit_field_class' => 'vc_col-sm-12',
+			'dependency'       => array(
+				'element' => 'layout',
+				'value'   => array( 'homepage-bento', 'homepage-bento-4' ),
+			),
+			'description'      => esc_html__( 'Show the bottom-of-card label (uses the post\'s Card Label, falls back to the post title; or use Custom Location Text below to override per slot).', 'cph-elements' ),
+		),
+
+		array(
 			'type'             => 'dropdown',
 			'heading'          => esc_html__( 'Content Position', 'cph-elements' ),
 			'param_name'       => 'slot_2_content_position',
@@ -407,6 +442,17 @@ return array(
 			'std'              => 'arrow',
 			'edit_field_class' => 'vc_col-sm-6',
 			'dependency'       => array(
+				'element' => 'layout',
+				'value'   => array( 'homepage-bento', 'homepage-bento-4' ),
+			),
+		),
+
+		array(
+			'type'        => 'textfield',
+			'heading'     => esc_html__( 'Custom Location Text', 'cph-elements' ),
+			'param_name'  => 'slot_2_custom_location',
+			'description' => esc_html__( 'Override the card label (defaults to the Portfolio post title).', 'cph-elements' ),
+			'dependency'  => array(
 				'element' => 'layout',
 				'value'   => array( 'homepage-bento', 'homepage-bento-4' ),
 			),
@@ -463,6 +509,20 @@ return array(
 		),
 
 		array(
+			'type'             => 'checkbox',
+			'heading'          => esc_html__( 'Show Card Label', 'cph-elements' ),
+			'param_name'       => 'slot_3_show_card_label',
+			'value'            => array( esc_html__( 'Yes', 'cph-elements' ) => 'yes' ),
+			'std'              => 'yes',
+			'edit_field_class' => 'vc_col-sm-12',
+			'dependency'       => array(
+				'element' => 'layout',
+				'value'   => array( 'homepage-bento', 'homepage-bento-4' ),
+			),
+			'description'      => esc_html__( 'Show the bottom-of-card label (uses the post\'s Card Label, falls back to the post title; or use Custom Location Text below to override per slot).', 'cph-elements' ),
+		),
+
+		array(
 			'type'             => 'dropdown',
 			'heading'          => esc_html__( 'Content Position', 'cph-elements' ),
 			'param_name'       => 'slot_3_content_position',
@@ -483,6 +543,17 @@ return array(
 			'std'              => 'arrow',
 			'edit_field_class' => 'vc_col-sm-6',
 			'dependency'       => array(
+				'element' => 'layout',
+				'value'   => array( 'homepage-bento', 'homepage-bento-4' ),
+			),
+		),
+
+		array(
+			'type'        => 'textfield',
+			'heading'     => esc_html__( 'Custom Location Text', 'cph-elements' ),
+			'param_name'  => 'slot_3_custom_location',
+			'description' => esc_html__( 'Override the card label (defaults to the Portfolio post title).', 'cph-elements' ),
+			'dependency'  => array(
 				'element' => 'layout',
 				'value'   => array( 'homepage-bento', 'homepage-bento-4' ),
 			),
@@ -539,6 +610,20 @@ return array(
 		),
 
 		array(
+			'type'             => 'checkbox',
+			'heading'          => esc_html__( 'Show Card Label', 'cph-elements' ),
+			'param_name'       => 'slot_4_show_card_label',
+			'value'            => array( esc_html__( 'Yes', 'cph-elements' ) => 'yes' ),
+			'std'              => 'yes',
+			'edit_field_class' => 'vc_col-sm-12',
+			'dependency'       => array(
+				'element' => 'layout',
+				'value'   => array( 'homepage-bento-4' ),
+			),
+			'description'      => esc_html__( 'Show the bottom-of-card label (uses the post\'s Card Label, falls back to the post title; or use Custom Location Text below to override per slot).', 'cph-elements' ),
+		),
+
+		array(
 			'type'             => 'dropdown',
 			'heading'          => esc_html__( 'Content Position', 'cph-elements' ),
 			'param_name'       => 'slot_4_content_position',
@@ -564,6 +649,17 @@ return array(
 			),
 		),
 
+		array(
+			'type'        => 'textfield',
+			'heading'     => esc_html__( 'Custom Location Text', 'cph-elements' ),
+			'param_name'  => 'slot_4_custom_location',
+			'description' => esc_html__( 'Override the card label (defaults to the Portfolio post title).', 'cph-elements' ),
+			'dependency'  => array(
+				'element' => 'layout',
+				'value'   => array( 'homepage-bento-4' ),
+			),
+		),
+
 		/*
 		 * ─────────────────────────────────────────────────────────────────
 		 * PROJECTS GRID SETTINGS (featured-2col, masonry, zigzag)
@@ -580,7 +676,7 @@ return array(
 		),
 
 		array(
-			'type'        => 'dropdown',
+			'type'        => 'checkbox',
 			'heading'     => esc_html__( 'Portfolio Category', 'cph-elements' ),
 			'param_name'  => 'category',
 			'value'       => cph_get_portfolio_categories_dropdown(),
@@ -588,11 +684,11 @@ return array(
 				'element' => 'layout',
 				'value'   => array( 'featured-2col', 'masonry', 'zigzag' ),
 			),
-			'description' => esc_html__( 'Filter by category or show all projects.', 'cph-elements' ),
+			'description' => esc_html__( 'Filter by one or more categories. Leave all unchecked to show every category.', 'cph-elements' ),
 		),
 
 		array(
-			'type'        => 'dropdown',
+			'type'        => 'checkbox',
 			'heading'     => esc_html__( 'Project Status', 'cph-elements' ),
 			'param_name'  => 'status',
 			'value'       => cph_get_project_status_dropdown(),
@@ -600,7 +696,7 @@ return array(
 				'element' => 'layout',
 				'value'   => array( 'featured-2col', 'masonry', 'zigzag' ),
 			),
-			'description' => esc_html__( 'Filter by Active or Completed status.', 'cph-elements' ),
+			'description' => esc_html__( 'Filter by one or more statuses. Leave all unchecked to show every status.', 'cph-elements' ),
 		),
 
 		array(
@@ -649,6 +745,19 @@ return array(
 				'value'   => array( 'featured-2col', 'masonry' ),
 			),
 			'description' => esc_html__( 'Display video background on cards that have a video set.', 'cph-elements' ),
+		),
+
+		array(
+			'type'        => 'checkbox',
+			'heading'     => esc_html__( 'Show Card Label', 'cph-elements' ),
+			'param_name'  => 'show_card_label',
+			'value'       => array( esc_html__( 'Yes', 'cph-elements' ) => 'yes' ),
+			'std'         => 'yes',
+			'dependency'  => array(
+				'element' => 'layout',
+				'value'   => array( 'featured-2col', 'masonry' ),
+			),
+			'description' => esc_html__( 'Show the bottom-of-card label on every card. Each card uses the post\'s Card Label, falling back to the post title if blank.', 'cph-elements' ),
 		),
 
 		array(

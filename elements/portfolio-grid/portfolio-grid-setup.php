@@ -204,6 +204,90 @@ if ( ! function_exists( 'cph_save_portfolio_featured_meta' ) ) {
 
 /*
  * ==========================================================================
+ * CARD LABEL META BOX
+ * ==========================================================================
+ */
+
+if ( ! function_exists( 'cph_add_portfolio_card_label_meta_box' ) ) {
+	/**
+	 * Add Card Label meta box to Portfolio post editor.
+	 *
+	 * Priority 'low' so it appears below the Project Status taxonomy box.
+	 *
+	 * @since 1.4.0
+	 *
+	 * @return void
+	 */
+	function cph_add_portfolio_card_label_meta_box() {
+		add_meta_box(
+			'cph_portfolio_card_label',
+			__( 'Card Label', 'cph-elements' ),
+			'cph_render_portfolio_card_label_meta_box',
+			'portfolio',
+			'side',
+			'low'
+		);
+	}
+	add_action( 'add_meta_boxes', 'cph_add_portfolio_card_label_meta_box' );
+}
+
+if ( ! function_exists( 'cph_render_portfolio_card_label_meta_box' ) ) {
+	/**
+	 * Render the Card Label meta box.
+	 *
+	 * @since 1.4.0
+	 *
+	 * @param WP_Post $post The post object.
+	 * @return void
+	 */
+	function cph_render_portfolio_card_label_meta_box( $post ) {
+		wp_nonce_field( 'cph_portfolio_card_label', 'cph_portfolio_card_label_nonce' );
+		$label = get_post_meta( $post->ID, '_cph_portfolio_card_label', true );
+		?>
+		<input type="text"
+			name="_cph_portfolio_card_label"
+			id="_cph_portfolio_card_label"
+			value="<?php echo esc_attr( $label ); ?>"
+			style="width:100%;"
+			placeholder="<?php esc_attr_e( 'e.g., Hollywood, FL', 'cph-elements' ); ?>" />
+		<p class="description">
+			<?php esc_html_e( 'Optional text shown next to the arrow on Portfolio Grid cards (when "Show Card Label" is enabled). Falls back to the post title if blank.', 'cph-elements' ); ?>
+		</p>
+		<?php
+	}
+}
+
+if ( ! function_exists( 'cph_save_portfolio_card_label_meta' ) ) {
+	/**
+	 * Save the Card Label meta box data.
+	 *
+	 * @since 1.4.0
+	 *
+	 * @param int $post_id The post ID.
+	 * @return void
+	 */
+	function cph_save_portfolio_card_label_meta( $post_id ) {
+		if ( ! isset( $_POST['cph_portfolio_card_label_nonce'] ) ) {
+			return;
+		}
+		if ( ! wp_verify_nonce( $_POST['cph_portfolio_card_label_nonce'], 'cph_portfolio_card_label' ) ) {
+			return;
+		}
+		if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
+			return;
+		}
+		if ( ! current_user_can( 'edit_post', $post_id ) ) {
+			return;
+		}
+
+		$value = isset( $_POST['_cph_portfolio_card_label'] ) ? sanitize_text_field( wp_unslash( $_POST['_cph_portfolio_card_label'] ) ) : '';
+		update_post_meta( $post_id, '_cph_portfolio_card_label', $value );
+	}
+	add_action( 'save_post_portfolio', 'cph_save_portfolio_card_label_meta' );
+}
+
+/*
+ * ==========================================================================
  * AUTOCOMPLETE CALLBACKS
  * ==========================================================================
  */
