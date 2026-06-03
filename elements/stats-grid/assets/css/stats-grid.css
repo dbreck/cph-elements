@@ -64,146 +64,99 @@
 }
 
 /* ==========================================================================
-   DIVIDERS - FULL STYLE (outer border + internal)
+   DIVIDERS
+   --------------------------------------------------------------------------
+   "internal" = inner dividers only (no outer border)
+   "full"     = inner dividers + outer border
+
+   The inner-divider logic (a right border between columns, a bottom border
+   between rows, with the outer edges trimmed) is identical for both styles.
+   "full" only adds the outer container border on top.
+
+   Which cells sit in the last column / last row depends on the column count,
+   so that trimming lives in the column-aware media blocks below. The column
+   count comes from the .cph-stats-grid--cols-{N} class set in the render
+   (NOT a [style] attribute — the --columns custom property is delivered via
+   a per-instance <style> block and can't be matched with [style*=...]).
    ========================================================================== */
 
+/* Inner dividers: every cell draws a right + bottom border. */
+.cph-stats-grid--dividers .cph-stats-grid__item {
+	border-right: 1px solid var(--divider-color);
+	border-bottom: 1px solid var(--divider-color);
+}
+
+/* The final cell never needs a trailing right border (covers a partially
+   filled last row, e.g. an orphan cell). */
+.cph-stats-grid--dividers .cph-stats-grid__item:last-child {
+	border-right: none;
+}
+
+/* "Full" style adds the outer border around the whole grid. */
 .cph-stats-grid--dividers-full {
 	border: 1px solid var(--divider-color);
 }
 
-.cph-stats-grid--dividers-full .cph-stats-grid__item {
-	border-right: 1px solid var(--divider-color);
-	border-bottom: 1px solid var(--divider-color);
-}
+/* ==========================================================================
+   DESKTOP COLUMN LOGIC (min-width: 1000px)
+   Trim the right border off the last column and the bottom border off the
+   last row, per chosen column count. Gated to desktop so the tablet/mobile
+   ranges below stand on their own without specificity battles.
+   ========================================================================== */
 
-/* Remove right border on last item in each row - 3 columns */
-.cph-stats-grid--dividers-full .cph-stats-grid__item:nth-child(3n) {
-	border-right: none;
-}
+@media only screen and (min-width: 1000px) {
+	/* 2 columns */
+	.cph-stats-grid--cols-2 .cph-stats-grid__item:nth-child(2n) {
+		border-right: none;
+	}
+	.cph-stats-grid--cols-2 .cph-stats-grid__item:nth-last-child(-n+2):nth-child(2n+1),
+	.cph-stats-grid--cols-2 .cph-stats-grid__item:nth-last-child(-n+2):nth-child(2n+1) ~ .cph-stats-grid__item {
+		border-bottom: none;
+	}
 
-/* Remove bottom border from last row items */
-.cph-stats-grid--dividers-full .cph-stats-grid__item:last-child {
-	border-bottom: none;
-}
+	/* 3 columns */
+	.cph-stats-grid--cols-3 .cph-stats-grid__item:nth-child(3n) {
+		border-right: none;
+	}
+	.cph-stats-grid--cols-3 .cph-stats-grid__item:nth-last-child(-n+3):nth-child(3n+1),
+	.cph-stats-grid--cols-3 .cph-stats-grid__item:nth-last-child(-n+3):nth-child(3n+1) ~ .cph-stats-grid__item {
+		border-bottom: none;
+	}
 
-/* 3-column: remove bottom border from last row */
-.cph-stats-grid--dividers-full .cph-stats-grid__item:nth-last-child(-n+3):nth-child(3n+1),
-.cph-stats-grid--dividers-full .cph-stats-grid__item:nth-last-child(-n+3):nth-child(3n+1) ~ .cph-stats-grid__item {
-	border-bottom: none;
+	/* 4 columns */
+	.cph-stats-grid--cols-4 .cph-stats-grid__item:nth-child(4n) {
+		border-right: none;
+	}
+	.cph-stats-grid--cols-4 .cph-stats-grid__item:nth-last-child(-n+4):nth-child(4n+1),
+	.cph-stats-grid--cols-4 .cph-stats-grid__item:nth-last-child(-n+4):nth-child(4n+1) ~ .cph-stats-grid__item {
+		border-bottom: none;
+	}
 }
 
 /* ==========================================================================
-   DIVIDERS - INTERNAL STYLE (no outer border)
+   RESPONSIVE - TABLET (691px - 999px) — grid collapses to 2 columns.
+   Bounded range so these rules don't leak into the mobile block below.
    ========================================================================== */
 
-.cph-stats-grid--dividers-internal .cph-stats-grid__item {
-	/* Right border creates vertical dividers */
-	border-right: 1px solid var(--divider-color);
-	/* Bottom border creates horizontal dividers */
-	border-bottom: 1px solid var(--divider-color);
-}
-
-/* Remove right border on last item in each row - 3 columns */
-.cph-stats-grid--dividers-internal .cph-stats-grid__item:nth-child(3n) {
-	border-right: none;
-}
-
-/* Remove bottom border from last row items */
-.cph-stats-grid--dividers-internal .cph-stats-grid__item:last-child {
-	border-bottom: none;
-}
-
-/* 3-column: remove bottom border from last row */
-.cph-stats-grid--dividers-internal .cph-stats-grid__item:nth-last-child(-n+3):nth-child(3n+1),
-.cph-stats-grid--dividers-internal .cph-stats-grid__item:nth-last-child(-n+3):nth-child(3n+1) ~ .cph-stats-grid__item {
-	border-bottom: none;
-}
-
-/* ==========================================================================
-   COLUMN-SPECIFIC DIVIDER RULES (2 and 4 columns)
-   ========================================================================== */
-
-/* 2-Column Grid */
-.cph-stats-grid[style*="--columns: 2"] .cph-stats-grid__item:nth-child(3n) {
-	border-right: 1px solid var(--divider-color);
-}
-
-.cph-stats-grid[style*="--columns: 2"] .cph-stats-grid__item:nth-child(2n) {
-	border-right: none;
-}
-
-.cph-stats-grid--dividers-full[style*="--columns: 2"] .cph-stats-grid__item:nth-last-child(-n+2):nth-child(2n+1),
-.cph-stats-grid--dividers-full[style*="--columns: 2"] .cph-stats-grid__item:nth-last-child(-n+2):nth-child(2n+1) ~ .cph-stats-grid__item {
-	border-bottom: none;
-}
-
-.cph-stats-grid--dividers-internal[style*="--columns: 2"] .cph-stats-grid__item:nth-last-child(-n+2):nth-child(2n+1),
-.cph-stats-grid--dividers-internal[style*="--columns: 2"] .cph-stats-grid__item:nth-last-child(-n+2):nth-child(2n+1) ~ .cph-stats-grid__item {
-	border-bottom: none;
-}
-
-/* 4-Column Grid */
-.cph-stats-grid[style*="--columns: 4"] .cph-stats-grid__item:nth-child(3n) {
-	border-right: 1px solid var(--divider-color);
-}
-
-.cph-stats-grid[style*="--columns: 4"] .cph-stats-grid__item:nth-child(4n) {
-	border-right: none;
-}
-
-.cph-stats-grid--dividers-full[style*="--columns: 4"] .cph-stats-grid__item:nth-last-child(-n+4):nth-child(4n+1),
-.cph-stats-grid--dividers-full[style*="--columns: 4"] .cph-stats-grid__item:nth-last-child(-n+4):nth-child(4n+1) ~ .cph-stats-grid__item {
-	border-bottom: none;
-}
-
-.cph-stats-grid--dividers-internal[style*="--columns: 4"] .cph-stats-grid__item:nth-last-child(-n+4):nth-child(4n+1),
-.cph-stats-grid--dividers-internal[style*="--columns: 4"] .cph-stats-grid__item:nth-last-child(-n+4):nth-child(4n+1) ~ .cph-stats-grid__item {
-	border-bottom: none;
-}
-
-/* ==========================================================================
-   RESPONSIVE - TABLET (max-width: 999px)
-   ========================================================================== */
-
-@media only screen and (max-width: 999px) {
+@media only screen and (min-width: 691px) and (max-width: 999px) {
 	.cph-stats-grid {
 		--label-font-size: 22px;
 		--value-font-size: 36px;
 		--cell-padding: 30px;
 	}
 
-	/* Reset to 2-column divider rules */
-	.cph-stats-grid--dividers .cph-stats-grid__item {
-		border-right: 1px solid var(--divider-color);
-		border-bottom: 1px solid var(--divider-color);
-	}
-
+	/* 2-column trims (base right + bottom borders come from the rules above). */
 	.cph-stats-grid--dividers .cph-stats-grid__item:nth-child(2n) {
 		border-right: none;
 	}
-
-	.cph-stats-grid--dividers .cph-stats-grid__item:nth-child(3n),
-	.cph-stats-grid--dividers .cph-stats-grid__item:nth-child(4n) {
-		border-right: 1px solid var(--divider-color);
-	}
-
-	.cph-stats-grid--dividers .cph-stats-grid__item:nth-child(2n) {
-		border-right: none;
-	}
-
-	/* Remove bottom border from last row (up to 2 items) */
-	.cph-stats-grid--dividers .cph-stats-grid__item:nth-last-child(-n+2) {
+	.cph-stats-grid--dividers .cph-stats-grid__item:nth-last-child(-n+2):nth-child(2n+1),
+	.cph-stats-grid--dividers .cph-stats-grid__item:nth-last-child(-n+2):nth-child(2n+1) ~ .cph-stats-grid__item {
 		border-bottom: none;
-	}
-
-	/* Handle odd number of items - last item alone */
-	.cph-stats-grid--dividers .cph-stats-grid__item:last-child:nth-child(odd) {
-		border-right: none;
 	}
 }
 
 /* ==========================================================================
-   RESPONSIVE - MOBILE (max-width: 690px)
+   RESPONSIVE - MOBILE (max-width: 690px) — single column.
    ========================================================================== */
 
 @media only screen and (max-width: 690px) {
@@ -213,20 +166,12 @@
 		--cell-padding: 25px 20px;
 	}
 
-	/*
-	 * Single column layout - reset ALL desktop rules.
-	 * Every item gets bottom border only, last item gets none.
-	 * Using !important to override complex desktop specificity chains.
-	 */
-
-	/* Reset all items to bottom border only */
+	/* One column: bottom dividers only. */
 	.cph-stats-grid--dividers .cph-stats-grid__item {
-		border-right: none !important;
-		border-bottom: 1px solid var(--divider-color) !important;
+		border-right: none;
+		border-bottom: 1px solid var(--divider-color);
 	}
-
-	/* Remove bottom border from last item only */
 	.cph-stats-grid--dividers .cph-stats-grid__item:last-child {
-		border-bottom: none !important;
+		border-bottom: none;
 	}
 }

@@ -57,7 +57,8 @@ function cph_stats_grid_shortcode( $atts ) {
 	$grid_id = 'cph-stats-grid-' . $instance_id;
 
 	// Build wrapper classes.
-	$wrapper_classes = array( 'cph-stats-grid' );
+	$wrapper_classes   = array( 'cph-stats-grid' );
+	$wrapper_classes[] = 'cph-stats-grid--cols-' . intval( $atts['columns'] );
 	if ( 'none' !== $atts['divider_style'] ) {
 		$wrapper_classes[] = 'cph-stats-grid--dividers';
 		$wrapper_classes[] = 'cph-stats-grid--dividers-' . esc_attr( $atts['divider_style'] );
