@@ -31,7 +31,9 @@ function cph_file_download_card_shortcode( $atts = array(), $content = '', $tag 
 			'image'               => '',
 			'file'                => '',
 			'button_text'         => 'Download',
+			'image_click'         => 'lightbox',
 			'aspect_ratio'        => '4-3',
+			'image_position'      => 'center-center',
 			'title_tag'           => 'h3',
 			'show_meta'           => 'yes',
 			'border_radius'       => 'md',
@@ -64,6 +66,10 @@ function cph_file_download_card_shortcode( $atts = array(), $content = '', $tag 
 	$file_name = basename( $file_path );
 	$file_size = size_format( filesize( $file_path ) );
 	$file_type = strtoupper( pathinfo( $file_path, PATHINFO_EXTENSION ) );
+
+	// Detect video files (always preview in a lightbox player).
+	$video_extensions = array( 'MP4', 'MOV', 'WEBM', 'OGG', 'AVI' );
+	$is_video         = in_array( $file_type, $video_extensions, true );
 
 	// Get title (use filename if not provided).
 	$title = ! empty( $atts['title'] ) ? $atts['title'] : pathinfo( $file_name, PATHINFO_FILENAME );
@@ -150,8 +156,11 @@ function cph_file_download_card_shortcode( $atts = array(), $content = '', $tag 
 		'file_name'      => $file_name,
 		'file_size'      => $file_size,
 		'file_type'      => $file_type,
+		'is_video'       => $is_video,
 		'button_text'    => $atts['button_text'],
+		'image_click'    => $atts['image_click'],
 		'aspect_ratio'   => $atts['aspect_ratio'],
+		'image_position' => $atts['image_position'],
 		'show_meta'      => 'yes' === $atts['show_meta'],
 		'border_radius'  => $atts['border_radius'],
 		'shadow_class'   => $shadow_class,

@@ -85,6 +85,43 @@
     aspect-ratio: 3 / 4;
 }
 
+/* Image Position Variants (object-position for the cover crop) */
+.file-download-card__image--pos-center-center img {
+    object-position: center center;
+}
+
+.file-download-card__image--pos-top-left img {
+    object-position: left top;
+}
+
+.file-download-card__image--pos-top-center img {
+    object-position: center top;
+}
+
+.file-download-card__image--pos-top-right img {
+    object-position: right top;
+}
+
+.file-download-card__image--pos-center-left img {
+    object-position: left center;
+}
+
+.file-download-card__image--pos-center-right img {
+    object-position: right center;
+}
+
+.file-download-card__image--pos-bottom-left img {
+    object-position: left bottom;
+}
+
+.file-download-card__image--pos-bottom-center img {
+    object-position: center bottom;
+}
+
+.file-download-card__image--pos-bottom-right img {
+    object-position: right bottom;
+}
+
 .file-download-card__preview-link {
     display: block;
     width: 100%;
@@ -136,6 +173,17 @@
 .file-download-card__image:hover .file-download-card__preview-icon {
     opacity: 1;
     transform: scale(1);
+}
+
+/* Video preview modifier */
+.file-download-card__image--video .file-download-card__preview-link {
+    cursor: pointer;
+}
+
+.file-download-card__preview-icon--play svg {
+    width: 16px;
+    height: 16px;
+    margin-left: 2px; /* Optical centering for play triangle */
 }
 
 /* Subtle gradient vignette on hover */

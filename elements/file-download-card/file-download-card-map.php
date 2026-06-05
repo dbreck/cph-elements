@@ -47,6 +47,17 @@ return array(
 			'value'       => 'Download',
 			'description' => esc_html__( 'Text for the download button.', 'cph-elements' ),
 		),
+		array(
+			'type'        => 'dropdown',
+			'heading'     => esc_html__( 'Preview Image Click Action', 'cph-elements' ),
+			'param_name'  => 'image_click',
+			'value'       => array(
+				esc_html__( 'Open Lightbox', 'cph-elements' )  => 'lightbox',
+				esc_html__( 'Download File', 'cph-elements' )  => 'download',
+			),
+			'std'         => 'lightbox',
+			'description' => esc_html__( 'What happens when the preview image is clicked. Video files always open in a lightbox player.', 'cph-elements' ),
+		),
 
 		// Display Options Tab.
 		array(
@@ -60,6 +71,25 @@ return array(
 			),
 			'std'         => '4-3',
 			'description' => esc_html__( 'Aspect ratio for the preview image.', 'cph-elements' ),
+			'group'       => esc_html__( 'Display Options', 'cph-elements' ),
+		),
+		array(
+			'type'        => 'dropdown',
+			'heading'     => esc_html__( 'Image Position', 'cph-elements' ),
+			'param_name'  => 'image_position',
+			'value'       => array(
+				esc_html__( 'Center Center', 'cph-elements' )  => 'center-center',
+				esc_html__( 'Top Left', 'cph-elements' )       => 'top-left',
+				esc_html__( 'Top Center', 'cph-elements' )     => 'top-center',
+				esc_html__( 'Top Right', 'cph-elements' )      => 'top-right',
+				esc_html__( 'Center Left', 'cph-elements' )    => 'center-left',
+				esc_html__( 'Center Right', 'cph-elements' )   => 'center-right',
+				esc_html__( 'Bottom Left', 'cph-elements' )    => 'bottom-left',
+				esc_html__( 'Bottom Center', 'cph-elements' )  => 'bottom-center',
+				esc_html__( 'Bottom Right', 'cph-elements' )   => 'bottom-right',
+			),
+			'std'         => 'center-center',
+			'description' => esc_html__( 'Which part of the preview image stays visible when it is cropped to the aspect ratio.', 'cph-elements' ),
 			'group'       => esc_html__( 'Display Options', 'cph-elements' ),
 		),
 		array(

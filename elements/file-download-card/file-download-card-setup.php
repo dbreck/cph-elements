@@ -153,8 +153,17 @@ if ( ! function_exists( 'cph_fdc_admin_enqueue_scripts' ) ) {
 			return;
 		}
 
+		// Title auto-populate from filename in the WPBakery edit panel.
+		wp_enqueue_script(
+			'cph-fdc-admin',
+			cph_element_url( 'file-download-card' ) . 'assets/js/file-download-card-admin.js',
+			array( 'jquery' ),
+			CPH_ELEMENTS_VERSION,
+			true
+		);
+
 		// Localize admin nonce for AJAX handler.
-		wp_localize_script( 'cph-wpbakery-admin', 'fdcAdmin', array(
+		wp_localize_script( 'cph-fdc-admin', 'fdcAdmin', array(
 			'nonce' => wp_create_nonce( 'fdc_admin_nonce' ),
 		) );
 	}

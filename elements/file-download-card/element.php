@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 return array(
 	'name'      => 'File Download Card',
 	'shortcode' => 'file_download_card',
-	'version'   => '1.0.0',
+	'version'   => '1.1.0',
 	'category'  => 'Clear pH Elements',
 
 	'files' => array(

@@ -65,6 +65,41 @@
                 $('body').removeClass('fancybox-file-preview-open');
             }
         });
+
+        // Video preview lightbox
+        $('[data-fancybox="fdc-video"]').fancybox({
+            // Animation
+            animationEffect: 'fade',
+            animationDuration: 300,
+            transitionEffect: 'fade',
+            transitionDuration: 300,
+
+            // UI options
+            buttons: [
+                'close'
+            ],
+
+            // Behavior
+            loop: false,
+            protect: false,
+            toolbar: true,
+
+            // Click behavior
+            clickSlide: 'close',
+
+            // Video options
+            video: {
+                autoStart: true
+            },
+
+            // Callbacks
+            afterLoad: function(instance, current) {
+                $('body').addClass('fancybox-file-preview-open');
+            },
+            afterClose: function() {
+                $('body').removeClass('fancybox-file-preview-open');
+            }
+        });
     }
 
     /**

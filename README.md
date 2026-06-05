@@ -2,7 +2,7 @@
 
 Custom WPBakery Page Builder elements with an auto-discovery loader. Drop elements into the `elements/` directory and they register themselves — no manual hookup required.
 
-**Version:** 1.4.0
+**Version:** 1.5.0
 **Requires:** WordPress 6.0+ / PHP 7.4+ / WPBakery Page Builder
 **Optional:** Salient theme (enhanced admin UI components)
 
@@ -19,10 +19,27 @@ Custom WPBakery Page Builder elements with an auto-discovery loader. Drop elemen
 | Stats Bubbles | `cph_stats_bubbles` | Floating bubble stats with scroll-triggered GSAP animations |
 | Stats Photos | `cph_stats_photos` | Statistics paired with photos in a grid |
 | Gallery Slider | `cph_gallery_slider` | Center-mode carousel with 3D effects (coverflow, carousel, etc.) |
-| File Download Card | `file_download_card` | Downloadable file card with metadata display |
+| File Download Card | `file_download_card` | Downloadable file card with preview image (lightbox/download/video play), metadata display, and crop-position control |
 | Testimonials | `cph_testimonials` | Quote slider with dot navigation and auto-rotate |
 | Animated Vert Line | `cph_animated_vert_line` | Decorative vertical line with scroll-triggered grow animation |
 | Expandable Grid | `cph_expandable_grid` | Accordion grid backed by `cph_grid_item` CPT with per-item borders and expand/collapse detail panels |
+
+### File Download Card parameters
+
+| Param | Values | Default | Notes |
+|-------|--------|---------|-------|
+| `title` | text | filename | Auto-populates from the selected file's name |
+| `image` | attachment ID | — | Preview image |
+| `file` | attachment ID | — | The downloadable file (custom `fdc_file_picker` param) |
+| `button_text` | text | `Download` | |
+| `image_click` | `lightbox` \| `download` | `lightbox` | Video files (MP4/MOV/WEBM/OGG/AVI) always open a FancyBox video player |
+| `aspect_ratio` | `4-3` \| `16-9` \| `3-4` | `4-3` | |
+| `image_position` | `center-center`, `top-left`, `top-center`, `top-right`, `center-left`, `center-right`, `bottom-left`, `bottom-center`, `bottom-right` | `center-center` | `object-position` crop focus for the cover-fit preview image |
+| `title_tag` | `h2`–`h6` | `h3` | |
+| `show_meta` | `yes` \| `` | `yes` | File type + size line |
+| `border_radius` | `none` \| `sm` \| `md` \| `lg` | `md` | |
+| `shadow` / `shadow_strength` / `shadow_color` | — | enabled/medium | |
+| `color_scheme` | `light`, `dark`, `accent`, `extra-1/2/3`, `custom` | `light` | Custom scheme exposes bg/text/button color pickers |
 
 ## Installation
 
@@ -32,13 +49,13 @@ Custom WPBakery Page Builder elements with an auto-discovery loader. Drop elemen
 
 ## Configuration
 
-By default all elements are loaded. To limit which elements are active on a given site, copy the sample config:
+By default all elements are loaded. To limit which elements are active on a given site, copy the sample config to **`wp-content/cph-config.php`** (preferred — site-specific, survives plugin updates and symlinked installs):
 
 ```bash
-cp cph-config-sample.php cph-config.php
+cp wp-content/plugins/cph-elements/cph-config-sample.php wp-content/cph-config.php
 ```
 
-Then edit `cph-config.php` and keep only the element slugs you need:
+Then edit it and keep only the element slugs you need:
 
 ```php
 return array(
@@ -50,7 +67,9 @@ return array(
 );
 ```
 
-If `cph-config.php` doesn't exist, every element in `elements/` loads automatically.
+A `cph-config.php` inside the plugin directory also works as a fallback, but the `wp-content/` copy wins when both exist. If neither exists, every element in `elements/` loads automatically.
+
+Only allow-listed elements register their shortcodes **and** enqueue their CSS/JS — on sites that use one or two elements, the allow-list keeps the asset footprint minimal.
 
 ## Project Structure
 

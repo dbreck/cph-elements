@@ -2,7 +2,7 @@
 /**
  * Plugin Name: CPH Elements
  * Description: Custom WPBakery elements by Clear pH. Auto-discovers elements from the elements/ directory.
- * Version:     1.4.0
+ * Version:     1.5.0
  * Author:      Clear pH
  * Author URI:  https://clearph.com
  * Text Domain: cph-elements
@@ -19,7 +19,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Plugin constants.
  */
-define( 'CPH_ELEMENTS_VERSION', '1.4.0' );
+define( 'CPH_ELEMENTS_VERSION', '1.5.0' );
 define( 'CPH_ELEMENTS_FILE', __FILE__ );
 define( 'CPH_ELEMENTS_PATH', plugin_dir_path( __FILE__ ) );
 define( 'CPH_ELEMENTS_URL', plugin_dir_url( __FILE__ ) );
@@ -63,8 +63,13 @@ require_once CPH_ELEMENTS_PATH . 'shared/class-cph-admin.php';
  */
 function cph_elements_init() {
 	// Load optional config file for allow-list filtering.
+	// wp-content/cph-config.php takes priority (site-specific, survives plugin
+	// updates and symlinked installs); falls back to a copy in the plugin dir.
 	$config = array();
-	$config_file = CPH_ELEMENTS_PATH . 'cph-config.php';
+	$config_file = WP_CONTENT_DIR . '/cph-config.php';
+	if ( ! file_exists( $config_file ) ) {
+		$config_file = CPH_ELEMENTS_PATH . 'cph-config.php';
+	}
 	if ( file_exists( $config_file ) ) {
 		$config = include $config_file;
 	}
