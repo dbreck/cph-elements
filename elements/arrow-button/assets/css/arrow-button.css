@@ -1,0 +1,69 @@
+/**
+ * Arrow Button
+ *
+ * Pill-shaped outlined arrow link button.
+ */
+
+/* Wrapper handles alignment so user margins never fight centering. */
+.cph-arrow-button-wrap {
+	display: flex;
+}
+
+.cph-arrow-button-wrap--align-center {
+	justify-content: center;
+}
+
+.cph-arrow-button-wrap--align-left {
+	justify-content: flex-start;
+}
+
+.cph-arrow-button-wrap--align-right {
+	justify-content: flex-end;
+}
+
+/* The button itself. */
+.cph-arrow-button {
+	box-sizing: border-box;
+	color: var(--cph-ab-color, #fff);
+	display: block;
+	line-height: 0;
+	text-decoration: none;
+	width: var(--cph-ab-width, 140px);
+}
+
+.cph-arrow-button__icon {
+	display: block;
+	transition: transform 0.3s ease;
+	width: 100%;
+}
+
+.cph-arrow-button__icon svg {
+	display: block;
+	height: auto;
+	width: 100%;
+}
+
+/* Color via explicit stroke so it's immune to theme a:hover color rules. */
+.cph-arrow-button svg rect,
+.cph-arrow-button svg path {
+	stroke: var(--cph-ab-color, #fff);
+	transition: stroke 0.3s ease;
+}
+
+.cph-arrow-button:hover svg rect,
+.cph-arrow-button:hover svg path,
+.cph-arrow-button:focus-visible svg rect,
+.cph-arrow-button:focus-visible svg path {
+	stroke: var(--cph-ab-hover-color, var(--cph-ab-color, #fff));
+}
+
+/* Hover movement effects. */
+.cph-arrow-button--hover-slide:hover .cph-arrow-button__icon,
+.cph-arrow-button--hover-slide:focus-visible .cph-arrow-button__icon {
+	transform: translateX(5px);
+}
+
+.cph-arrow-button--hover-grow:hover .cph-arrow-button__icon,
+.cph-arrow-button--hover-grow:focus-visible .cph-arrow-button__icon {
+	transform: scale(1.05);
+}

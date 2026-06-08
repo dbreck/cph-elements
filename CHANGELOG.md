@@ -2,6 +2,15 @@
 
 All notable changes to CPH Elements are documented here. Versions correspond to GitHub releases (used by the in-plugin updater).
 
+## [1.6.0] — 2026-06-08
+
+### Arrow Button (new element 1.0.0)
+- **New element** `cph_arrow_button` — pill-shaped outlined arrow link button, rebuilt as a standalone element (self-contained, no longer dependent on Portfolio Grid's `.cph-card__arrow` CSS)
+- **Controls:** Link (`vc_link`), accessible label, alignment, pill width, stroke width, color, hover color, and hover effect (slide / grow / none)
+- **Spacing & Transform** — reuses Salient's native Row controls (`SalientWPbakeryParamGroups::spacing_group()` + the Row Transform block) for responsive Padding, Margin, and Transform (Translate X/Y, Scale, Rotate) with the device toggle and constrain locks
+- **Admin:** dedicated `arrow-button-admin.js` reproduces Salient's `createDeviceGroup()` wrap-and-toggle for this element's panel, since Salient only wires those groups for `vc_row`/`vc_section`/`vc_column`
+- Hover color applied via explicit SVG `stroke` (immune to theme `a:hover` rules); responsive spacing emitted as per-instance scoped CSS at Salient's 999px/690px breakpoints
+
 ## [1.5.0] — 2026-06-05
 
 ### File Download Card (element 1.1.0)

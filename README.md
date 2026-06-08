@@ -2,7 +2,7 @@
 
 Custom WPBakery Page Builder elements with an auto-discovery loader. Drop elements into the `elements/` directory and they register themselves — no manual hookup required.
 
-**Version:** 1.5.0
+**Version:** 1.6.0
 **Requires:** WordPress 6.0+ / PHP 7.4+ / WPBakery Page Builder
 **Optional:** Salient theme (enhanced admin UI components)
 
@@ -23,6 +23,7 @@ Custom WPBakery Page Builder elements with an auto-discovery loader. Drop elemen
 | Testimonials | `cph_testimonials` | Quote slider with dot navigation and auto-rotate |
 | Animated Vert Line | `cph_animated_vert_line` | Decorative vertical line with scroll-triggered grow animation |
 | Expandable Grid | `cph_expandable_grid` | Accordion grid backed by `cph_grid_item` CPT with per-item borders and expand/collapse detail panels |
+| Arrow Button | `cph_arrow_button` | Pill-shaped outlined arrow link with color/hover controls and Salient-native responsive Spacing & Transform (Padding, Margin, Transform) |
 
 ### File Download Card parameters
 
