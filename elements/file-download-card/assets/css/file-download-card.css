@@ -180,6 +180,11 @@
     cursor: pointer;
 }
 
+/* Link preview modifier */
+.file-download-card__image--link .file-download-card__preview-link {
+    cursor: pointer;
+}
+
 .file-download-card__preview-icon--play svg {
     width: 16px;
     height: 16px;
@@ -283,6 +288,15 @@
 
 .file-download-card__button:hover .file-download-card__button-icon {
     transform: translateY(2px);
+}
+
+/* Link buttons: arrow nudges sideways instead of down on hover */
+.file-download-card__button--link:hover .file-download-card__button-icon {
+    transform: translateX(3px);
+}
+
+.file-download-card__button--external:hover .file-download-card__button-icon {
+    transform: translate(2px, -2px);
 }
 
 /* ========================================

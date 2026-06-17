@@ -29,7 +29,11 @@ function cph_file_download_card_shortcode( $atts = array(), $content = '', $tag 
 		array(
 			'title'               => '',
 			'image'               => '',
+			'card_type'           => 'file',
 			'file'                => '',
+			'link_url'            => '',
+			'link_target'         => 'same',
+			'is_external'         => '',
 			'button_text'         => 'Download',
 			'image_click'         => 'lightbox',
 			'aspect_ratio'        => '4-3',
@@ -49,32 +53,70 @@ function cph_file_download_card_shortcode( $atts = array(), $content = '', $tag 
 		$tag
 	);
 
-	// Bail if no file is set.
-	if ( empty( $atts['file'] ) ) {
-		return '';
+	$card_type = in_array( $atts['card_type'], array( 'file', 'link' ), true ) ? $atts['card_type'] : 'file';
+	$is_link   = ( 'link' === $card_type );
+
+	// Mode-specific defaults (template always receives these).
+	$file_url    = '';
+	$file_name   = '';
+	$file_size   = '';
+	$file_type   = '';
+	$is_video    = false;
+	$link_url    = '';
+	$link_target = '';
+	$link_rel    = '';
+	$is_external = false;
+
+	if ( $is_link ) {
+
+		// Link mode: bail if no URL is set.
+		$link_url = trim( $atts['link_url'] );
+		if ( '' === $link_url ) {
+			return '';
+		}
+
+		$is_external = ( 'yes' === $atts['is_external'] );
+		$link_target = ( 'new' === $atts['link_target'] ) ? '_blank' : '';
+
+		// Security rel for new tabs and external links.
+		if ( '_blank' === $link_target ) {
+			$link_rel = 'noopener noreferrer';
+		} elseif ( $is_external ) {
+			$link_rel = 'noopener';
+		}
+
+		// Title is used as entered (no filename derivation in link mode).
+		$title = $atts['title'];
+
+	} else {
+
+		// File mode: bail if no file is set.
+		if ( empty( $atts['file'] ) ) {
+			return '';
+		}
+
+		// Get file info.
+		$file_id   = intval( $atts['file'] );
+		$file_path = get_attached_file( $file_id );
+
+		if ( ! $file_path || ! file_exists( $file_path ) ) {
+			return '';
+		}
+
+		$file_url  = wp_get_attachment_url( $file_id );
+		$file_name = basename( $file_path );
+		$file_size = size_format( filesize( $file_path ) );
+		$file_type = strtoupper( pathinfo( $file_path, PATHINFO_EXTENSION ) );
+
+		// Detect video files (always preview in a lightbox player).
+		$video_extensions = array( 'MP4', 'MOV', 'WEBM', 'OGG', 'AVI' );
+		$is_video         = in_array( $file_type, $video_extensions, true );
+
+		// Get title (use filename if not provided).
+		$title = ! empty( $atts['title'] ) ? $atts['title'] : pathinfo( $file_name, PATHINFO_FILENAME );
+		$title = str_replace( array( '-', '_' ), ' ', $title );
+		$title = ucwords( $title );
 	}
-
-	// Get file info.
-	$file_id   = intval( $atts['file'] );
-	$file_path = get_attached_file( $file_id );
-
-	if ( ! $file_path || ! file_exists( $file_path ) ) {
-		return '';
-	}
-
-	$file_url  = wp_get_attachment_url( $file_id );
-	$file_name = basename( $file_path );
-	$file_size = size_format( filesize( $file_path ) );
-	$file_type = strtoupper( pathinfo( $file_path, PATHINFO_EXTENSION ) );
-
-	// Detect video files (always preview in a lightbox player).
-	$video_extensions = array( 'MP4', 'MOV', 'WEBM', 'OGG', 'AVI' );
-	$is_video         = in_array( $file_type, $video_extensions, true );
-
-	// Get title (use filename if not provided).
-	$title = ! empty( $atts['title'] ) ? $atts['title'] : pathinfo( $file_name, PATHINFO_FILENAME );
-	$title = str_replace( array( '-', '_' ), ' ', $title );
-	$title = ucwords( $title );
 
 	// Get image URL.
 	$image_url      = '';
@@ -128,8 +170,9 @@ function cph_file_download_card_shortcode( $atts = array(), $content = '', $tag 
 			break;
 	}
 
-	// Ensure FancyBox is enqueued (runtime dependency from Salient).
-	if ( wp_script_is( 'fancyBox', 'registered' ) ) {
+	// Ensure FancyBox is enqueued (runtime dependency from Salient) — only file
+	// mode uses the lightbox/video preview.
+	if ( ! $is_link && wp_script_is( 'fancyBox', 'registered' ) ) {
 		wp_enqueue_script( 'fancyBox' );
 	}
 
@@ -152,16 +195,22 @@ function cph_file_download_card_shortcode( $atts = array(), $content = '', $tag 
 		'title_tag'      => $title_tag,
 		'image_url'      => $image_url,
 		'image_full_url' => $image_full_url,
+		'is_link'        => $is_link,
 		'file_url'       => $file_url,
 		'file_name'      => $file_name,
 		'file_size'      => $file_size,
 		'file_type'      => $file_type,
 		'is_video'       => $is_video,
+		'link_url'       => $link_url,
+		'link_target'    => $link_target,
+		'link_rel'       => $link_rel,
+		'is_external'    => $is_external,
 		'button_text'    => $atts['button_text'],
 		'image_click'    => $atts['image_click'],
 		'aspect_ratio'   => $atts['aspect_ratio'],
 		'image_position' => $atts['image_position'],
-		'show_meta'      => 'yes' === $atts['show_meta'],
+		// Meta (file type/size) only applies to file mode.
+		'show_meta'      => ! $is_link && 'yes' === $atts['show_meta'],
 		'border_radius'  => $atts['border_radius'],
 		'shadow_class'   => $shadow_class,
 		'color_class'    => $color_class,

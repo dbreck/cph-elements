@@ -2,6 +2,18 @@
 
 All notable changes to CPH Elements are documented here. Versions correspond to GitHub releases (used by the in-plugin updater).
 
+## [1.7.0] — 2026-06-17
+
+### File Download Card (element 1.2.0)
+- **New: Card Type** — `card_type` param toggles the card between **File Download** (existing behavior) and **Link** (links the user to another page or website)
+- **New: Link mode fields** (shown only when Card Type = Link):
+  - `link_url` text field — replaces the file picker; accepts relative paths (`/residences/`) or full URLs
+  - `link_target` — Same Tab / New Tab; applies to both the button and the preview image
+  - `is_external` checkbox — adds an outbound (↗) arrow icon to the button and preview-image overlay to signal the link leaves the site (internal links use a → arrow)
+- New-tab links get `rel="noopener noreferrer"`; external same-tab links get `rel="noopener"`
+- File picker, Preview Image Click Action, and file meta (type • size) now hide in Link mode; FancyBox is no longer enqueued for link cards
+- File Download mode is unchanged
+
 ## [1.6.0] — 2026-06-08
 
 ### Arrow Button (new element 1.0.0)

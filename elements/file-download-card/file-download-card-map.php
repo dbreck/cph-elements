@@ -22,10 +22,22 @@ return array(
 
 		// Content Tab.
 		array(
+			'type'        => 'dropdown',
+			'heading'     => esc_html__( 'Card Type', 'cph-elements' ),
+			'param_name'  => 'card_type',
+			'value'       => array(
+				esc_html__( 'File Download', 'cph-elements' ) => 'file',
+				esc_html__( 'Link', 'cph-elements' )          => 'link',
+			),
+			'std'         => 'file',
+			'description' => esc_html__( 'Choose whether this card downloads a file or links the user to another page or website.', 'cph-elements' ),
+			'admin_label' => true,
+		),
+		array(
 			'type'        => 'textfield',
 			'heading'     => esc_html__( 'Title', 'cph-elements' ),
 			'param_name'  => 'title',
-			'description' => esc_html__( 'Card title. Leave empty to auto-populate from filename.', 'cph-elements' ),
+			'description' => esc_html__( 'Card title. In File Download mode, leave empty to auto-populate from filename.', 'cph-elements' ),
 			'admin_label' => true,
 		),
 		array(
@@ -39,13 +51,54 @@ return array(
 			'heading'     => esc_html__( 'Downloadable File', 'cph-elements' ),
 			'param_name'  => 'file',
 			'description' => esc_html__( 'Select the file to be downloaded (PDF, image, etc.) from the media library.', 'cph-elements' ),
+			'dependency'  => array(
+				'element' => 'card_type',
+				'value'   => 'file',
+			),
+		),
+		array(
+			'type'        => 'textfield',
+			'heading'     => esc_html__( 'Link URL', 'cph-elements' ),
+			'param_name'  => 'link_url',
+			'description' => esc_html__( 'The page or website to link to. Relative paths (e.g. /residences/) and full URLs both work.', 'cph-elements' ),
+			'dependency'  => array(
+				'element' => 'card_type',
+				'value'   => 'link',
+			),
+		),
+		array(
+			'type'        => 'dropdown',
+			'heading'     => esc_html__( 'Link Opens In', 'cph-elements' ),
+			'param_name'  => 'link_target',
+			'value'       => array(
+				esc_html__( 'Same Tab', 'cph-elements' ) => 'same',
+				esc_html__( 'New Tab', 'cph-elements' )  => 'new',
+			),
+			'std'         => 'same',
+			'description' => esc_html__( 'Whether the button and preview image open the link in the same tab or a new tab.', 'cph-elements' ),
+			'dependency'  => array(
+				'element' => 'card_type',
+				'value'   => 'link',
+			),
+		),
+		array(
+			'type'        => 'checkbox',
+			'heading'     => esc_html__( 'External Link', 'cph-elements' ),
+			'param_name'  => 'is_external',
+			'value'       => array( esc_html__( 'Yes', 'cph-elements' ) => 'yes' ),
+			'std'         => '',
+			'description' => esc_html__( 'Adds an outbound arrow icon to the button and preview image to show the link leaves this site.', 'cph-elements' ),
+			'dependency'  => array(
+				'element' => 'card_type',
+				'value'   => 'link',
+			),
 		),
 		array(
 			'type'        => 'textfield',
 			'heading'     => esc_html__( 'Button Text', 'cph-elements' ),
 			'param_name'  => 'button_text',
 			'value'       => 'Download',
-			'description' => esc_html__( 'Text for the download button.', 'cph-elements' ),
+			'description' => esc_html__( 'Text for the button.', 'cph-elements' ),
 		),
 		array(
 			'type'        => 'dropdown',
@@ -56,7 +109,11 @@ return array(
 				esc_html__( 'Download File', 'cph-elements' )  => 'download',
 			),
 			'std'         => 'lightbox',
-			'description' => esc_html__( 'What happens when the preview image is clicked. Video files always open in a lightbox player.', 'cph-elements' ),
+			'description' => esc_html__( 'What happens when the preview image is clicked. Video files always open in a lightbox player. (Link cards always open the link.)', 'cph-elements' ),
+			'dependency'  => array(
+				'element' => 'card_type',
+				'value'   => 'file',
+			),
 		),
 
 		// Display Options Tab.
