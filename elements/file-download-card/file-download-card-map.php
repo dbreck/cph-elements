@@ -94,6 +94,16 @@ return array(
 			),
 		),
 		array(
+			'type'        => 'textarea',
+			'heading'     => esc_html__( 'Extra Text', 'cph-elements' ),
+			'param_name'  => 'extra_text',
+			'description' => esc_html__( 'Optional text shown below the title (in place of the file type/size on download cards). Helps link cards line up with file cards.', 'cph-elements' ),
+			'dependency'  => array(
+				'element' => 'card_type',
+				'value'   => 'link',
+			),
+		),
+		array(
 			'type'        => 'textfield',
 			'heading'     => esc_html__( 'Button Text', 'cph-elements' ),
 			'param_name'  => 'button_text',

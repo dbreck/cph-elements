@@ -2,6 +2,11 @@
 
 All notable changes to CPH Elements are documented here. Versions correspond to GitHub releases (used by the in-plugin updater).
 
+## [1.7.1] — 2026-06-17
+
+### File Download Card (element 1.2.1)
+- **New: Extra Text** (`extra_text`) — optional text field for Link cards, rendered in the slot where file type/size appears on download cards so link cards line up with file cards in a row. Link mode only.
+
 ## [1.7.0] — 2026-06-17
 
 ### File Download Card (element 1.2.0)

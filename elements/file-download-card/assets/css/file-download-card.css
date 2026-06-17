@@ -240,6 +240,15 @@
     text-transform: uppercase;
 }
 
+/* Link-card extra text — sits in the meta slot but reads as a sentence */
+.file-download-card__extra {
+    margin: 0;
+    font-size: 0.9375rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: var(--fdc-text-muted);
+}
+
 /* ========================================
    Download Button
    ======================================== */

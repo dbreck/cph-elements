@@ -17,6 +17,7 @@
  * - $link_target (string) - Anchor target attribute ("_blank" or "")
  * - $link_rel (string) - Anchor rel attribute for new-tab/external links
  * - $is_external (bool) - Whether the link is external (shows outbound arrow)
+ * - $extra_text (string) - Optional text shown below the title on link cards
  * - $button_text (string) - Button text
  * - $image_click (string) - Preview image click action (lightbox|download)
  * - $aspect_ratio (string) - Image aspect ratio (4-3, 16-9, 3-4)
@@ -59,6 +60,7 @@ $link_url    = isset( $link_url ) ? $link_url : '';
 $link_target = isset( $link_target ) ? $link_target : '';
 $link_rel    = isset( $link_rel ) ? $link_rel : '';
 $is_external = isset( $is_external ) ? $is_external : false;
+$extra_text  = isset( $extra_text ) ? $extra_text : '';
 
 // Anchor attributes for link-mode cards.
 $link_attrs = '';
@@ -151,6 +153,10 @@ $link_icon_svg      = $is_external ? $external_arrow_svg : $arrow_right_svg;
 			echo esc_html( implode( ' • ', $meta_parts ) );
 			?>
 		</p>
+		<?php endif; ?>
+
+		<?php if ( $is_link && '' !== trim( $extra_text ) ) : ?>
+		<p class="file-download-card__extra"><?php echo nl2br( esc_html( $extra_text ) ); ?></p>
 		<?php endif; ?>
 
 		<?php if ( $is_link ) : ?>
