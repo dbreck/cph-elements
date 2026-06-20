@@ -22,6 +22,7 @@
  * - $image_click (string) - Preview image click action (lightbox|download)
  * - $aspect_ratio (string) - Image aspect ratio (4-3, 16-9, 3-4)
  * - $image_position (string) - Image crop focus (center-center, top-left, etc.)
+ * - $icon_always (bool) - Whether the action icon stays visible (vs. hover-reveal)
  * - $show_meta (bool) - Whether to show file metadata
  * - $border_radius (string) - none|sm|md|lg
  * - $shadow_class (string) - Shadow variant class
@@ -53,6 +54,9 @@ $aspect_ratio = isset( $aspect_ratio ) ? $aspect_ratio : '4-3';
 // Sanitize image_position against allowed values.
 $allowed_positions = array( 'center-center', 'top-left', 'top-center', 'top-right', 'center-left', 'center-right', 'bottom-left', 'bottom-center', 'bottom-right' );
 $image_position    = ( isset( $image_position ) && in_array( $image_position, $allowed_positions, true ) ) ? $image_position : 'center-center';
+
+// Whether the action icon stays visible at all times (vs. hover-reveal default).
+$icon_always = isset( $icon_always ) ? $icon_always : false;
 
 // Link-mode defaults (in case template is rendered standalone).
 $is_link     = isset( $is_link ) ? $is_link : false;
@@ -92,7 +96,7 @@ $link_icon_svg      = $is_external ? $external_arrow_svg : $arrow_right_svg;
 	);
 	$video_mime     = ( $is_video && isset( $video_mime_map[ $file_type ] ) ) ? $video_mime_map[ $file_type ] : '';
 	?>
-	<div class="file-download-card__image file-download-card__image--<?php echo esc_attr( $aspect_ratio ); ?> file-download-card__image--pos-<?php echo esc_attr( $image_position ); ?><?php echo $is_video ? ' file-download-card__image--video' : ''; ?><?php echo $is_link ? ' file-download-card__image--link' : ''; ?>">
+	<div class="file-download-card__image file-download-card__image--<?php echo esc_attr( $aspect_ratio ); ?> file-download-card__image--pos-<?php echo esc_attr( $image_position ); ?><?php echo $is_video ? ' file-download-card__image--video' : ''; ?><?php echo $is_link ? ' file-download-card__image--link' : ''; ?><?php echo $icon_always ? ' file-download-card__image--icon-always' : ''; ?>">
 		<?php if ( $is_link ) : ?>
 		<a href="<?php echo esc_url( $link_url ); ?>" class="file-download-card__preview-link file-download-card__preview-link--link"<?php echo $link_attrs; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?> title="<?php echo $is_external ? esc_attr__( 'Opens an external link', 'cph-elements' ) : esc_attr__( 'Click to open', 'cph-elements' ); ?>">
 			<img src="<?php echo esc_url( $image_url ); ?>" alt="<?php echo esc_attr( $title ); ?>" loading="lazy" />

@@ -41,6 +41,7 @@ function cph_file_download_card_shortcode( $atts = array(), $content = '', $tag 
 			'image_position'      => 'center-center',
 			'title_tag'           => 'h3',
 			'show_meta'           => 'yes',
+			'icon_on_hover'       => 'yes',
 			'border_radius'       => 'md',
 			'shadow'              => 'enabled',
 			'shadow_strength'     => 'medium',
@@ -211,6 +212,8 @@ function cph_file_download_card_shortcode( $atts = array(), $content = '', $tag 
 		'image_click'    => $atts['image_click'],
 		'aspect_ratio'   => $atts['aspect_ratio'],
 		'image_position' => $atts['image_position'],
+		// When the hover toggle is unchecked, the action icon stays visible at all times.
+		'icon_always'    => ( 'yes' !== $atts['icon_on_hover'] ),
 		// Meta (file type/size) only applies to file mode.
 		'show_meta'      => ! $is_link && 'yes' === $atts['show_meta'],
 		'border_radius'  => $atts['border_radius'],

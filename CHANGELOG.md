@@ -2,6 +2,11 @@
 
 All notable changes to CPH Elements are documented here. Versions correspond to GitHub releases (used by the in-plugin updater).
 
+## [1.7.2] — 2026-06-20
+
+### File Download Card (element 1.2.2)
+- **New: Action icon displays on hover** (`icon_on_hover`) — checkbox at the bottom of the Display Options tab, checked by default. When checked, the preview action icon (play / download / search / link arrow) fades in only on hover (existing behavior). Uncheck to keep the icon visible at all times — useful for video cards so visitors can distinguish videos from files at a glance.
+
 ## [1.7.1] — 2026-06-17
 
 ### File Download Card (element 1.2.1)

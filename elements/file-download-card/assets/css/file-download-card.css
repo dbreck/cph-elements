@@ -175,6 +175,12 @@
     transform: scale(1);
 }
 
+/* Always-visible action icon (hover toggle unchecked) */
+.file-download-card__image--icon-always .file-download-card__preview-icon {
+    opacity: 1;
+    transform: scale(1);
+}
+
 /* Video preview modifier */
 .file-download-card__image--video .file-download-card__preview-link {
     cursor: pointer;

@@ -235,6 +235,15 @@ return array(
 			),
 			'group'       => esc_html__( 'Display Options', 'cph-elements' ),
 		),
+		array(
+			'type'        => 'checkbox',
+			'heading'     => esc_html__( 'Action icon displays on hover', 'cph-elements' ),
+			'param_name'  => 'icon_on_hover',
+			'value'       => array( esc_html__( 'Yes', 'cph-elements' ) => 'yes' ),
+			'std'         => 'yes',
+			'description' => esc_html__( 'When checked (default), the action icon (play, download, search, or link arrow) fades in only on hover. Uncheck to always show the icon — useful for video cards so visitors can tell videos from files at a glance.', 'cph-elements' ),
+			'group'       => esc_html__( 'Display Options', 'cph-elements' ),
+		),
 
 		// Color Options Tab.
 		array(
