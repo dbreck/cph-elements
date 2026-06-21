@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 return array(
 	'name'      => 'CPH Gallery Slider',
 	'shortcode' => 'cph_gallery_slider',
-	'version'   => '1.2.0',
+	'version'   => '1.2.2',
 	'category'  => 'Clear pH Elements',
 
 	'files' => array(

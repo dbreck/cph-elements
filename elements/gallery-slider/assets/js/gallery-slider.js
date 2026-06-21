@@ -89,20 +89,24 @@
 			var beforeFrag = document.createDocumentFragment();
 			var afterFrag = document.createDocumentFragment();
 
-			realSlides.forEach(function(s) {
+			var makeClone = function(s) {
 				var clone = s.cloneNode(true);
 				clone.classList.add('cph-gallery-slider__slide--clone');
 				clone.setAttribute('aria-hidden', 'true');
 				clone.removeAttribute('data-index');
-				beforeFrag.appendChild(clone);
-			});
-			realSlides.forEach(function(s) {
-				var clone = s.cloneNode(true);
-				clone.classList.add('cph-gallery-slider__slide--clone');
-				clone.setAttribute('aria-hidden', 'true');
-				clone.removeAttribute('data-index');
-				afterFrag.appendChild(clone);
-			});
+				// Clones share the real slides' image URLs, so eager loading is
+				// effectively free from cache and guarantees the wrap is never
+				// blank (an off-screen lazy clone wouldn't decode in time).
+				var img = clone.querySelector('img');
+				if (img) {
+					img.loading = 'eager';
+					img.removeAttribute('loading');
+				}
+				return clone;
+			};
+
+			realSlides.forEach(function(s) { beforeFrag.appendChild(makeClone(s)); });
+			realSlides.forEach(function(s) { afterFrag.appendChild(makeClone(s)); });
 
 			track.insertBefore(beforeFrag, track.firstChild);
 			track.appendChild(afterFrag);
@@ -141,6 +145,12 @@
 				return;
 			}
 			currentIndex = offset + toRealIndex(currentIndex);
+			// Kill the wrap animation's in-flight per-slide tweens first. They
+			// target the clone we just animated into; if left running they win
+			// the tick race and re-apply the clone's "active" styling after this
+			// instant restyle — leaving the lit slide off-screen and the centre
+			// empty until the next interaction.
+			gsap.killTweensOf(slides);
 			var dims = getDimensions();
 			gsap.set(track, { x: getCenterPosition(currentIndex, dims) });
 			updateSlideStates(false);
@@ -197,6 +207,10 @@
 		function updateSlideStates(animate) {
 			var dims = getDimensions();
 			var duration = animate ? settings.transition / 1000 : 0;
+			// How many slides each side of center stay visible/animated. Slides
+			// beyond this (notably the loop clones) are hidden cheaply — this
+			// caps blur radius and avoids rendering work on off-screen slides.
+			var SIDE_RANGE = 2;
 
 			slides.forEach(function(slide, index) {
 				var isActive = index === currentIndex;
@@ -230,6 +244,18 @@
 					animProps.z = 0;
 					animProps.filter = 'blur(0px)';
 					animProps.boxShadow = 'none';
+				} else if (absDistance > SIDE_RANGE) {
+					// Beyond the visible window (e.g. loop clones). These are
+					// fully off-screen, so keep them hidden and cheap — never
+					// apply blur/shadow here. Otherwise distant slides would get
+					// enormous blur radii (blurAmount × distance) on large images
+					// and thrash the GPU during the loop wrap.
+					animProps.opacity = 0;
+					animProps.scale = Math.max(settings.sideScale * 0.9, 0.5);
+					animProps.filter = 'blur(0px)';
+					animProps.boxShadow = 'none';
+					gsap.to(slide, animProps);
+					return;
 				} else {
 					// Calculate base values
 					var scale = settings.sideScale;
@@ -649,7 +675,15 @@
 		 * Handle resize
 		 */
 		function handleResize() {
+			// A resize changes slide geometry (critical when slide width is a
+			// percentage). Kill any in-flight tween and clear the animation
+			// guard first, otherwise goToSlide() would be blocked and the track
+			// would be left stranded at the old position — showing an empty gap
+			// until the next click. Recenter any in-progress wrap as well.
+			gsap.killTweensOf(track);
+			isAnimating = false;
 			setSlideWidths();
+			recenterLoop();
 			goToSlide(currentIndex, false);
 		}
 

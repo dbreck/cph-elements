@@ -2,6 +2,16 @@
 
 All notable changes to CPH Elements are documented here. Versions correspond to GitHub releases (used by the in-plugin updater).
 
+## [1.9.2] — 2026-06-21
+
+### Gallery Slider (element 1.2.2) — infinite loop bugfixes
+Fixes a regression in the true infinite loop (1.9.0) where reaching the wrap point could leave the carousel showing an empty centre until the next click.
+
+- **Fixed: empty slide / stall at the loop wrap.** The seamless recenter repositioned the track but the wrap animation's in-flight per-slide opacity/transform tweens (targeting the clone) could win the render-tick race and re-apply the clone's "active" styling — leaving the lit slide off-screen and the centre empty until the next interaction. The recenter now kills those in-flight tweens before restyling. (Race-dependent, which made it intermittent.)
+- **Fixed: excessive blur on off-screen clones.** With `enable_blur` on, every slide got `blur(blurAmount × distance)`; the loop clones pushed that to huge radii on full-size images, thrashing the GPU during the wrap. Slides beyond the visible window (±2) are now hidden cheaply with no blur/shadow — also a general performance win.
+- **Fixed: resize could strand the track.** A viewport resize mid-transition (relevant when slide width is a %) was blocked by the animation guard, leaving the track at the old geometry. Resize now kills any in-flight tween, recenters, and repositions unconditionally.
+- Loop clone images load eagerly (they share the real slides' URLs, so it's effectively free from cache) so a wrap is never blank.
+
 ## [1.9.0] — 2026-06-21
 
 ### Gallery Slider (element 1.2.0)
