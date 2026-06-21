@@ -2,6 +2,14 @@
 
 All notable changes to CPH Elements are documented here. Versions correspond to GitHub releases (used by the in-plugin updater).
 
+## [1.8.0] — 2026-06-21
+
+### Gallery Slider (element 1.1.0)
+- **New: Arrow Layout** (`arrow_layout`) — dropdown in the Navigation tab (shown when Navigation Style is Arrows or Both). **Overlay (Sides)** is the default and keeps the existing behavior (arrows over the left/right edges of the images). **Below Slider (Centered)** places the two arrow buttons in a centered row beneath the carousel.
+- **New: Arrow Gap** (`arrow_gap`, default `16px`) — spacing between the two arrow buttons, shown only when Arrow Layout = Below.
+- In Below layout, the existing **Arrow Position** value (responsive) controls the space between the slider and the arrow row (margin-top); in Overlay it still controls distance from the edge.
+- Implementation: arrows are now wrapped in a `.cph-gallery-slider__nav` container (`display: contents` in overlay mode, so overlay positioning is unchanged); below mode moves clipping/height onto the viewport so the wrapper can grow. Fully backward-compatible — existing sliders default to Overlay.
+
 ## [1.7.2] — 2026-06-20
 
 ### File Download Card (element 1.2.2)

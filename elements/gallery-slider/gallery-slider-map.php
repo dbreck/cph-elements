@@ -41,6 +41,12 @@ $arrow_style_options = array(
 	esc_html__( 'Minimal', 'cph-elements' )        => 'minimal',
 );
 
+// Arrow layout options (where the arrows sit relative to the carousel).
+$arrow_layout_options = array(
+	esc_html__( 'Overlay (Sides)', 'cph-elements' )        => 'overlay',
+	esc_html__( 'Below Slider (Centered)', 'cph-elements' ) => 'below',
+);
+
 // Navigation type options.
 $nav_type_options = array(
 	esc_html__( 'Arrows', 'cph-elements' )     => 'arrows',
@@ -611,10 +617,37 @@ return array(
 			'description' => esc_html__( 'Shape of the arrow buttons.', 'cph-elements' ),
 		),
 
-		// Arrow Position — responsive.
+		array(
+			'type'        => 'dropdown',
+			'heading'     => esc_html__( 'Arrow Layout', 'cph-elements' ),
+			'param_name'  => 'arrow_layout',
+			'value'       => $arrow_layout_options,
+			'std'         => 'overlay',
+			'group'       => esc_html__( 'Navigation', 'cph-elements' ),
+			'dependency'  => array(
+				'element' => 'nav_type',
+				'value'   => array( 'arrows', 'both' ),
+			),
+			'description' => esc_html__( 'Overlay places arrows over the left/right edges of the images. Below places them in a centered row beneath the slider.', 'cph-elements' ),
+		),
+
+		array(
+			'type'        => 'textfield',
+			'heading'     => esc_html__( 'Arrow Gap (between buttons)', 'cph-elements' ),
+			'param_name'  => 'arrow_gap',
+			'value'       => '16px',
+			'group'       => esc_html__( 'Navigation', 'cph-elements' ),
+			'dependency'  => array(
+				'element' => 'arrow_layout',
+				'value'   => array( 'below' ),
+			),
+			'description' => esc_html__( 'Space between the two arrow buttons when using the "Below" layout.', 'cph-elements' ),
+		),
+
+		// Arrow Position — responsive. (Overlay: distance from edge. Below: space above the arrow row.)
 		array(
 			'type'             => 'textfield',
-			'heading'          => esc_html__( 'Arrow Position (from edge)', 'cph-elements' ),
+			'heading'          => esc_html__( 'Arrow Position (edge / spacing)', 'cph-elements' ),
 			'param_name'       => 'arrow_offset',
 			'value'            => '30px',
 			'edit_field_class' => 'vc_col-sm-4',
@@ -623,7 +656,7 @@ return array(
 				'element' => 'nav_type',
 				'value'   => array( 'arrows', 'both' ),
 			),
-			'description'      => esc_html__( 'Desktop.', 'cph-elements' ),
+			'description'      => esc_html__( 'Desktop. Overlay: distance from edge. Below: space above the arrow row.', 'cph-elements' ),
 		),
 		array(
 			'type'             => 'textfield',

@@ -230,6 +230,8 @@ function cph_gallery_slider_shortcode( $atts ) {
 			'nav_type'                     => 'arrows',
 			'show_arrows'                  => 'yes', // Legacy support.
 			'arrow_style'                  => 'pill',
+			'arrow_layout'                 => 'overlay',
+			'arrow_gap'                    => '16px',
 			'arrow_offset'                 => '30px',
 			'arrow_offset_tablet'          => '',
 			'arrow_offset_phone'           => '',
@@ -297,6 +299,8 @@ function cph_gallery_slider_shortcode( $atts ) {
 		$wrapper_classes[] = esc_attr( $atts['el_class'] );
 	}
 	$wrapper_classes[] = 'cph-gallery-slider--arrows-' . esc_attr( $atts['arrow_style'] );
+	$arrow_layout      = ( 'below' === $atts['arrow_layout'] ) ? 'below' : 'overlay';
+	$wrapper_classes[] = 'cph-gallery-slider--nav-' . $arrow_layout;
 
 	// Build data attributes for JS.
 	$start_slide = max( 0, intval( $atts['start_slide'] ) - 1 ); // Convert 1-based to 0-based index.
@@ -335,6 +339,7 @@ function cph_gallery_slider_shortcode( $atts ) {
 	$side_scale          = ! empty( $atts['side_scale'] ) ? floatval( $atts['side_scale'] ) : 0.75;
 	$side_opacity        = ! empty( $atts['side_opacity'] ) ? floatval( $atts['side_opacity'] ) : 0.6;
 	$arrow_offset        = ! empty( $atts['arrow_offset'] ) ? sanitize_text_field( $atts['arrow_offset'] ) : '30px';
+	$arrow_gap           = ! empty( $atts['arrow_gap'] ) ? sanitize_text_field( $atts['arrow_gap'] ) : '16px';
 	$dot_size            = ! empty( $atts['dot_size'] ) ? sanitize_text_field( $atts['dot_size'] ) : '12px';
 	$dot_gap             = ! empty( $atts['dot_gap'] ) ? sanitize_text_field( $atts['dot_gap'] ) : '10px';
 	$pagination_offset   = ! empty( $atts['pagination_offset'] ) ? sanitize_text_field( $atts['pagination_offset'] ) : '20px';
@@ -365,6 +370,7 @@ function cph_gallery_slider_shortcode( $atts ) {
 		'--side-scale: ' . esc_attr( $side_scale ),
 		'--side-opacity: ' . esc_attr( $side_opacity ),
 		'--arrow-offset: ' . esc_attr( $arrow_offset ),
+		'--arrow-gap: ' . esc_attr( $arrow_gap ),
 		'--perspective: ' . esc_attr( $perspective ),
 		'--dot-size: ' . esc_attr( $dot_size ),
 		'--dot-gap: ' . esc_attr( $dot_gap ),
@@ -516,12 +522,14 @@ function cph_gallery_slider_shortcode( $atts ) {
 		</div>
 
 		<?php if ( $show_arrows ) : ?>
-			<button class="cph-gallery-slider__arrow cph-gallery-slider__arrow--prev" aria-label="<?php esc_attr_e( 'Previous slide', 'cph-elements' ); ?>">
-				<?php echo $arrow_left; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
-			</button>
-			<button class="cph-gallery-slider__arrow cph-gallery-slider__arrow--next" aria-label="<?php esc_attr_e( 'Next slide', 'cph-elements' ); ?>">
-				<?php echo $arrow_right; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
-			</button>
+			<div class="cph-gallery-slider__nav">
+				<button class="cph-gallery-slider__arrow cph-gallery-slider__arrow--prev" aria-label="<?php esc_attr_e( 'Previous slide', 'cph-elements' ); ?>">
+					<?php echo $arrow_left; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+				</button>
+				<button class="cph-gallery-slider__arrow cph-gallery-slider__arrow--next" aria-label="<?php esc_attr_e( 'Next slide', 'cph-elements' ); ?>">
+					<?php echo $arrow_right; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+				</button>
+			</div>
 		<?php endif; ?>
 
 		<?php if ( $show_pagination ) : ?>

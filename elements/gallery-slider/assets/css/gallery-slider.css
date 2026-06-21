@@ -20,6 +20,7 @@
 	--side-opacity: 0.6;
 	--arrow-color: #ffffff;
 	--arrow-offset: 30px;
+	--arrow-gap: 16px;
 	--dot-size: 12px;
 	--dot-gap: 10px;
 	--pagination-offset: 20px;
@@ -103,6 +104,16 @@
 /* Hide slides initially until GSAP positions them */
 .cph-gallery-slider:not(.is-initialized) .cph-gallery-slider__slide {
 	opacity: 0;
+}
+
+/* ==========================================================================
+   Arrow Nav Container
+   ========================================================================== */
+
+/* Overlay layout: container is transparent to layout so the absolutely
+   positioned arrows resolve against the slider wrapper (default behavior). */
+.cph-gallery-slider__nav {
+	display: contents;
 }
 
 /* ==========================================================================
@@ -195,6 +206,49 @@
 .cph-gallery-slider--arrows-minimal .cph-gallery-slider__arrow svg {
 	width: 100%;
 	height: auto;
+}
+
+/* ==========================================================================
+   Arrow Layout - Below Slider (centered row beneath the carousel)
+   ========================================================================== */
+
+/* Let the wrapper grow to fit the arrow row; move clipping to the viewport. */
+.cph-gallery-slider--nav-below {
+	height: auto;
+	overflow: visible;
+}
+
+.cph-gallery-slider--nav-below .cph-gallery-slider__viewport {
+	height: var(--slider-height);
+	overflow: hidden;
+}
+
+/* Lay the two arrows out as a centered row below the slider. */
+.cph-gallery-slider--nav-below .cph-gallery-slider__nav {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: var(--arrow-gap);
+	margin-top: var(--arrow-offset);
+}
+
+.cph-gallery-slider--nav-below .cph-gallery-slider__arrow {
+	position: static;
+	top: auto;
+	left: auto;
+	right: auto;
+	transform: none;
+}
+
+.cph-gallery-slider--nav-below .cph-gallery-slider__arrow:hover {
+	transform: scale(1.05);
+}
+
+/* Mobile overlay rule (top: 90%) does not apply in below layout. */
+@media (max-width: 690px) {
+	.cph-gallery-slider--nav-below .cph-gallery-slider__arrow {
+		top: auto;
+	}
 }
 
 /* ==========================================================================
