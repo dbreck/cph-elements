@@ -221,6 +221,7 @@ function cph_gallery_slider_shortcode( $atts ) {
 			// Behavior.
 			'start_slide'                  => '1',
 			'infinite'                     => 'yes',
+			'infinite_rewind'              => '',
 			'draggable'                    => 'yes',
 			'autoplay'                     => '',
 			'autoplay_speed'               => '5',
@@ -308,6 +309,7 @@ function cph_gallery_slider_shortcode( $atts ) {
 	$data_attrs  = array(
 		'start-slide'         => $start_slide,
 		'infinite'            => 'yes' === $atts['infinite'] ? 'true' : 'false',
+		'rewind'              => 'yes' === $atts['infinite_rewind'] ? 'true' : 'false',
 		'autoplay'            => 'yes' === $atts['autoplay'] ? 'true' : 'false',
 		'autoplay-speed'      => intval( $atts['autoplay_speed'] ) * 1000,
 		'pause-on-hover'      => 'yes' === $atts['pause_on_hover'] ? 'true' : 'false',

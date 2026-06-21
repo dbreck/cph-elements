@@ -2,6 +2,14 @@
 
 All notable changes to CPH Elements are documented here. Versions correspond to GitHub releases (used by the in-plugin updater).
 
+## [1.9.0] — 2026-06-21
+
+### Gallery Slider (element 1.2.0)
+- **True infinite loop is now the default.** Previously, advancing past the last slide rewound the track all the way back to the first slide (a visible reverse sweep). The loop now continues seamlessly in the same direction — the first slide enters from the trailing edge — by cloning a full set of slides on each side and silently recentering after a move crosses into the clone buffer. Applies to arrows, autoplay, keyboard, pagination, and drag/swipe.
+- **New: Infinite Loop Rewind** (`infinite_rewind`) — checkbox in the Behavior tab (shown when Infinite Loop is on, off by default). Restores the legacy rewind behavior for anyone who prefers it.
+- Clones are marked `aria-hidden` and stripped of `data-index`; pagination dots still map 1:1 to the real slides.
+- No change when Infinite Loop is off (non-looping clamp behavior is unchanged).
+
 ## [1.8.0] — 2026-06-21
 
 ### Gallery Slider (element 1.1.0)

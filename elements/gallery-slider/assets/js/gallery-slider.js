@@ -57,6 +57,7 @@
 		var settings = {
 			startSlide: parseInt(container.dataset.startSlide, 10) || 0,
 			infinite: container.dataset.infinite === 'true',
+			rewind: container.dataset.rewind === 'true',
 			autoplay: container.dataset.autoplay === 'true',
 			autoplaySpeed: parseInt(container.dataset.autoplaySpeed, 10) || 5000,
 			pauseOnHover: container.dataset.pauseOnHover === 'true',
@@ -73,11 +74,77 @@
 			blurAmount: parseFloat(container.dataset.blurAmount) || 4
 		};
 
-		var slideCount = slides.length;
-		var currentIndex = 0;
+		// True infinite loop: clone a full set of slides on each side so the
+		// carousel can advance past the last slide into the first (and vice
+		// versa) without rewinding the track. After a move lands in the clone
+		// buffer, we silently recenter to the matching real slide — the buffer
+		// is an exact copy, so the jump is invisible. Disabled (legacy index-
+		// wrap "rewind" behavior) when the "Infinite Loop Rewind" option is on.
+		var realCount = slides.length;
+		var loop = settings.infinite && !settings.rewind;
+		var offset = 0;
+
+		if (loop) {
+			var realSlides = Array.prototype.slice.call(slides);
+			var beforeFrag = document.createDocumentFragment();
+			var afterFrag = document.createDocumentFragment();
+
+			realSlides.forEach(function(s) {
+				var clone = s.cloneNode(true);
+				clone.classList.add('cph-gallery-slider__slide--clone');
+				clone.setAttribute('aria-hidden', 'true');
+				clone.removeAttribute('data-index');
+				beforeFrag.appendChild(clone);
+			});
+			realSlides.forEach(function(s) {
+				var clone = s.cloneNode(true);
+				clone.classList.add('cph-gallery-slider__slide--clone');
+				clone.setAttribute('aria-hidden', 'true');
+				clone.removeAttribute('data-index');
+				afterFrag.appendChild(clone);
+			});
+
+			track.insertBefore(beforeFrag, track.firstChild);
+			track.appendChild(afterFrag);
+
+			// Re-query so all layout / transform logic includes the clones.
+			slides = track.querySelectorAll(CONFIG.slideSelector);
+			offset = realCount; // Real slides start after the leading clones.
+		}
+
+		var slideCount = slides.length; // Extended count when looping.
+		var currentIndex = 0;            // Extended index when looping.
 		var isAnimating = false;
 		var autoplayTimer = null;
 		var isPaused = false;
+
+		/**
+		 * Map an extended (possibly-clone) index to its real slide index.
+		 */
+		function toRealIndex(pos) {
+			if (!loop) {
+				return pos;
+			}
+			return ((pos - offset) % realCount + realCount) % realCount;
+		}
+
+		/**
+		 * After a move into the clone buffer, jump (without animation) to the
+		 * equivalent real slide. The buffer is an exact copy positioned one full
+		 * set away, so shifting the track by realCount slots is seamless.
+		 */
+		function recenterLoop() {
+			if (!loop) {
+				return;
+			}
+			if (currentIndex >= offset && currentIndex < offset + realCount) {
+				return;
+			}
+			currentIndex = offset + toRealIndex(currentIndex);
+			var dims = getDimensions();
+			gsap.set(track, { x: getCenterPosition(currentIndex, dims) });
+			updateSlideStates(false);
+		}
 
 		// Set CSS variable for transition duration
 		container.style.setProperty('--transition-duration', settings.transition + 'ms');
@@ -243,18 +310,27 @@
 				animate = true;
 			}
 
-			// Handle bounds for non-infinite mode
-			if (!settings.infinite) {
+			// Handle bounds per mode.
+			if (loop) {
+				// True infinite: allow stepping into the clone buffer; we
+				// recenter to the matching real slide once the move completes.
 				if (index < 0) {
 					index = 0;
 				} else if (index >= slideCount) {
 					index = slideCount - 1;
 				}
-			} else {
-				// Wrap for infinite mode
+			} else if (!settings.infinite) {
+				// Clamp to the real range.
 				if (index < 0) {
-					index = slideCount - 1;
-				} else if (index >= slideCount) {
+					index = 0;
+				} else if (index >= realCount) {
+					index = realCount - 1;
+				}
+			} else {
+				// Infinite "rewind": wrap the index back to the other end.
+				if (index < 0) {
+					index = realCount - 1;
+				} else if (index >= realCount) {
 					index = 0;
 				}
 			}
@@ -272,6 +348,7 @@
 				ease: settings.easing,
 				onComplete: function() {
 					isAnimating = false;
+					recenterLoop();
 					updateArrowStates();
 					updatePagination();
 				}
@@ -323,8 +400,9 @@
 				return;
 			}
 
+			var activeReal = toRealIndex(currentIndex);
 			dots.forEach(function(dot, index) {
-				if (index === currentIndex) {
+				if (index === activeReal) {
 					dot.classList.add('is-active');
 					dot.setAttribute('aria-selected', 'true');
 				} else {
@@ -493,9 +571,21 @@
 					updateArrowStates();
 					updatePagination();
 
+					// With inertia the track keeps moving after release; defer
+					// the seamless recenter to onThrowComplete so we don't fight
+					// the throw tween. Without inertia, this is the final stop.
+					if (typeof InertiaPlugin === 'undefined') {
+						recenterLoop();
+					}
+
 					if (settings.autoplay && settings.pauseOnHover) {
 						resumeAutoplay();
 					}
+				},
+				onThrowComplete: function() {
+					recenterLoop();
+					updateArrowStates();
+					updatePagination();
 				}
 			})[0];
 		}
@@ -526,7 +616,7 @@
 						e.preventDefault();
 						var index = parseInt(dot.dataset.index, 10);
 						if (!isNaN(index)) {
-							goToSlide(index);
+							goToSlide(loop ? offset + index : index);
 						}
 					});
 				});
@@ -606,12 +696,16 @@
 			// Set slide widths explicitly (CSS % doesn't work correctly in flex track)
 			setSlideWidths();
 
-			// Validate start slide index
+			// Validate start slide index (against real slides), then offset
+			// into the real region when looping.
 			var startIndex = settings.startSlide;
 			if (startIndex < 0) {
 				startIndex = 0;
-			} else if (startIndex >= slideCount) {
-				startIndex = slideCount - 1;
+			} else if (startIndex >= realCount) {
+				startIndex = realCount - 1;
+			}
+			if (loop) {
+				startIndex += offset;
 			}
 
 			// Initial positioning

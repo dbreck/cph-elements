@@ -493,7 +493,21 @@ return array(
 			'value'       => array( esc_html__( 'Yes', 'cph-elements' ) => 'yes' ),
 			'std'         => 'yes',
 			'group'       => esc_html__( 'Behavior', 'cph-elements' ),
-			'description' => esc_html__( 'Enable continuous looping.', 'cph-elements' ),
+			'description' => esc_html__( 'Enable continuous looping. By default this is a true infinite loop — advancing past the last slide brings the first slide in from the same direction (no rewind).', 'cph-elements' ),
+		),
+
+		array(
+			'type'        => 'checkbox',
+			'heading'     => esc_html__( 'Infinite Loop Rewind', 'cph-elements' ),
+			'param_name'  => 'infinite_rewind',
+			'value'       => array( esc_html__( 'Yes', 'cph-elements' ) => 'yes' ),
+			'std'         => '',
+			'group'       => esc_html__( 'Behavior', 'cph-elements' ),
+			'dependency'  => array(
+				'element' => 'infinite',
+				'value'   => array( 'yes' ),
+			),
+			'description' => esc_html__( 'Legacy behavior: instead of a seamless loop, rewind the carousel back to the first slide after the last (and to the last when going back from the first).', 'cph-elements' ),
 		),
 
 		array(
