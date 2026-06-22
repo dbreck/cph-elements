@@ -2,6 +2,18 @@
 
 All notable changes to CPH Elements are documented here. Versions correspond to GitHub releases (used by the in-plugin updater).
 
+## [1.9.5] — 2026-06-22
+
+### Icon Grid (element 1.1.0)
+First substantive update to the Icon Grid since launch — a column-layout bugfix plus links, a sub-label, a hover animation, and theme-driven typography.
+
+- **Fixed: columns collapsed to one-per-row.** When an `el_class` containing `icon-` (e.g. the natural `icon-grid`) was added, Salient's bundled FontAwesome rule `[class*=" icon-"] { display: inline; }` overrode the grid container's `display: grid`, dropping every item onto its own row. The container rule is now `div.cph-icon-grid` (specificity (0,1,1)) so the grid layout always wins.
+- **New: Sub Label** (`sub_label`) — optional second line below the main label (e.g. "10 MILES"), with its own color, font size, and top margin (the latter independent of the icon↔label gap).
+- **New: per-item Link URL** (`url`) + **Open in New Tab** (`url_blank`) — makes the whole cell a link (`<a>` wrapper, `rel="noopener noreferrer"` when opening a new tab).
+- **New: Hover Animation** (`hover_animation`) — None / **Zoom Icon on Hover** (icon scales to 1.08 on hover/focus, 0.4s ease). Best paired with linked cells.
+- **Theme-driven typography.** The label font was hard-coded to `area-normal`; it now defaults to `inherit` (picks up the theme font) with an optional **Label Font Family** override. Added **Font Weight** (dropdown) and **Letter Spacing** controls for both the label and sub-label.
+- Implementation: cell content is now wrapped in `.cph-icon-grid__inner` (renders as `<a>` when linked, else `<div>`), and label + sub-label sit in a `.cph-icon-grid__text` block so sub-label spacing is independent of the flex gap. All new styling is driven by CSS custom properties that only emit when set, so existing grids are unchanged.
+
 ## [1.9.2] — 2026-06-21
 
 ### Gallery Slider (element 1.2.2) — infinite loop bugfixes

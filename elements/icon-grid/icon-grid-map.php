@@ -21,6 +21,18 @@ $column_options = array(
 	esc_html__( '6 Columns', 'cph-elements' ) => '6',
 );
 
+// Font-weight options (blank = inherit element default).
+$font_weight_options = array(
+	esc_html__( 'Default', 'cph-elements' )         => '',
+	esc_html__( 'Light (300)', 'cph-elements' )     => '300',
+	esc_html__( 'Regular (400)', 'cph-elements' )   => '400',
+	esc_html__( 'Medium (500)', 'cph-elements' )    => '500',
+	esc_html__( 'Semi Bold (600)', 'cph-elements' ) => '600',
+	esc_html__( 'Bold (700)', 'cph-elements' )      => '700',
+	esc_html__( 'Extra Bold (800)', 'cph-elements' ) => '800',
+	esc_html__( 'Black (900)', 'cph-elements' )     => '900',
+);
+
 // Icon preset options (16 built-in icons + Custom).
 $icon_presets = array(
 	esc_html__( '-- Select Icon --', 'cph-elements' ) => '',
@@ -229,6 +241,29 @@ return array(
 					'admin_label' => true,
 					'description' => esc_html__( 'The label text displayed below the icon (e.g., "MARINA").', 'cph-elements' ),
 				),
+				array(
+					'type'        => 'textfield',
+					'heading'     => esc_html__( 'Sub Label', 'cph-elements' ),
+					'param_name'  => 'sub_label',
+					'description' => esc_html__( 'Optional second line below the label (e.g., "10 MILES").', 'cph-elements' ),
+				),
+				array(
+					'type'        => 'textfield',
+					'heading'     => esc_html__( 'Link URL', 'cph-elements' ),
+					'param_name'  => 'url',
+					'description' => esc_html__( 'Optional. Makes the whole cell a link (e.g., https://example.com).', 'cph-elements' ),
+				),
+				array(
+					'type'        => 'checkbox',
+					'heading'     => esc_html__( 'Open in New Tab', 'cph-elements' ),
+					'param_name'  => 'url_blank',
+					'value'       => array( esc_html__( 'Open this link in a new tab', 'cph-elements' ) => 'yes' ),
+					'dependency'  => array(
+						'element'   => 'url',
+						'not_empty' => true,
+					),
+					'description' => '',
+				),
 			),
 		),
 
@@ -281,6 +316,18 @@ return array(
 			'description' => esc_html__( 'Color for SVG icons using currentColor.', 'cph-elements' ),
 		),
 
+		array(
+			'type'        => 'dropdown',
+			'heading'     => esc_html__( 'Hover Animation', 'cph-elements' ),
+			'param_name'  => 'hover_animation',
+			'value'       => array(
+				esc_html__( 'None', 'cph-elements' )           => '',
+				esc_html__( 'Zoom Icon on Hover', 'cph-elements' ) => 'zoom',
+			),
+			'std'         => '',
+			'description' => esc_html__( 'Animation applied on hover (best paired with linked cells).', 'cph-elements' ),
+		),
+
 		/*
 		 * ─────────────────────────────────────────────────────────────────
 		 * TYPOGRAPHY
@@ -328,6 +375,83 @@ return array(
 			'param_name'  => 'label_color',
 			'value'       => '#000000',
 			'description' => esc_html__( 'Color for label text.', 'cph-elements' ),
+		),
+
+		array(
+			'type'        => 'textfield',
+			'heading'     => esc_html__( 'Label Font Family', 'cph-elements' ),
+			'param_name'  => 'label_font_family',
+			'value'       => '',
+			'description' => esc_html__( 'Font stack for labels and sub-labels (e.g., "area-normal", sans-serif). Leave blank to inherit the theme font.', 'cph-elements' ),
+		),
+
+		array(
+			'type'        => 'dropdown',
+			'heading'     => esc_html__( 'Label Font Weight', 'cph-elements' ),
+			'param_name'  => 'label_font_weight',
+			'value'       => $font_weight_options,
+			'std'         => '',
+			'description' => esc_html__( 'Font weight for labels. Default = 600.', 'cph-elements' ),
+		),
+
+		array(
+			'type'        => 'textfield',
+			'heading'     => esc_html__( 'Label Letter Spacing', 'cph-elements' ),
+			'param_name'  => 'label_letter_spacing',
+			'value'       => '',
+			'description' => esc_html__( 'Letter spacing for labels (e.g., 0.02em or 1px). Blank = 0.02em.', 'cph-elements' ),
+		),
+
+		/*
+		 * ─────────────────────────────────────────────────────────────────
+		 * SUB LABEL
+		 * ─────────────────────────────────────────────────────────────────
+		 */
+		array(
+			'type'       => 'nectar_group_header',
+			'heading'    => esc_html__( 'Sub Label', 'cph-elements' ),
+			'param_name' => 'group_header_sub_label',
+		),
+
+		array(
+			'type'        => 'textfield',
+			'heading'     => esc_html__( 'Sub Label Font Size', 'cph-elements' ),
+			'param_name'  => 'sub_label_font_size',
+			'value'       => '',
+			'description' => esc_html__( 'Font size for the sub-label (e.g., 18px or 0.9vw). Blank = 18px.', 'cph-elements' ),
+		),
+
+		array(
+			'type'        => 'colorpicker',
+			'heading'     => esc_html__( 'Sub Label Color', 'cph-elements' ),
+			'param_name'  => 'sub_label_color',
+			'value'       => '',
+			'description' => esc_html__( 'Color for the sub-label text. Blank = #9F7C56.', 'cph-elements' ),
+		),
+
+		array(
+			'type'        => 'textfield',
+			'heading'     => esc_html__( 'Sub Label Margin (top)', 'cph-elements' ),
+			'param_name'  => 'sub_label_margin',
+			'value'       => '',
+			'description' => esc_html__( 'Space between the label and sub-label (e.g., 10px). Blank = 10px.', 'cph-elements' ),
+		),
+
+		array(
+			'type'        => 'dropdown',
+			'heading'     => esc_html__( 'Sub Label Font Weight', 'cph-elements' ),
+			'param_name'  => 'sub_label_font_weight',
+			'value'       => $font_weight_options,
+			'std'         => '',
+			'description' => esc_html__( 'Font weight for the sub-label. Default = 600.', 'cph-elements' ),
+		),
+
+		array(
+			'type'        => 'textfield',
+			'heading'     => esc_html__( 'Sub Label Letter Spacing', 'cph-elements' ),
+			'param_name'  => 'sub_label_letter_spacing',
+			'value'       => '',
+			'description' => esc_html__( 'Letter spacing for the sub-label (e.g., 0.02em or 1px). Blank = 0.02em.', 'cph-elements' ),
 		),
 
 		/*

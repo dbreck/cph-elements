@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 return array(
 	'name'      => 'CPH Icon Grid',
 	'shortcode' => 'cph_icon_grid',
-	'version'   => '1.0.0',
+	'version'   => '1.1.0',
 	'category'  => 'Clear pH Elements',
 
 	'files' => array(

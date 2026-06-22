@@ -5,7 +5,7 @@
  * Uses CSS custom properties for flexible configuration.
  * Responsive values are controlled via inline styles from shortcode.
  *
- * @package Salient_Child
+ * @package CPH_Elements
  * @since   1.0.0
  */
 
@@ -13,7 +13,10 @@
    GRID CONTAINER
    ========================================================================== */
 
-.cph-icon-grid {
+/* `div.` specificity (0,1,1) so the grid layout can't be clobbered by
+   FontAwesome's `[class*=" icon-"]` rule (0,1,0), which matches when an
+   el_class like "icon-grid" is added to the container. */
+div.cph-icon-grid {
 	display: grid;
 	grid-template-columns: repeat(var(--columns, 5), 1fr);
 	row-gap: var(--row-gap, 0px);
@@ -24,7 +27,13 @@
    GRID ITEMS
    ========================================================================== */
 
+/* Grid cell — just the box. Layout lives on the inner element so the cell
+   can wrap either an anchor (linked) or a div (static) interchangeably. */
 .cph-icon-grid__item {
+	box-sizing: border-box;
+}
+
+.cph-icon-grid__inner {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
@@ -33,6 +42,19 @@
 	gap: var(--gap, 30px);
 	padding: 10px;
 	box-sizing: border-box;
+	text-decoration: none;
+	color: inherit;
+}
+
+/* Linked cells */
+a.cph-icon-grid__inner {
+	cursor: pointer;
+}
+
+a.cph-icon-grid__inner:hover,
+a.cph-icon-grid__inner:focus {
+	text-decoration: none;
+	color: inherit;
 }
 
 /* ==========================================================================
@@ -60,16 +82,54 @@
 }
 
 /* ==========================================================================
-   LABEL
+   HOVER ANIMATION — ICON ZOOM
    ========================================================================== */
 
+.cph-icon-grid--hover-zoom .cph-icon-grid__icon {
+	transition: transform 0.4s ease;
+	will-change: transform;
+}
+
+.cph-icon-grid--hover-zoom .cph-icon-grid__inner:hover .cph-icon-grid__icon,
+.cph-icon-grid--hover-zoom .cph-icon-grid__inner:focus .cph-icon-grid__icon {
+	transform: scale(1.08);
+}
+
+/* ==========================================================================
+   LABEL TEXT BLOCK
+   ========================================================================== */
+
+/* Wraps the label + sub-label so the icon↔label gap (flex `gap`) stays
+   independent of the label↔sub-label spacing (`--sub-label-margin`). */
+.cph-icon-grid__text {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
 .cph-icon-grid__label {
-	font-family: "area-normal", sans-serif;
-	font-weight: 600;
+	font-family: var(--label-font-family, inherit);
+	font-weight: var(--label-font-weight, 600);
 	font-size: var(--label-font-size, 28px);
 	line-height: 1.2;
 	text-transform: uppercase;
 	text-align: center;
 	color: var(--label-color, #000000);
-	letter-spacing: 0.02em;
+	letter-spacing: var(--label-letter-spacing, 0.02em);
+}
+
+/* ==========================================================================
+   SUB LABEL
+   ========================================================================== */
+
+.cph-icon-grid__sublabel {
+	font-family: var(--label-font-family, inherit);
+	font-weight: var(--sub-label-font-weight, 600);
+	font-size: var(--sub-label-font-size, 18px);
+	line-height: 1.2;
+	text-transform: uppercase;
+	text-align: center;
+	color: var(--sub-label-color, #9f7c56);
+	letter-spacing: var(--sub-label-letter-spacing, 0.02em);
+	margin-top: var(--sub-label-margin, 10px);
 }
