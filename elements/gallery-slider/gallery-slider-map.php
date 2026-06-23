@@ -658,6 +658,47 @@ return array(
 			'description' => esc_html__( 'Space between the two arrow buttons when using the "Below" layout.', 'cph-elements' ),
 		),
 
+		// Arrow Size — responsive. Sets the button HEIGHT; width follows each shape's aspect ratio (no glyph distortion).
+		array(
+			'type'             => 'textfield',
+			'heading'          => esc_html__( 'Arrow Size (height)', 'cph-elements' ),
+			'param_name'       => 'arrow_size',
+			'value'            => '',
+			'edit_field_class' => 'vc_col-sm-4',
+			'group'            => esc_html__( 'Navigation', 'cph-elements' ),
+			'dependency'       => array(
+				'element' => 'nav_type',
+				'value'   => array( 'arrows', 'both' ),
+			),
+			'description'      => esc_html__( 'Desktop. Button height, e.g. 50px / 4vh. Width scales with the shape. Blank = default (pill 50px, circle 50px, minimal 40px).', 'cph-elements' ),
+		),
+		array(
+			'type'             => 'textfield',
+			'heading'          => esc_html__( 'Tablet', 'cph-elements' ),
+			'param_name'       => 'arrow_size_tablet',
+			'value'            => '',
+			'edit_field_class' => 'vc_col-sm-4',
+			'group'            => esc_html__( 'Navigation', 'cph-elements' ),
+			'dependency'       => array(
+				'element' => 'nav_type',
+				'value'   => array( 'arrows', 'both' ),
+			),
+			'description'      => esc_html__( 'Inherits desktop.', 'cph-elements' ),
+		),
+		array(
+			'type'             => 'textfield',
+			'heading'          => esc_html__( 'Phone', 'cph-elements' ),
+			'param_name'       => 'arrow_size_phone',
+			'value'            => '',
+			'edit_field_class' => 'vc_col-sm-4',
+			'group'            => esc_html__( 'Navigation', 'cph-elements' ),
+			'dependency'       => array(
+				'element' => 'nav_type',
+				'value'   => array( 'arrows', 'both' ),
+			),
+			'description'      => esc_html__( 'Inherits tablet.', 'cph-elements' ),
+		),
+
 		// Arrow Position — responsive. (Overlay: distance from edge. Below: space above the arrow row.)
 		array(
 			'type'             => 'textfield',

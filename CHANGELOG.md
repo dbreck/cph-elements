@@ -2,6 +2,12 @@
 
 All notable changes to CPH Elements are documented here. Versions correspond to GitHub releases (used by the in-plugin updater).
 
+## [1.9.6] — 2026-06-23
+
+### Gallery Slider (element 1.2.3) — Arrow Size control
+- **New: Arrow Size (height)** — responsive (Desktop / Tablet / Phone) — under Navigation → Arrow Buttons. Sets the arrow button **height**; width follows each shape's aspect ratio (pill `140:50`, circle/minimal `1:1`) so the SVG glyph never distorts. Accepts any CSS length (`px`, `vw`, `vh`, `rem`, …); blank = each shape's prior default (pill 50px, circle 50px, minimal 40px). Tablet inherits desktop, phone inherits tablet.
+- Implementation: per-shape sizing is now `height: var(--arrow-size, <default>)` + `aspect-ratio` + `width: auto` instead of hard-coded `width`/`height`. The fixed responsive breakpoint sizes (1440+, ≤999px, ≤690px) became `var(--arrow-size, <original-px>)` fallbacks, so sliders that don't set a size render byte-identically, while a set size carries through all breakpoints. `--arrow-size` is only emitted when set.
+
 ## [1.9.5] — 2026-06-22
 
 ### Icon Grid (element 1.1.0)

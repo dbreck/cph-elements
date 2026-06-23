@@ -170,9 +170,12 @@
    Arrow Styles - Pill (Default)
    ========================================================================== */
 
+/* Size is driven by height (--arrow-size); width follows the shape's
+   aspect ratio so the glyph never distorts. Blank var = per-shape default. */
 .cph-gallery-slider--arrows-pill .cph-gallery-slider__arrow {
-	width: 140px;
-	height: 50px;
+	height: var(--arrow-size, 50px);
+	aspect-ratio: 140 / 50;
+	width: auto;
 }
 
 .cph-gallery-slider--arrows-pill .cph-gallery-slider__arrow svg {
@@ -185,8 +188,9 @@
    ========================================================================== */
 
 .cph-gallery-slider--arrows-circle .cph-gallery-slider__arrow {
-	width: 50px;
-	height: 50px;
+	height: var(--arrow-size, 50px);
+	aspect-ratio: 1;
+	width: auto;
 }
 
 .cph-gallery-slider--arrows-circle .cph-gallery-slider__arrow svg {
@@ -199,8 +203,9 @@
    ========================================================================== */
 
 .cph-gallery-slider--arrows-minimal .cph-gallery-slider__arrow {
-	width: 40px;
-	height: 40px;
+	height: var(--arrow-size, 40px);
+	aspect-ratio: 1;
+	width: auto;
 }
 
 .cph-gallery-slider--arrows-minimal .cph-gallery-slider__arrow svg {
@@ -312,8 +317,7 @@
 
 @media (min-width: 1440px) {
 	.cph-gallery-slider--arrows-pill .cph-gallery-slider__arrow {
-		width: 160px;
-		height: 58px;
+		height: var(--arrow-size, 58px);
 	}
 }
 
@@ -329,18 +333,15 @@
 	}
 
 	.cph-gallery-slider--arrows-pill .cph-gallery-slider__arrow {
-		width: 100px;
-		height: 36px;
+		height: var(--arrow-size, 36px);
 	}
 
 	.cph-gallery-slider--arrows-circle .cph-gallery-slider__arrow {
-		width: 40px;
-		height: 40px;
+		height: var(--arrow-size, 40px);
 	}
 
 	.cph-gallery-slider--arrows-minimal .cph-gallery-slider__arrow {
-		width: 32px;
-		height: 32px;
+		height: var(--arrow-size, 32px);
 	}
 }
 
@@ -361,18 +362,15 @@
 	}
 
 	.cph-gallery-slider--arrows-pill .cph-gallery-slider__arrow {
-		width: 80px;
-		height: 30px;
+		height: var(--arrow-size, 30px);
 	}
 
 	.cph-gallery-slider--arrows-circle .cph-gallery-slider__arrow {
-		width: 36px;
-		height: 36px;
+		height: var(--arrow-size, 36px);
 	}
 
 	.cph-gallery-slider--arrows-minimal .cph-gallery-slider__arrow {
-		width: 28px;
-		height: 28px;
+		height: var(--arrow-size, 28px);
 	}
 }
 

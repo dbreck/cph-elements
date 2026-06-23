@@ -233,6 +233,9 @@ function cph_gallery_slider_shortcode( $atts ) {
 			'arrow_style'                  => 'pill',
 			'arrow_layout'                 => 'overlay',
 			'arrow_gap'                    => '16px',
+			'arrow_size'                   => '',
+			'arrow_size_tablet'            => '',
+			'arrow_size_phone'             => '',
 			'arrow_offset'                 => '30px',
 			'arrow_offset_tablet'          => '',
 			'arrow_offset_phone'           => '',
@@ -342,6 +345,7 @@ function cph_gallery_slider_shortcode( $atts ) {
 	$side_opacity        = ! empty( $atts['side_opacity'] ) ? floatval( $atts['side_opacity'] ) : 0.6;
 	$arrow_offset        = ! empty( $atts['arrow_offset'] ) ? sanitize_text_field( $atts['arrow_offset'] ) : '30px';
 	$arrow_gap           = ! empty( $atts['arrow_gap'] ) ? sanitize_text_field( $atts['arrow_gap'] ) : '16px';
+	$arrow_size          = sanitize_text_field( $atts['arrow_size'] );
 	$dot_size            = ! empty( $atts['dot_size'] ) ? sanitize_text_field( $atts['dot_size'] ) : '12px';
 	$dot_gap             = ! empty( $atts['dot_gap'] ) ? sanitize_text_field( $atts['dot_gap'] ) : '10px';
 	$pagination_offset   = ! empty( $atts['pagination_offset'] ) ? sanitize_text_field( $atts['pagination_offset'] ) : '20px';
@@ -378,6 +382,12 @@ function cph_gallery_slider_shortcode( $atts ) {
 		'--dot-gap: ' . esc_attr( $dot_gap ),
 		'--pagination-offset: ' . esc_attr( $pagination_offset ),
 	);
+
+	// Only emit --arrow-size when set so each shape's CSS default (and the
+	// responsive defaults) apply when left blank.
+	if ( '' !== $arrow_size ) {
+		$desktop_vars[] = '--arrow-size: ' . esc_attr( $arrow_size );
+	}
 	$element_css = '#' . esc_attr( $slider_id ) . ' { ' . implode( '; ', $desktop_vars ) . '; }';
 
 	// Image position CSS.
@@ -438,6 +448,7 @@ function cph_gallery_slider_shortcode( $atts ) {
 		'slide_gap'         => '--slide-gap',
 		'slide_radius'      => '--slide-radius',
 		'arrow_offset'      => '--arrow-offset',
+		'arrow_size'        => '--arrow-size',
 		'dot_size'          => '--dot-size',
 		'dot_gap'           => '--dot-gap',
 		'pagination_offset' => '--pagination-offset',
