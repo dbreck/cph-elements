@@ -68,6 +68,31 @@ $image_position_options = array(
 	esc_html__( 'Right Bottom', 'cph-elements' )  => 'right bottom',
 );
 
+// Caption placement options.
+$caption_placement_options = array(
+	esc_html__( 'Below Image (outside)', 'cph-elements' ) => 'below',
+	esc_html__( 'Over Image (overlay)', 'cph-elements' )  => 'overlay',
+);
+
+// Caption alignment options.
+$caption_align_options = array(
+	esc_html__( 'Left', 'cph-elements' )   => 'left',
+	esc_html__( 'Center', 'cph-elements' ) => 'center',
+	esc_html__( 'Right', 'cph-elements' )  => 'right',
+);
+
+// Caption HTML tag options.
+$caption_tag_options = array(
+	esc_html__( 'Paragraph (p)', 'cph-elements' ) => 'p',
+	esc_html__( 'Span', 'cph-elements' )          => 'span',
+	esc_html__( 'H1', 'cph-elements' )            => 'h1',
+	esc_html__( 'H2', 'cph-elements' )            => 'h2',
+	esc_html__( 'H3', 'cph-elements' )            => 'h3',
+	esc_html__( 'H4', 'cph-elements' )            => 'h4',
+	esc_html__( 'H5', 'cph-elements' )            => 'h5',
+	esc_html__( 'H6', 'cph-elements' )            => 'h6',
+);
+
 // Easing options for animations.
 $easing_options = array(
 	esc_html__( 'Power2 Out (Default)', 'cph-elements' ) => 'power2.out',
@@ -174,6 +199,107 @@ return array(
 				'value'   => array( 'cpt' ),
 			),
 			'description' => esc_html__( 'Optional: Filter by category/taxonomy slug (e.g., "urban-communities").', 'cph-elements' ),
+		),
+
+		/*
+		 * Captions
+		 */
+		array(
+			'type'       => 'nectar_group_header',
+			'heading'    => esc_html__( 'Captions', 'cph-elements' ),
+			'param_name' => 'group_header_captions',
+			'group'      => esc_html__( 'Content', 'cph-elements' ),
+		),
+
+		array(
+			'type'        => 'checkbox',
+			'heading'     => esc_html__( 'Show Caption', 'cph-elements' ),
+			'param_name'  => 'show_caption',
+			'value'       => array( esc_html__( 'Yes', 'cph-elements' ) => 'yes' ),
+			'std'         => '',
+			'group'       => esc_html__( 'Content', 'cph-elements' ),
+			'description' => esc_html__( 'Display each image\'s caption (from the Media Library caption field). Images without a caption render without one.', 'cph-elements' ),
+		),
+
+		array(
+			'type'        => 'dropdown',
+			'heading'     => esc_html__( 'Caption Placement', 'cph-elements' ),
+			'param_name'  => 'caption_placement',
+			'value'       => $caption_placement_options,
+			'std'         => 'below',
+			'group'       => esc_html__( 'Content', 'cph-elements' ),
+			'dependency'  => array(
+				'element' => 'show_caption',
+				'value'   => array( 'yes' ),
+			),
+			'description' => esc_html__( 'Below Image places the caption outside the image (default 10px below). Over Image overlays it near the bottom (default 20px from the edges).', 'cph-elements' ),
+		),
+
+		array(
+			'type'        => 'dropdown',
+			'heading'     => esc_html__( 'Caption Alignment', 'cph-elements' ),
+			'param_name'  => 'caption_align',
+			'value'       => $caption_align_options,
+			'std'         => 'left',
+			'group'       => esc_html__( 'Content', 'cph-elements' ),
+			'dependency'  => array(
+				'element' => 'show_caption',
+				'value'   => array( 'yes' ),
+			),
+			'description' => esc_html__( 'Horizontal alignment of the caption text.', 'cph-elements' ),
+		),
+
+		array(
+			'type'        => 'dropdown',
+			'heading'     => esc_html__( 'Caption Tag', 'cph-elements' ),
+			'param_name'  => 'caption_tag',
+			'value'       => $caption_tag_options,
+			'std'         => 'p',
+			'group'       => esc_html__( 'Content', 'cph-elements' ),
+			'dependency'  => array(
+				'element' => 'show_caption',
+				'value'   => array( 'yes' ),
+			),
+			'description' => esc_html__( 'HTML tag used for the caption element.', 'cph-elements' ),
+		),
+
+		array(
+			'type'        => 'colorpicker',
+			'heading'     => esc_html__( 'Caption Color', 'cph-elements' ),
+			'param_name'  => 'caption_color',
+			'value'       => '',
+			'group'       => esc_html__( 'Content', 'cph-elements' ),
+			'dependency'  => array(
+				'element' => 'show_caption',
+				'value'   => array( 'yes' ),
+			),
+			'description' => esc_html__( 'Leave empty to inherit the theme color (overlay placement defaults to white).', 'cph-elements' ),
+		),
+
+		array(
+			'type'        => 'textfield',
+			'heading'     => esc_html__( 'Caption Font Size', 'cph-elements' ),
+			'param_name'  => 'caption_font_size',
+			'value'       => '',
+			'group'       => esc_html__( 'Content', 'cph-elements' ),
+			'dependency'  => array(
+				'element' => 'show_caption',
+				'value'   => array( 'yes' ),
+			),
+			'description' => esc_html__( 'Any CSS size (e.g. 16px, 1.1vw). Leave empty to inherit the theme size for the chosen tag.', 'cph-elements' ),
+		),
+
+		array(
+			'type'        => 'textfield',
+			'heading'     => esc_html__( 'Caption Offset', 'cph-elements' ),
+			'param_name'  => 'caption_offset',
+			'value'       => '',
+			'group'       => esc_html__( 'Content', 'cph-elements' ),
+			'dependency'  => array(
+				'element' => 'show_caption',
+				'value'   => array( 'yes' ),
+			),
+			'description' => esc_html__( 'Below Image: space between image and caption (default 10px). Over Image: distance from the bottom/side edges (default 20px).', 'cph-elements' ),
 		),
 
 		/*

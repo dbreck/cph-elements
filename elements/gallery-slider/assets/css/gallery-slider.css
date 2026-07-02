@@ -98,6 +98,62 @@
 }
 
 /* ==========================================================================
+   Captions
+   ========================================================================== */
+
+/* Captions position against the slide (overlay mode) and inherit the
+   slide's transforms/opacity naturally in both modes. */
+.cph-gallery-slider--captions .cph-gallery-slider__slide {
+	position: relative;
+}
+
+.cph-gallery-slider__caption {
+	margin: 0;
+	padding: 0;
+	line-height: 1.4;
+	/* Keep drag/swipe working over the caption (imgs already do this). */
+	pointer-events: none;
+}
+
+.cph-gallery-slider__caption--left   { text-align: left; }
+.cph-gallery-slider__caption--center { text-align: center; }
+.cph-gallery-slider__caption--right  { text-align: right; }
+
+/* Placement: below the image (outside). The slide becomes a column — the
+   image flexes to fill what the caption doesn't use, and the rounded
+   corners move from the slide to the img so the caption isn't clipped. */
+.cph-gallery-slider--caption-below .cph-gallery-slider__slide {
+	display: flex;
+	flex-direction: column;
+	overflow: visible;
+	border-radius: 0;
+}
+
+.cph-gallery-slider--caption-below .cph-gallery-slider__slide img,
+.row .col .cph-gallery-slider--caption-below .cph-gallery-slider__slide img {
+	flex: 1 1 auto;
+	min-height: 0;
+	height: auto;
+	border-radius: var(--slide-radius);
+}
+
+.cph-gallery-slider--caption-below .cph-gallery-slider__caption {
+	flex: 0 0 auto;
+	margin-top: var(--caption-offset, 10px);
+}
+
+/* Placement: over the image (overlay), anchored near the bottom. */
+.cph-gallery-slider--caption-overlay .cph-gallery-slider__caption {
+	position: absolute;
+	left: var(--caption-offset, 20px);
+	right: var(--caption-offset, 20px);
+	bottom: var(--caption-offset, 20px);
+	z-index: 2;
+	color: #ffffff;
+	text-shadow: 0 1px 14px rgba(0, 0, 0, 0.4);
+}
+
+/* ==========================================================================
    3D Effect - Initial States (GSAP takes over after init)
    ========================================================================== */
 

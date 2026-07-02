@@ -2,6 +2,16 @@
 
 All notable changes to CPH Elements are documented here. Versions correspond to GitHub releases (used by the in-plugin updater).
 
+## [1.10.0] — 2026-07-02
+
+### Gallery Slider (element 1.3.0) — Image captions
+- **New: Show Caption** (Content → Captions) — displays each image's Media Library caption on its slide (CPT source uses the featured image's caption). Images without a caption render without one.
+- **Caption Placement** — *Below Image (outside)*: caption sits under the image (default 10px gap); the rounded clip moves to a new `.cph-gallery-slider__media` wrapper so the caption isn't clipped, and the image area flexes to fit within the carousel height. *Over Image (overlay)*: caption overlays near the bottom (default 20px from bottom/side edges), white with a soft text shadow.
+- **Caption Alignment** — left / center / right.
+- **Caption Tag** — p (default), span, or h1–h6 (whitelisted; inherits the theme's styling for the chosen tag).
+- **Caption Color / Font Size / Offset** — optional overrides; blank inherits the theme (color/size) or the placement default (offset). All emitted only when set.
+- Implementation: with captions **off**, slide markup and CSS are byte-identical to 1.9.6 (no `__media` wrapper). Captions live inside the slide so infinite-loop clones carry them automatically; `pointer-events: none` keeps drag/swipe working over the caption.
+
 ## [1.9.6] — 2026-06-23
 
 ### Gallery Slider (element 1.2.3) — Arrow Size control

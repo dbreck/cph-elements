@@ -102,13 +102,15 @@ function cph_gallery_slider_get_gallery_images( $images_string ) {
 			continue;
 		}
 
-		$url = wp_get_attachment_image_url( $id, 'full' );
-		$alt = get_post_meta( $id, '_wp_attachment_image_alt', true );
+		$url     = wp_get_attachment_image_url( $id, 'full' );
+		$alt     = get_post_meta( $id, '_wp_attachment_image_alt', true );
+		$caption = wp_get_attachment_caption( $id );
 
 		if ( $url ) {
 			$images[] = array(
-				'url' => $url,
-				'alt' => $alt ? $alt : '',
+				'url'     => $url,
+				'alt'     => $alt ? $alt : '',
+				'caption' => $caption ? $caption : '',
 			);
 		}
 	}
@@ -160,12 +162,15 @@ function cph_gallery_slider_get_cpt_images( $post_type, $posts_per_page, $taxono
 	if ( $query->have_posts() ) {
 		while ( $query->have_posts() ) {
 			$query->the_post();
+			$thumb_id  = get_post_thumbnail_id( get_the_ID() );
 			$thumb_url = get_the_post_thumbnail_url( get_the_ID(), 'full' );
+			$caption   = $thumb_id ? wp_get_attachment_caption( $thumb_id ) : '';
 
 			if ( $thumb_url ) {
 				$images[] = array(
-					'url' => $thumb_url,
-					'alt' => get_the_title(),
+					'url'     => $thumb_url,
+					'alt'     => get_the_title(),
+					'caption' => $caption ? $caption : '',
 				);
 			}
 		}
@@ -193,6 +198,14 @@ function cph_gallery_slider_shortcode( $atts ) {
 			'post_type'                    => 'portfolio',
 			'posts_per_page'               => '6',
 			'taxonomy_slug'                => '',
+			// Captions.
+			'show_caption'                 => '',
+			'caption_placement'            => 'below',
+			'caption_align'                => 'left',
+			'caption_tag'                  => 'p',
+			'caption_color'                => '',
+			'caption_font_size'            => '',
+			'caption_offset'               => '',
 			// Layout.
 			'height'                       => '600px',
 			'height_tablet'                => '',
@@ -306,6 +319,16 @@ function cph_gallery_slider_shortcode( $atts ) {
 	$arrow_layout      = ( 'below' === $atts['arrow_layout'] ) ? 'below' : 'overlay';
 	$wrapper_classes[] = 'cph-gallery-slider--nav-' . $arrow_layout;
 
+	// Captions.
+	$show_caption      = ( 'yes' === $atts['show_caption'] );
+	$caption_placement = ( 'overlay' === $atts['caption_placement'] ) ? 'overlay' : 'below';
+	$caption_align     = in_array( $atts['caption_align'], array( 'left', 'center', 'right' ), true ) ? $atts['caption_align'] : 'left';
+	$caption_tag       = in_array( $atts['caption_tag'], array( 'p', 'span', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6' ), true ) ? $atts['caption_tag'] : 'p';
+	if ( $show_caption ) {
+		$wrapper_classes[] = 'cph-gallery-slider--captions';
+		$wrapper_classes[] = 'cph-gallery-slider--caption-' . $caption_placement;
+	}
+
 	// Build data attributes for JS.
 	$start_slide = max( 0, intval( $atts['start_slide'] ) - 1 ); // Convert 1-based to 0-based index.
 	$easing      = ! empty( $atts['easing'] ) ? $atts['easing'] : 'power2.out';
@@ -388,7 +411,31 @@ function cph_gallery_slider_shortcode( $atts ) {
 	if ( '' !== $arrow_size ) {
 		$desktop_vars[] = '--arrow-size: ' . esc_attr( $arrow_size );
 	}
+
+	// Caption vars/rules — only emitted when captions are on and a value is set,
+	// so the CSS defaults (10px below / 20px overlay, inherited color) apply.
+	if ( $show_caption ) {
+		$caption_offset = sanitize_text_field( $atts['caption_offset'] );
+		if ( '' !== $caption_offset ) {
+			$desktop_vars[] = '--caption-offset: ' . esc_attr( $caption_offset );
+		}
+	}
 	$element_css = '#' . esc_attr( $slider_id ) . ' { ' . implode( '; ', $desktop_vars ) . '; }';
+
+	if ( $show_caption ) {
+		$caption_color     = sanitize_text_field( $atts['caption_color'] );
+		$caption_font_size = sanitize_text_field( $atts['caption_font_size'] );
+		$caption_rules     = array();
+		if ( '' !== $caption_color ) {
+			$caption_rules[] = 'color: ' . esc_attr( $caption_color );
+		}
+		if ( '' !== $caption_font_size ) {
+			$caption_rules[] = 'font-size: ' . esc_attr( $caption_font_size );
+		}
+		if ( ! empty( $caption_rules ) ) {
+			$element_css .= ' #' . esc_attr( $slider_id ) . ' .cph-gallery-slider__caption { ' . implode( '; ', $caption_rules ) . '; }';
+		}
+	}
 
 	// Image position CSS.
 	$element_css .= ' #' . esc_attr( $slider_id ) . ' .cph-gallery-slider__slide img { ';
@@ -529,6 +576,9 @@ function cph_gallery_slider_shortcode( $atts ) {
 						<img src="<?php echo esc_url( $image['url'] ); ?>"
 							 alt="<?php echo esc_attr( $image['alt'] ); ?>"
 							 loading="lazy" />
+						<?php if ( $show_caption && '' !== $image['caption'] ) : ?>
+							<<?php echo $caption_tag; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- whitelisted above. ?> class="cph-gallery-slider__caption cph-gallery-slider__caption--<?php echo esc_attr( $caption_align ); ?>"><?php echo wp_kses_post( $image['caption'] ); ?></<?php echo $caption_tag; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
+						<?php endif; ?>
 					</div>
 				<?php endforeach; ?>
 			</div>
