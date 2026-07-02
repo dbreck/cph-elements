@@ -2,6 +2,14 @@
 
 All notable changes to CPH Elements are documented here. Versions correspond to GitHub releases (used by the in-plugin updater).
 
+## [1.11.0] — 2026-07-02
+
+### New element: Mira Mar Animated Hero (element 1.0.0)
+- **`[miramar_animated_hero]`** — layered CSS-only animated hero ported from the Mira Mar brochure design export: gradient sky, two drifting cloud bands (seamless 3-tile loop), bird flock pass, building facade cutout, and logo. No JavaScript; respects `prefers-reduced-motion` (animations off, birds hidden).
+- Params: **Show Birds** / **Show Logo** (yes/no), **Cloud Drift Duration** (default 90s), **Bird Pass Duration** (default 60s; flock visible for the first 60% of the cycle), **Max Width** (empty = fill column), extra class.
+- Authored on a 1140×1419 stage and converted to percentage-based positioning (`aspect-ratio` wrapper) so it scales fluidly at any width. All img sizing rules carry `!important` — Salient's `.row .col img:not([srcset]) { width: auto }` and `.main-content img { height: auto }` otherwise force natural image sizes (clouds crop with a hard line at the band edge).
+- Site-specific artwork ships in the element's `assets/img/` — allow-list `animated-hero` only on Mira Mar (`wp-content/cph-config.php`).
+
 ## [1.10.0] — 2026-07-02
 
 ### Gallery Slider (element 1.3.0) — Image captions

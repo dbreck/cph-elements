@@ -1,0 +1,179 @@
+/**
+ * Mira Mar Animated Hero — [miramar_animated_hero]
+ *
+ * Ported from the design-tool export "Mira Mar animated hero" (Brochure assets).
+ * Layered scene: gradient sky, two drifting cloud bands, bird flock pass,
+ * ground, facade cutout, logo. Pure CSS animation — no JS.
+ *
+ * The scene was authored on a 1140x1419 stage; all positions/sizes below are
+ * converted to percentages of that stage so it scales fluidly with its
+ * container. Translate percentages are relative to each element's own box,
+ * which scales with the container, so the motion geometry is preserved.
+ */
+
+.mm-animated-hero {
+	position: relative;
+	width: 100%;
+	max-width: var(--mmh-max-width, none);
+	margin: 0 auto;
+	aspect-ratio: 1140 / 1419;
+	overflow: hidden;
+	background: #0d4a8f;
+}
+
+.mm-animated-hero__stage {
+	position: absolute;
+	inset: 0;
+}
+
+.mm-animated-hero__sky {
+	position: absolute;
+	inset: 0;
+	background: linear-gradient(
+		to bottom,
+		rgb(3, 58, 114) 0%,
+		rgb(6, 66, 125) 14.1%,
+		rgb(4, 82, 152) 28.2%,
+		rgb(32, 108, 172) 42.3%,
+		rgb(90, 150, 205) 56.4%,
+		rgb(127, 171, 210) 70.5%,
+		rgb(141, 178, 214) 81%,
+		rgb(141, 178, 214) 100%
+	);
+}
+
+/* Cloud bands — each holds a 3-tile strip that drifts one tile width, then loops */
+.mm-animated-hero__band {
+	position: absolute;
+	left: 0;
+	width: 100%;
+	overflow: hidden;
+}
+
+.mm-animated-hero__band--high {
+	top: 0;
+	height: 45.1022%; /* 640/1419 */
+}
+
+.mm-animated-hero__band--low {
+	top: 38.055%; /* 540/1419 */
+	height: 42.988%; /* 610/1419 */
+}
+
+.mm-animated-hero__drift {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 226.3158%; /* 3 tiles x 860px on a 1140px stage */
+	height: 100%;
+	animation: mm-drift var(--mmh-drift, 90s) linear infinite;
+}
+
+.mm-animated-hero__drift img {
+	position: absolute;
+	top: 0;
+	width: 33.3334% !important; /* one tile of the 3-tile strip */
+	height: 100% !important;
+	max-width: none !important;
+}
+
+.mm-animated-hero__drift img:nth-child(2) {
+	left: 33.3333%;
+}
+
+.mm-animated-hero__drift img:nth-child(3) {
+	left: 66.6666%;
+}
+
+.mm-animated-hero__birds {
+	position: absolute;
+	top: 37.7731%; /* 536/1419 */
+	left: 0;
+	width: 9.6491%; /* 110/1140 */
+	animation: mm-birds var(--mmh-birds, 60s) linear infinite;
+	will-change: transform;
+}
+
+.mm-animated-hero__birds img {
+	display: block;
+	width: 100% !important;
+	height: auto !important;
+	animation: mm-bob 4s ease-in-out infinite;
+}
+
+.mm-animated-hero__ground {
+	position: absolute;
+	top: 76.1099%; /* 1080/1419 */
+	left: 0;
+	width: 100% !important;
+	height: 23.8901% !important; /* 339/1419 */
+}
+
+.mm-animated-hero__facade {
+	position: absolute;
+	inset: 0;
+	width: 100% !important;
+	height: 100% !important;
+}
+
+.mm-animated-hero__logo {
+	position: absolute;
+	top: 6.2016%; /* 88/1419 */
+	left: 50%;
+	transform: translateX(-50%);
+	width: 37.7193% !important; /* 430/1140 */
+	height: auto !important;
+	filter: brightness(0) invert(1) drop-shadow(0 2px 14px rgba(3, 40, 80, 0.25));
+}
+
+/* Drift one tile width = 1/3 of the strip's own width */
+@keyframes mm-drift {
+	from {
+		transform: translate3d(0, 0, 0);
+	}
+	to {
+		transform: translate3d(-33.3333%, 0, 0);
+	}
+}
+
+/* Original path: (1230px,14px) -> (-200px,-34px) on a 110x64 flock,
+   expressed as percentages of the flock's own box */
+@keyframes mm-birds {
+	0% {
+		transform: translate(1118.18%, 21.875%);
+		opacity: 1;
+	}
+	59.9% {
+		opacity: 1;
+	}
+	60% {
+		transform: translate(-181.82%, -53.125%);
+		opacity: 0;
+	}
+	100% {
+		transform: translate(-181.82%, -53.125%);
+		opacity: 0;
+	}
+}
+
+@keyframes mm-bob {
+	0%,
+	100% {
+		transform: translateY(0);
+	}
+	50% {
+		transform: translateY(10.9375%); /* 7px of 64px */
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.mm-animated-hero__drift,
+	.mm-animated-hero__birds,
+	.mm-animated-hero__birds img {
+		animation: none;
+	}
+
+	.mm-animated-hero__birds {
+		display: none;
+	}
+}

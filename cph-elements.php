@@ -2,7 +2,7 @@
 /**
  * Plugin Name: CPH Elements
  * Description: Custom WPBakery elements by Clear pH. Auto-discovers elements from the elements/ directory.
- * Version:     1.10.0
+ * Version:     1.11.0
  * Author:      Clear pH
  * Author URI:  https://clearph.com
  * Text Domain: cph-elements
@@ -19,7 +19,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Plugin constants.
  */
-define( 'CPH_ELEMENTS_VERSION', '1.10.0' );
+define( 'CPH_ELEMENTS_VERSION', '1.11.0' );
 define( 'CPH_ELEMENTS_FILE', __FILE__ );
 define( 'CPH_ELEMENTS_PATH', plugin_dir_path( __FILE__ ) );
 define( 'CPH_ELEMENTS_URL', plugin_dir_url( __FILE__ ) );
