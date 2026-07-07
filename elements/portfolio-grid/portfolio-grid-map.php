@@ -1109,11 +1109,20 @@ return array(
 
 		array(
 			'type'        => 'textfield',
-			'heading'     => esc_html__( 'Logo Width', 'cph-elements' ),
+			'heading'     => esc_html__( 'Logo Max Width', 'cph-elements' ),
 			'param_name'  => 'logo_max_width',
 			'value'       => '70%',
 			'group'       => esc_html__( 'Style', 'cph-elements' ),
-			'description' => esc_html__( 'Forces all logos to the same width. Any CSS unit: 70%, 250px, 20vw, etc.', 'cph-elements' ),
+			'description' => esc_html__( 'Target width all logos are sized to (relative to card). Any CSS unit: 70%, 250px, 20vw, etc.', 'cph-elements' ),
+		),
+
+		array(
+			'type'        => 'textfield',
+			'heading'     => esc_html__( 'Logo Max Height', 'cph-elements' ),
+			'param_name'  => 'logo_max_height',
+			'value'       => '',
+			'group'       => esc_html__( 'Style', 'cph-elements' ),
+			'description' => esc_html__( 'Caps logo height so tall/narrow logos don\'t blow out the card (aspect ratio preserved). Leave blank for no limit. Any CSS unit: 120px, 8vw, etc.', 'cph-elements' ),
 		),
 
 		array(

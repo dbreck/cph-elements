@@ -410,6 +410,7 @@ function cph_portfolio_grid_shortcode( $atts ) {
 			'lower_third_text_color'    => '',
 			// Logo styling.
 			'logo_max_width'            => '70%',
+			'logo_max_height'           => '',
 			'logo_blend_mode'           => 'normal',
 			'logo_brightness'           => '100',
 			// Other styling.
@@ -542,6 +543,7 @@ function cph_portfolio_grid_shortcode( $atts ) {
 		'--location-letter-spacing: ' . esc_attr( $atts['location_letter_spacing'] ),
 		// Logo.
 		'--logo-max-width: ' . esc_attr( $atts['logo_max_width'] ),
+		'--logo-max-height: ' . ( ! empty( $atts['logo_max_height'] ) ? esc_attr( $atts['logo_max_height'] ) : 'none' ),
 		'--logo-blend-mode: ' . esc_attr( $atts['logo_blend_mode'] ),
 		'--logo-brightness: ' . ( (int) $atts['logo_brightness'] / 100 ),
 		// Overlay - Default.
