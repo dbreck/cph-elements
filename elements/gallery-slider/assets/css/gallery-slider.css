@@ -19,6 +19,7 @@
 	--side-scale: 0.75;
 	--side-opacity: 0.6;
 	--arrow-color: #ffffff;
+	--arrow-outline-color: #ffffff;
 	--arrow-offset: 30px;
 	--arrow-gap: 16px;
 	--dot-size: 12px;
@@ -270,6 +271,77 @@
 }
 
 /* ==========================================================================
+   Pause / Play Button (rendered only when autoplay is on)
+   ========================================================================== */
+
+/* Shares the arrow button's chrome and colour scheme, but is always a circle
+   at the arrows' height so it reads as a secondary control next to the
+   140x50 pill. In overlay layout it sits in the top-right corner, clear of
+   the vertically-centred arrows and the bottom-centred pagination dots. */
+.cph-gallery-slider__playpause {
+	position: absolute;
+	top: var(--arrow-offset);
+	right: var(--arrow-offset);
+	z-index: 11;
+
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	height: var(--arrow-size, 50px);
+	aspect-ratio: 1;
+	width: auto;
+
+	padding: 0;
+	background: transparent;
+	border: none;
+	color: var(--arrow-color);
+
+	cursor: pointer;
+	transition: transform 0.3s ease, opacity 0.3s ease, background 0.3s ease;
+}
+
+.cph-gallery-slider__playpause svg {
+	width: 100%;
+	height: auto;
+}
+
+.cph-gallery-slider__playpause svg circle {
+	stroke: var(--arrow-outline-color, #ffffff);
+	fill: var(--arrow-bg-color, transparent);
+	transition: stroke 0.3s ease, fill 0.3s ease;
+}
+
+.cph-gallery-slider__playpause svg rect,
+.cph-gallery-slider__playpause svg path {
+	fill: var(--arrow-color, #ffffff);
+	transition: fill 0.3s ease;
+}
+
+.cph-gallery-slider__playpause:hover {
+	transform: scale(1.05);
+}
+
+.cph-gallery-slider__playpause:focus {
+	outline: none;
+}
+
+.cph-gallery-slider__playpause:focus-visible {
+	outline: 2px solid var(--arrow-color, #ffffff);
+	outline-offset: 4px;
+}
+
+/* One icon at a time — the JS toggles is-playing / is-paused on the button. */
+.cph-gallery-slider__playpause-icon {
+	display: none;
+}
+
+.cph-gallery-slider__playpause.is-playing .cph-gallery-slider__playpause-icon--pause,
+.cph-gallery-slider__playpause.is-paused .cph-gallery-slider__playpause-icon--play {
+	display: block;
+}
+
+/* ==========================================================================
    Arrow Layout - Below Slider (centered row beneath the carousel)
    ========================================================================== */
 
@@ -293,7 +365,8 @@
 	margin-top: var(--arrow-offset);
 }
 
-.cph-gallery-slider--nav-below .cph-gallery-slider__arrow {
+.cph-gallery-slider--nav-below .cph-gallery-slider__arrow,
+.cph-gallery-slider--nav-below .cph-gallery-slider__playpause {
 	position: static;
 	top: auto;
 	left: auto;
@@ -399,6 +472,10 @@
 	.cph-gallery-slider--arrows-minimal .cph-gallery-slider__arrow {
 		height: var(--arrow-size, 32px);
 	}
+
+	.cph-gallery-slider__playpause {
+		height: var(--arrow-size, 40px);
+	}
 }
 
 /* ==========================================================================
@@ -427,6 +504,10 @@
 
 	.cph-gallery-slider--arrows-minimal .cph-gallery-slider__arrow {
 		height: var(--arrow-size, 28px);
+	}
+
+	.cph-gallery-slider__playpause {
+		height: var(--arrow-size, 36px);
 	}
 }
 

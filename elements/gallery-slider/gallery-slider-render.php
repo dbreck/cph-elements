@@ -20,7 +20,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @return string SVG markup.
  */
 function cph_gallery_slider_arrow_left() {
-	return '<svg viewBox="0 0 140 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+	return '<svg viewBox="0 0 140 50" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
 		<rect x="0.5" y="0.5" width="139" height="49" rx="24.5" stroke="currentColor" stroke-width="1"/>
 		<path d="M95 25H45M45 25L51 30M45 25L51 20" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
 	</svg>';
@@ -34,7 +34,7 @@ function cph_gallery_slider_arrow_left() {
  * @return string SVG markup.
  */
 function cph_gallery_slider_arrow_right() {
-	return '<svg viewBox="0 0 140 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+	return '<svg viewBox="0 0 140 50" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
 		<rect x="0.5" y="0.5" width="139" height="49" rx="24.5" stroke="currentColor" stroke-width="1"/>
 		<path d="M45 25H95M95 25L89 20M95 25L89 30" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
 	</svg>';
@@ -50,12 +50,12 @@ function cph_gallery_slider_arrow_right() {
  */
 function cph_gallery_slider_arrow_circle( $direction = 'right' ) {
 	if ( 'left' === $direction ) {
-		return '<svg viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+		return '<svg viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
 			<circle cx="25" cy="25" r="24" stroke="currentColor" stroke-width="1"/>
 			<path d="M30 17L22 25L30 33" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
 		</svg>';
 	}
-	return '<svg viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+	return '<svg viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
 		<circle cx="25" cy="25" r="24" stroke="currentColor" stroke-width="1"/>
 		<path d="M20 17L28 25L20 33" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
 	</svg>';
@@ -71,12 +71,45 @@ function cph_gallery_slider_arrow_circle( $direction = 'right' ) {
  */
 function cph_gallery_slider_arrow_minimal( $direction = 'right' ) {
 	if ( 'left' === $direction ) {
-		return '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+		return '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
 			<path d="M15 6L9 12L15 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
 		</svg>';
 	}
-	return '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+	return '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
 		<path d="M9 6L15 12L9 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+	</svg>';
+}
+
+/**
+ * Get the pause icon SVG (circle outline + two bars).
+ *
+ * Decorative — the accessible name lives on the button's aria-label.
+ *
+ * @since 1.4.0
+ *
+ * @return string SVG markup.
+ */
+function cph_gallery_slider_icon_pause() {
+	return '<svg class="cph-gallery-slider__playpause-icon cph-gallery-slider__playpause-icon--pause" viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+		<circle cx="25" cy="25" r="24" stroke="currentColor" stroke-width="1"/>
+		<rect x="19" y="17" width="4" height="16" rx="1"/>
+		<rect x="27" y="17" width="4" height="16" rx="1"/>
+	</svg>';
+}
+
+/**
+ * Get the play icon SVG (circle outline + triangle).
+ *
+ * Decorative — the accessible name lives on the button's aria-label.
+ *
+ * @since 1.4.0
+ *
+ * @return string SVG markup.
+ */
+function cph_gallery_slider_icon_play() {
+	return '<svg class="cph-gallery-slider__playpause-icon cph-gallery-slider__playpause-icon--play" viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+		<circle cx="25" cy="25" r="24" stroke="currentColor" stroke-width="1"/>
+		<path d="M20 16.5L34 25L20 33.5V16.5Z"/>
 	</svg>';
 }
 
@@ -276,6 +309,8 @@ function cph_gallery_slider_shortcode( $atts ) {
 			'pagination_offset'            => '20px',
 			'pagination_offset_tablet'     => '',
 			'pagination_offset_phone'      => '',
+			// Accessibility.
+			'aria_label'                   => '',
 			// Extra.
 			'el_class'                     => '',
 		),
@@ -400,6 +435,10 @@ function cph_gallery_slider_shortcode( $atts ) {
 		'--side-opacity: ' . esc_attr( $side_opacity ),
 		'--arrow-offset: ' . esc_attr( $arrow_offset ),
 		'--arrow-gap: ' . esc_attr( $arrow_gap ),
+		// Exposed so the pause/play button can inherit the arrow color scheme.
+		// The arrows themselves are still coloured by the explicit rules below.
+		'--arrow-color: ' . esc_attr( $arrow_color ),
+		'--arrow-outline-color: ' . esc_attr( $arrow_outline_color ),
 		'--perspective: ' . esc_attr( $perspective ),
 		'--dot-size: ' . esc_attr( $dot_size ),
 		'--dot-gap: ' . esc_attr( $dot_gap ),
@@ -410,6 +449,12 @@ function cph_gallery_slider_shortcode( $atts ) {
 	// responsive defaults) apply when left blank.
 	if ( '' !== $arrow_size ) {
 		$desktop_vars[] = '--arrow-size: ' . esc_attr( $arrow_size );
+	}
+
+	// Only emit --arrow-bg-color when set so the pause/play button's circle
+	// stays transparent by default (matching the arrows).
+	if ( '' !== $arrow_bg_color ) {
+		$desktop_vars[] = '--arrow-bg-color: ' . esc_attr( $arrow_bg_color );
 	}
 
 	// Caption vars/rules — only emitted when captions are on and a value is set,
@@ -521,6 +566,20 @@ function cph_gallery_slider_shortcode( $atts ) {
 	$show_arrows = in_array( $nav_type, array( 'arrows', 'both' ), true );
 	$show_pagination = in_array( $nav_type, array( 'pagination', 'both' ), true );
 
+	// Autoplaying content must offer a pause control (WCAG 2.2.2, Level A), so
+	// the button is tied to the autoplay setting rather than the nav type. With
+	// autoplay off nothing extra renders at all.
+	$show_playpause = ( 'yes' === $atts['autoplay'] );
+
+	// Accessible name for the carousel region. Blank falls back to a generic
+	// label so the region is never nameless.
+	$aria_label = trim( sanitize_text_field( $atts['aria_label'] ) );
+	if ( '' === $aria_label ) {
+		$aria_label = __( 'Image gallery', 'cph-elements' );
+	}
+
+	$total_slides = count( $images );
+
 	// Get arrow SVGs based on style.
 	$arrow_left  = '';
 	$arrow_right = '';
@@ -567,12 +626,18 @@ function cph_gallery_slider_shortcode( $atts ) {
 	<style><?php echo $element_css; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></style>
 	<div id="<?php echo esc_attr( $slider_id ); ?>"
 		 class="<?php echo esc_attr( implode( ' ', $wrapper_classes ) ); ?>"
+		 role="region"
+		 aria-roledescription="carousel"
+		 aria-label="<?php echo esc_attr( $aria_label ); ?>"
 		 <?php echo $data_string; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
 
 		<div class="cph-gallery-slider__viewport">
 			<div class="cph-gallery-slider__track">
 				<?php foreach ( $images as $index => $image ) : ?>
-					<div class="cph-gallery-slider__slide" data-index="<?php echo esc_attr( $index ); ?>">
+					<div class="cph-gallery-slider__slide" data-index="<?php echo esc_attr( $index ); ?>"
+						 role="group"
+						 aria-roledescription="slide"
+						 aria-label="<?php echo esc_attr( sprintf( /* translators: 1: current slide number, 2: total slides */ __( '%1$d of %2$d', 'cph-elements' ), $index + 1, $total_slides ) ); ?>">
 						<img src="<?php echo esc_url( $image['url'] ); ?>"
 							 alt="<?php echo esc_attr( $image['alt'] ); ?>"
 							 loading="lazy" />
@@ -584,25 +649,41 @@ function cph_gallery_slider_shortcode( $atts ) {
 			</div>
 		</div>
 
-		<?php if ( $show_arrows ) : ?>
+		<?php if ( $show_arrows || $show_playpause ) : ?>
 			<div class="cph-gallery-slider__nav">
+				<?php if ( $show_arrows ) : ?>
 				<button class="cph-gallery-slider__arrow cph-gallery-slider__arrow--prev" aria-label="<?php esc_attr_e( 'Previous slide', 'cph-elements' ); ?>">
 					<?php echo $arrow_left; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 				</button>
+				<?php endif; ?>
+				<?php if ( $show_playpause ) : ?>
+					<button type="button"
+							class="cph-gallery-slider__playpause is-playing"
+							aria-pressed="false"
+							aria-label="<?php esc_attr_e( 'Pause slideshow', 'cph-elements' ); ?>"
+							data-label-pause="<?php esc_attr_e( 'Pause slideshow', 'cph-elements' ); ?>"
+							data-label-play="<?php esc_attr_e( 'Play slideshow', 'cph-elements' ); ?>">
+						<?php
+						echo cph_gallery_slider_icon_pause(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+						echo cph_gallery_slider_icon_play();  // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+						?>
+					</button>
+				<?php endif; ?>
+				<?php if ( $show_arrows ) : ?>
 				<button class="cph-gallery-slider__arrow cph-gallery-slider__arrow--next" aria-label="<?php esc_attr_e( 'Next slide', 'cph-elements' ); ?>">
 					<?php echo $arrow_right; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 				</button>
+				<?php endif; ?>
 			</div>
 		<?php endif; ?>
 
 		<?php if ( $show_pagination ) : ?>
-			<div class="cph-gallery-slider__pagination" role="tablist" aria-label="<?php esc_attr_e( 'Slide navigation', 'cph-elements' ); ?>">
+			<div class="cph-gallery-slider__pagination" role="group" aria-label="<?php esc_attr_e( 'Slide navigation', 'cph-elements' ); ?>">
 				<?php foreach ( $images as $index => $image ) : ?>
-					<button class="cph-gallery-slider__dot<?php echo 0 === $index ? ' is-active' : ''; ?>"
+					<button type="button" class="cph-gallery-slider__dot<?php echo 0 === $index ? ' is-active' : ''; ?>"
 							data-index="<?php echo esc_attr( $index ); ?>"
-							role="tab"
-							aria-selected="<?php echo 0 === $index ? 'true' : 'false'; ?>"
-							aria-label="<?php echo esc_attr( sprintf( __( 'Go to slide %d', 'cph-elements' ), $index + 1 ) ); ?>">
+							aria-pressed="<?php echo 0 === $index ? 'true' : 'false'; ?>"
+							aria-label="<?php echo esc_attr( sprintf( /* translators: %d: slide number */ __( 'Go to slide %d', 'cph-elements' ), $index + 1 ) ); ?>">
 					</button>
 				<?php endforeach; ?>
 			</div>

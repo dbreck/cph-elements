@@ -22,8 +22,18 @@
 		arrowPrevSelector: '.cph-gallery-slider__arrow--prev',
 		arrowNextSelector: '.cph-gallery-slider__arrow--next',
 		paginationSelector: '.cph-gallery-slider__pagination',
-		dotSelector: '.cph-gallery-slider__dot'
+		dotSelector: '.cph-gallery-slider__dot',
+		playPauseSelector: '.cph-gallery-slider__playpause',
+		cloneClass: 'cph-gallery-slider__slide--clone'
 	};
+
+	/**
+	 * Whether the visitor has asked for reduced motion. Autoplay starts paused
+	 * when they have (WCAG 2.2.2 / 2.3.3) — the pause button then reads "Play".
+	 */
+	function prefersReducedMotion() {
+		return !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+	}
 
 	/**
 	 * Store for slider instances
@@ -48,6 +58,7 @@
 		var arrowNext = container.querySelector(CONFIG.arrowNextSelector);
 		var pagination = container.querySelector(CONFIG.paginationSelector);
 		var dots = pagination ? pagination.querySelectorAll(CONFIG.dotSelector) : [];
+		var playPause = container.querySelector(CONFIG.playPauseSelector);
 
 		if (!track || !viewport || slides.length < 2) {
 			return;
@@ -121,6 +132,13 @@
 		var isAnimating = false;
 		var autoplayTimer = null;
 		var isPaused = false;
+		// Set only by the pause/play button (and by reduced-motion at startup).
+		// Distinct from isPaused so hover-pause can resume on mouseleave without
+		// overriding an explicit pause by the visitor.
+		var userPaused = false;
+		// Feature-detect once: `inert` keeps off-screen slides out of the tab
+		// order in browsers that support it, and is simply skipped elsewhere.
+		var supportsInert = 'inert' in document.createElement('div');
 
 		/**
 		 * Map an extended (possibly-clone) index to its real slide index.
@@ -202,9 +220,44 @@
 		}
 
 		/**
+		 * Expose only the centred slide to assistive tech.
+		 *
+		 * Off-centre slides (and every loop clone, which is a duplicate of a
+		 * real slide) are marked aria-hidden and made inert so a keyboard user
+		 * can never tab into content they can't see. Attributes only — the
+		 * transforms/styles are owned by updateSlideStates() and the drag
+		 * handlers, and must not be touched here.
+		 */
+		function updateSlideA11y() {
+			var activeReal = toRealIndex(currentIndex);
+
+			slides.forEach(function(slide) {
+				var hidden;
+
+				if (slide.classList.contains(CONFIG.cloneClass)) {
+					hidden = true;
+				} else {
+					hidden = parseInt(slide.dataset.index, 10) !== activeReal;
+				}
+
+				if (hidden) {
+					slide.setAttribute('aria-hidden', 'true');
+				} else {
+					slide.removeAttribute('aria-hidden');
+				}
+
+				if (supportsInert) {
+					slide.inert = hidden;
+				}
+			});
+		}
+
+		/**
 		 * Update slide states (active class and advanced 3D effects)
 		 */
 		function updateSlideStates(animate) {
+			updateSlideA11y();
+
 			var dims = getDimensions();
 			var duration = animate ? settings.transition / 1000 : 0;
 			// How many slides each side of center stay visible/animated. Slides
@@ -430,10 +483,10 @@
 			dots.forEach(function(dot, index) {
 				if (index === activeReal) {
 					dot.classList.add('is-active');
-					dot.setAttribute('aria-selected', 'true');
+					dot.setAttribute('aria-pressed', 'true');
 				} else {
 					dot.classList.remove('is-active');
-					dot.setAttribute('aria-selected', 'false');
+					dot.setAttribute('aria-pressed', 'false');
 				}
 			});
 		}
@@ -442,7 +495,7 @@
 		 * Start autoplay
 		 */
 		function startAutoplay() {
-			if (!settings.autoplay || isPaused) {
+			if (!settings.autoplay || isPaused || userPaused) {
 				return;
 			}
 
@@ -475,10 +528,48 @@
 		 * Resume autoplay (on mouse leave)
 		 */
 		function resumeAutoplay() {
+			// An explicit pause outranks hover — leaving the slider must not
+			// restart a slideshow the visitor deliberately stopped.
+			if (userPaused) {
+				return;
+			}
 			isPaused = false;
 			if (settings.autoplay) {
 				startAutoplay();
 			}
+		}
+
+		/**
+		 * Set the explicit (visitor-controlled) pause state and sync the button.
+		 *
+		 * Safe to call when there is no button — non-autoplay sliders never
+		 * render one.
+		 *
+		 * @param {boolean} paused True to stop the slideshow.
+		 */
+		function setUserPaused(paused) {
+			userPaused = paused;
+
+			if (paused) {
+				isPaused = true;
+				stopAutoplay();
+			} else {
+				isPaused = false;
+				startAutoplay();
+			}
+
+			if (!playPause) {
+				return;
+			}
+
+			playPause.classList.toggle('is-paused', paused);
+			playPause.classList.toggle('is-playing', !paused);
+			playPause.setAttribute('aria-pressed', paused ? 'true' : 'false');
+
+			var label = paused
+				? (playPause.dataset.labelPlay || 'Play slideshow')
+				: (playPause.dataset.labelPause || 'Pause slideshow');
+			playPause.setAttribute('aria-label', label);
 		}
 
 		/**
@@ -648,6 +739,14 @@
 				});
 			}
 
+			// Pause / play toggle
+			if (playPause) {
+				playPause.addEventListener('click', function(e) {
+					e.preventDefault();
+					setUserPaused(!userPaused);
+				});
+			}
+
 			// Pause on hover
 			if (settings.autoplay && settings.pauseOnHover) {
 				container.addEventListener('mouseenter', pauseAutoplay);
@@ -754,9 +853,14 @@
 			// Bind events
 			bindEvents();
 
-			// Start autoplay
+			// Start autoplay — held paused for visitors who ask for reduced
+			// motion, with the button already showing the play state.
 			if (settings.autoplay) {
-				startAutoplay();
+				if (prefersReducedMotion()) {
+					setUserPaused(true);
+				} else {
+					startAutoplay();
+				}
 			}
 
 			// Mark as initialized
@@ -776,6 +880,8 @@
 			getCurrentIndex: function() { return currentIndex; },
 			startAutoplay: startAutoplay,
 			stopAutoplay: stopAutoplay,
+			setPaused: setUserPaused,
+			isPaused: function() { return userPaused; },
 			recalculate: handleResize,
 			setSlideWidths: setSlideWidths
 		};

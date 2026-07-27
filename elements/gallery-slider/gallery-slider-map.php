@@ -1201,6 +1201,15 @@ return array(
 
 		array(
 			'type'        => 'textfield',
+			'heading'     => esc_html__( 'Accessible Label', 'cph-elements' ),
+			'param_name'  => 'aria_label',
+			'value'       => '',
+			'group'       => esc_html__( 'Extra', 'cph-elements' ),
+			'description' => esc_html__( 'How screen readers announce this carousel, e.g. "Amenities photo gallery". Leave blank to use "Image gallery".', 'cph-elements' ),
+		),
+
+		array(
+			'type'        => 'textfield',
 			'heading'     => esc_html__( 'Extra Class Name', 'cph-elements' ),
 			'param_name'  => 'el_class',
 			'value'       => '',

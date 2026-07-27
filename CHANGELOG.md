@@ -2,6 +2,25 @@
 
 All notable changes to CPH Elements are documented here. Versions correspond to GitHub releases (used by the in-plugin updater).
 
+## [1.13.0] — 2026-07-27
+
+### Gallery Slider (element 1.4.0) — Accessibility
+Addresses two accessibility-audit failures: the slider was a focusable element with no role or accessible name, and autoplaying sliders had no way to stop the motion (WCAG 2.2.2 "Pause, Stop, Hide", Level A).
+
+- **New: Pause/Play button** — rendered inside `.cph-gallery-slider__nav` (between the prev/next arrows) **only when Autoplay is on**, so sliders without autoplay are unchanged. Toggling it stops/starts the autoplay timer and swaps its icon, `aria-label` ("Pause slideshow" / "Play slideshow"), and `aria-pressed`. An explicit pause outranks pause-on-hover — leaving the slider no longer restarts a slideshow the visitor deliberately stopped.
+- **Reduced motion** — when the visitor's system asks for reduced motion, autoplay now starts **paused** with the button already in its play state, instead of moving on its own.
+- **New: Accessible Label** (`aria_label`, Extra tab) — the name screen readers announce for the carousel, e.g. "Amenities photo gallery". Blank falls back to "Image gallery".
+- **Carousel semantics** — the wrapper carries `role="region"`, `aria-roledescription="carousel"` and the accessible label (it was already made focusable via `tabindex="0"` for keyboard arrow-key navigation, but had neither role nor name). Each real slide carries `role="group"`, `aria-roledescription="slide"` and an "N of M" label.
+- **Off-centre slides are hidden from assistive tech** — only the centred slide is exposed; the rest (and every infinite-loop clone) get `aria-hidden` plus `inert` where supported, so a keyboard user can't tab into content they can't see. Attributes only — slide transforms are untouched.
+- **Pagination dots** are no longer mis-typed as a `tablist`/`tab` set (there are no tab panels). The container is a labelled `role="group"` and each dot reports its state with `aria-pressed` instead of `aria-selected`. Existing "Go to slide N" labels are unchanged.
+- Decorative arrow SVGs are now `aria-hidden="true" focusable="false"`.
+- Button styling reuses the arrows' colour scheme via new `--arrow-color` / `--arrow-outline-color` / `--arrow-bg-color` custom properties on the wrapper, and matches the arrows' height at every breakpoint (always circular, so it reads as secondary next to the 140×50 pill). Visible `:focus-visible` outline included.
+
+## [1.12.0] — 2026-07-07
+
+### Portfolio Grid — Logo Max Height control
+- **New: Logo Max Height** (Style tab → Logo) — caps logo height while preserving aspect ratio, so tall/narrow logos no longer blow out the card. Renders as a `--logo-max-height` CSS var (defaults to `none` when blank — existing grids render identically). Relabeled "Logo Width" → "Logo Max Width" for clarity. *(Entry backfilled 2026-07-27 — released without a changelog entry.)*
+
 ## [1.11.0] — 2026-07-02
 
 ### New element: Mira Mar Animated Hero (element 1.0.0)
