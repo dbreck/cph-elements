@@ -691,6 +691,20 @@ return array(
 		),
 
 		array(
+			'type'        => 'checkbox',
+			'heading'     => esc_html__( 'Show Play/Pause Button', 'cph-elements' ),
+			'param_name'  => 'show_playpause',
+			'value'       => array( esc_html__( 'Yes', 'cph-elements' ) => 'yes' ),
+			'std'         => 'yes',
+			'group'       => esc_html__( 'Behavior', 'cph-elements' ),
+			'dependency'  => array(
+				'element' => 'autoplay',
+				'value'   => array( 'yes' ),
+			),
+			'description' => esc_html__( 'Show a button that lets visitors pause and resume autoplay. Recommended for accessibility (WCAG 2.2.2).', 'cph-elements' ),
+		),
+
+		array(
 			'type'       => 'nectar_group_header',
 			'heading'    => esc_html__( 'Animation', 'cph-elements' ),
 			'param_name' => 'group_header_animation',

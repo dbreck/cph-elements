@@ -272,6 +272,7 @@ function cph_gallery_slider_shortcode( $atts ) {
 			'autoplay'                     => '',
 			'autoplay_speed'               => '5',
 			'pause_on_hover'               => 'yes',
+			'show_playpause'               => 'yes',
 			'transition_duration'          => '600',
 			// Navigation.
 			'nav_type'                     => 'arrows',
@@ -566,10 +567,11 @@ function cph_gallery_slider_shortcode( $atts ) {
 	$show_arrows = in_array( $nav_type, array( 'arrows', 'both' ), true );
 	$show_pagination = in_array( $nav_type, array( 'pagination', 'both' ), true );
 
-	// Autoplaying content must offer a pause control (WCAG 2.2.2, Level A), so
-	// the button is tied to the autoplay setting rather than the nav type. With
-	// autoplay off nothing extra renders at all.
-	$show_playpause = ( 'yes' === $atts['autoplay'] );
+	// Autoplaying content should offer a pause control (WCAG 2.2.2, Level A), so
+	// the button is tied to the autoplay setting rather than the nav type and is
+	// on by default. It can be switched off per instance; with autoplay off
+	// nothing extra renders at all.
+	$show_playpause = ( 'yes' === $atts['autoplay'] && 'yes' === $atts['show_playpause'] );
 
 	// Accessible name for the carousel region. Blank falls back to a generic
 	// label so the region is never nameless.

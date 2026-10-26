@@ -2,6 +2,11 @@
 
 All notable changes to CPH Elements are documented here. Versions correspond to GitHub releases (used by the in-plugin updater).
 
+## [1.14.0] — 2026-10-26
+
+### Gallery Slider (element 1.5.0)
+- **New: Show Play/Pause Button** (`show_playpause`, Behavior tab, visible only when Autoplay is on). Default `yes`, so existing sliders keep the button; uncheck to hide it per instance. With the button hidden, reduced-motion visitors get a slider that starts paused and can only be advanced manually.
+
 ## [1.13.0] — 2026-07-27
 
 ### Gallery Slider (element 1.4.0) — Accessibility
